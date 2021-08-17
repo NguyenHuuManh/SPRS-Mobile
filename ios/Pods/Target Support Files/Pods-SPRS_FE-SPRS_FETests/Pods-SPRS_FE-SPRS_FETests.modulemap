@@ -1,0 +1,6 @@
+module Pods_SPRS_FE_SPRS_FETests {
+  umbrella header "Pods-SPRS_FE-SPRS_FETests-umbrella.h"
+
+  export *
+  module * { export * }
+}
