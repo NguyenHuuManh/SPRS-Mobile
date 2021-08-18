@@ -10,8 +10,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "ansi-styles": "^3.2.1",
+    "geolocation": "^0.2.0",
     "react": "17.0.1",
-    "react-native": "0.64.2"
+    "react-native": "0.64.2",
+    "react-native-get-location": "^2.1.2",
+    "react-native-maps": "^0.28.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
