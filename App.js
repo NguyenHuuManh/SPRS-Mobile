@@ -9,7 +9,6 @@
 import React from 'react';
 import type { Node } from 'react';
 import GetLocation from 'react-native-get-location'
-import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import {
   SafeAreaView,
   ScrollView,
@@ -28,6 +27,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import { useEffect } from 'react/cjs/react.development';
+import MapView from 'react-native-maps';
 
 const Section = ({ children, title }): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -79,39 +79,11 @@ const App: () => Node = () => {
     getCurrentLocation();
   }, [])
   return (
-    // <SafeAreaView style={backgroundStyle}>
-    //   <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-    //   <ScrollView
-    //     contentInsetAdjustmentBehavior="automatic"
-    //     style={backgroundStyle}>
-    //     <Header />
-    //     <View
-    //       style={{
-    //         backgroundColor: isDarkMode ? Colors.black : Colors.white,
-    //       }}>
-    //       <Section title="Step One">
-    //         Edit <Text style={styles.highlight}>App.js</Text> to change this
-    //         screen and then come back to see your edits.
-    //       </Section>
-    //       <Section title="See Your Changes">
-    //         <ReloadInstructions />
-    //       </Section>
-    //       <Section title="Debug">
-    //         <DebugInstructions />
-    //       </Section>
-    //       <Section title="Learn More">
-    //         Read the docs to discover what to do next:
-    //       </Section>
-    //       <LearnMoreLinks />
-    //     </View>
-
-    //   </ScrollView>
-
-    // </SafeAreaView>
     <View style={{ position: 'relative', height: 500 }}>
       <MapView
-        provider={PROVIDER_GOOGLE}
-        style={{ left: 0, right: 0, top: 0, bottom: 0, position: 'absolute' }}
+        // provider={PROVIDER_GOOGLE}
+        // style={{ left: 0, right: 0, top: 0, bottom: 0, position: 'absolute' }}
+        // style={{width:200,height:200}}
         initialRegion={{
           latitude: 37.78825,
           longitude: -122.4324,
@@ -122,24 +94,5 @@ const App: () => Node = () => {
     </View>
   );
 };
-
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
 
 export default App;
