@@ -9,7 +9,6 @@
 import React from 'react';
 import type { Node } from 'react';
 import GetLocation from 'react-native-get-location'
-import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import {
   SafeAreaView,
   ScrollView,
@@ -28,6 +27,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import { useEffect } from 'react/cjs/react.development';
+import MapView from 'react-native-maps';
 
 const Section = ({ children, title }): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -81,8 +81,9 @@ const App: () => Node = () => {
   return (
     <View style={{ position: 'relative', height: 500 }}>
       <MapView
-        provider={PROVIDER_GOOGLE}
-        style={{ left: 0, right: 0, top: 0, bottom: 0, position: 'absolute' }}
+        // provider={PROVIDER_GOOGLE}
+        // style={{ left: 0, right: 0, top: 0, bottom: 0, position: 'absolute' }}
+        // style={{width:200,height:200}}
         initialRegion={{
           latitude: 37.78825,
           longitude: -122.4324,
