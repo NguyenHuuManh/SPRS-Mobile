@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Node } from 'react';
 import GetLocation from 'react-native-get-location'
 import {
@@ -26,8 +26,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { useEffect } from 'react/cjs/react.development';
-import MapView from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const Section = ({ children, title }): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -57,6 +56,12 @@ const Section = ({ children, title }): Node => {
 
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
+  const [region, setRegion] = useState({
+    latitude: 21.0263084,
+    longitude: 105.7709134,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  })
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -78,19 +83,30 @@ const App: () => Node = () => {
   useEffect(() => {
     getCurrentLocation();
   }, [])
+
+  const onChangeRegion = (region) => {
+    setRegion(region)
+  }
   return (
-    <View style={{ position: 'relative', height: 500 }}>
+    <View style={{ position: 'relative', height: 800 }}>
       <MapView
-        // provider={PROVIDER_GOOGLE}
-        // style={{ left: 0, right: 0, top: 0, bottom: 0, position: 'absolute' }}
-        // style={{width:200,height:200}}
+        mapType={"standard"}
+        provider={PROVIDER_GOOGLE}
+        style={{ left: 0, right: 0, top: 0, bottom: 0, position: 'absolute' }}
         initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: 21.0263084,
+          longitude: 105.7709134,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-      />
+        onPress={(e) => { console.log(e, "e") }}
+      >
+        <Marker
+          coordinate={{ latitude: 21.0263084, longitude: 105.7709134 }}
+          title={"marker.title"}
+          description={"marker.description"}
+        />
+      </MapView>
     </View>
   );
 };
