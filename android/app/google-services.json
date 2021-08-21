@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "47892257681",
+    "project_id": "fptu-cp-demo",
+    "storage_bucket": "fptu-cp-demo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47892257681:android:ec271d8b999ced96b51830",
+        "android_client_info": {
+          "package_name": "com.sprs_fe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "47892257681-pcpdpmucdbb1k2rrmmlvevohk9ag4al3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6tFXKOY76Xsrn3Eg2Na__le0oCAGmuIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "47892257681-pcpdpmucdbb1k2rrmmlvevohk9ag4al3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
