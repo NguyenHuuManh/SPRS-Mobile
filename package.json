@@ -10,21 +10,47 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.7",
+    "@react-native-community/masked-view": "^0.1.11",
     "@react-native-firebase/app": "^12.7.1",
     "@react-native-firebase/auth": "^12.7.1",
+    "@react-native-firebase/messaging": "^12.7.2",
+    "@react-navigation/bottom-tabs": "^6.0.5",
+    "@react-navigation/drawer": "^6.1.4",
+    "@react-navigation/native": "^6.0.2",
+    "@react-navigation/stack": "^6.0.7",
+    "@stomp/rx-stomp": "^1.1.2",
+    "@stomp/stompjs": "^6.1.0",
+    "@types/lodash": "^4.14.172",
+    "@types/react-native-push-notification": "^7.3.1",
+    "@types/sockjs-client": "^1.5.1",
     "ansi-styles": "^3.2.1",
-    "firebase": "^8.10.0",
+    "axios": "^0.21.1",
     "geolocation": "^0.2.0",
     "react": "17.0.1",
     "react-native": "0.64.2",
     "react-native-firebase": "^5.6.0",
+    "react-native-gesture-handler": "^1.10.3",
     "react-native-get-location": "^2.1.2",
-    "react-native-maps": "^0.28.0"
+    "react-native-maps": "^0.28.0",
+    "react-native-reanimated": "^2.2.0",
+    "react-native-safe-area-context": "^3.3.0",
+    "react-native-screens": "^3.5.0",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.1",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-saga": "^1.1.3",
+    "socket.io-client": "^4.1.3",
+    "sockjs-client": "^1.5.2",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@types/react": "^17.0.19",
+    "@types/react-native": "^0.64.13",
     "babel-jest": "^26.6.3",
     "eslint": "7.14.0",
     "jest": "^26.6.3",
@@ -32,6 +58,7 @@
     "react-test-renderer": "17.0.1"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "verbose": true
   }
 }
