@@ -8,12 +8,14 @@ import messaging from '@react-native-firebase/messaging';
 import { Store } from "../..";
 import { useNavigation } from "@react-navigation/native";
 import { apiSaveTokenDevice, apiSenAll } from "../../ApiFunction/Location";
+import { useDispatch } from "react-redux";
+import { logout } from "../../Redux/Actions/UserActions";
 
 export default () => {
     const navigation = useNavigation()
     const [message, setMessage] = useState<any>("None");
     const { user: { setUser, user } } = useContext(Store)
-
+    const dispatch = useDispatch()
 
     const configNotification = () => {
         const unsubscribe = messaging().onMessage(remoteMessage => {
@@ -33,7 +35,7 @@ export default () => {
             })
     }, [])
     const signout = () => {
-        setUser(null)
+        dispatch(logout());
     }
 
     const saveTokenDevice = (token: String) => {

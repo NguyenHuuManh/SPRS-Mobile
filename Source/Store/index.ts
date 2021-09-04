@@ -1,9 +1,9 @@
-// Imports: Dependencies
+
 import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import _ from 'lodash';
-// Imports: Redux
+
 import sagas from '../Redux/Sagas';
 import rootReducer from '../Redux/Reducers';
 import AsyncStorage from '@react-native-async-storage/async-storage';

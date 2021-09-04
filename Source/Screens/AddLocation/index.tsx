@@ -4,9 +4,13 @@ import { Button, Text } from "react-native";
 import SockJS from "sockjs-client";
 import { Client, Stomp, } from "@stomp/stompjs";
 import socketIO from 'socket.io-client';
+import ContentLoader, { BulletsLoader, FacebookLoader } from "react-native-easy-content-loader";
+
 
 export default () => {
     const [response, setResponse] = useState<any>("");
+    const [loading, setLoading] = useState(false);
+
     var stompClient = null
     const connect = () => {
         const socket = new SockJS("https://rest-sprs-wbs.herokuapp.com/wbs-sprs-nort");
@@ -16,7 +20,7 @@ export default () => {
             function (frame) {
                 console.log('Connectedsadas: ' + frame);
                 stompClient.subscribe(
-                    `/client/nortification`,
+                    `https://rest-sprs-wbs.herokuapp.com/`,
                     message => {
                         console.log("message", message.body)
                     }
@@ -32,9 +36,6 @@ export default () => {
         stompClient.onreceipt = (mess) => {
             console.log("onreceipt" + mess);
         }
-
-
-
     }
 
     const showMessage = (message) => {
@@ -64,14 +65,17 @@ export default () => {
         client.connect({}, connect_callback, error_callback);
     }
 
-    useEffect(() => {
-        connect();
-    }, [])
+    // useEffect(() => {
+    //     connect1();
+    // }, [])
     return (
         <>
-            <Text>{response || "Can't not connect"}</Text>
-            <Button title="Send Location" onPress={() => { sendLocation() }}></Button>
-            {/* <Button title="Disconnect" onPress={() => { disconnect() }}></Button> */}
+            <ContentLoader loading={!loading} >
+                <Text>{response || "Can't not connect"}</Text>
+                <Button title="Send Location" onPress={() => { sendLocation() }}></Button>
+                {/* <Button title="Disconnect" onPress={() => { disconnect() }}></Button> */}
+            </ContentLoader>
+
         </>
     )
 }

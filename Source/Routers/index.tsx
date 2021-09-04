@@ -10,6 +10,9 @@ import httpServices from '../Services/httpServices';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/Reducers';
 import { isEmpty } from 'lodash';
+import TabBar from '../Components/TabBar';
+// import ContentLoader from 'react-native-masked-loader';
+import Loading from '../Components/Loading';
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const AuStack = createStackNavigator();
@@ -40,7 +43,7 @@ const TaskScreen = () => (
 )
 
 const TabScreens = () => (
-    <Tabs.Navigator screenOptions={{ headerShown: false }}>
+    <Tabs.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => { return <TabBar {...props} /> }}>
         <Tabs.Screen name="Main" component={MainStackScreen} />
         <Tabs.Screen name="Task" component={TaskScreen} />
     </Tabs.Navigator>
@@ -55,13 +58,16 @@ const RootStackScreen = () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
     const isUserToken = !isEmpty(userReducer?.data || {})
     return (
-        <RootStack.Navigator screenOptions={{ headerShown: false }}>
-            {isUserToken ? (
-                <RootStack.Screen name="DrawScreen" component={DrawScreen} options={{ animationEnabled: true }} />
-            ) : (
-                <RootStack.Screen name="AuStackScreen" component={AuStackScreen} options={{ animationEnabled: true }} />
-            )}
-        </RootStack.Navigator>
+        <>
+            {/* <ContentLoader MaskedElement={Loading} /> */}
+            <RootStack.Navigator screenOptions={{ headerShown: false }}>
+                {isUserToken ? (
+                    <RootStack.Screen name="DrawScreen" component={DrawScreen} options={{ animationEnabled: true }} />
+                ) : (
+                    <RootStack.Screen name="AuStackScreen" component={AuStackScreen} options={{ animationEnabled: true }} />
+                )}
+            </RootStack.Navigator>
+        </>
     );
 }
 
