@@ -11,8 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/Reducers';
 import { isEmpty } from 'lodash';
 import TabBar from '../Components/TabBar';
-// import ContentLoader from 'react-native-masked-loader';
-import Loading from '../Components/Loading';
+
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const AuStack = createStackNavigator();
@@ -59,7 +58,6 @@ const RootStackScreen = () => {
     const isUserToken = !isEmpty(userReducer?.data || {})
     return (
         <>
-            {/* <ContentLoader MaskedElement={Loading} /> */}
             <RootStack.Navigator screenOptions={{ headerShown: false }}>
                 {isUserToken ? (
                     <RootStack.Screen name="DrawScreen" component={DrawScreen} options={{ animationEnabled: true }} />

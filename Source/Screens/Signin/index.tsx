@@ -3,16 +3,19 @@ import { Button, Text, TextInput, View } from "react-native";
 import { apiSignin, apiSigup } from "../../ApiFunction/Auth";
 import httpServices from "../../Services/httpServices";
 import { userActions } from "../../Redux/Actions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
 import Input from "../../Components/Input";
 import ButtonCustom from "../../Components/ButtonCustom";
+import AwesomeLoading from 'react-native-awesome-loading';
+
 import styles from "./styles";
-// import Loader from 'react-native-easy-content-loader';
+import { RootState } from "../../Redux/Reducers";
 export default () => {
     const [userName, setUserNAme] = useState<any>("");
     const [passWord, setPassWord] = useState<any>("");
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const userReducer = useSelector((state: RootState) => state.userReducer);
     const signin = ({ username, passWord }) => {
         dispatch(userActions.loginReques({ username: username || "manh19999", password: passWord || "spring123" }));
     }
@@ -29,7 +32,7 @@ export default () => {
         }
     }
 
-
+    console.log("isLoading", userReducer?.isLoading)
     return (
 
         <Formik
@@ -43,6 +46,7 @@ export default () => {
         >
             {({ submitForm }) => (
                 <View style={styles.container}>
+                    <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." />
                     <Field
                         component={Input}
                         title="Tài khoản:"
