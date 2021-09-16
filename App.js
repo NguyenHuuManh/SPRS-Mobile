@@ -12,7 +12,7 @@ import 'react-native-gesture-handler';
 
 import Source from './Source'
 const App: () => Node = () => {
-
+  // navigator.geolocation = require('react-native-geolocation-service');
   return (
     <Source />
   )

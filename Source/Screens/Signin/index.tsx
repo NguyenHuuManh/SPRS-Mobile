@@ -31,10 +31,7 @@ export default () => {
             console.log(error);
         }
     }
-
-    console.log("isLoading", userReducer?.isLoading)
     return (
-
         <Formik
             initialValues={{
                 username: "",
@@ -63,17 +60,5 @@ export default () => {
                 </View>
             )}
         </Formik>
-    )
-
-    return (
-        <View>
-            <Text>Account:</Text>
-            <TextInput onChangeText={(e) => { setUserNAme(e) }} value={userName} />
-            <Text>Password:</Text>
-            <TextInput onChangeText={(e) => { setPassWord(e) }} value={passWord} />
-            <Button title="Login" onPress={() => { signin() }} ></Button>
-            <Button title="Signup" onPress={() => { signup() }}></Button>
-        </View>
-
     )
 }

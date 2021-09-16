@@ -1,81 +1,125 @@
+import React, { useRef } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  StyleSheet,
+  View,
+  ImageBackground,
+  Animated,
+  useWindowDimensions
+} from "react-native";
 
-import React, { useEffect, useState } from "react";
-import { Button, Text } from "react-native";
-import SockJS from "sockjs-client";
-import { Client, Stomp, } from "@stomp/stompjs";
-import socketIO from 'socket.io-client';
-import ContentLoader, { BulletsLoader, FacebookLoader } from "react-native-easy-content-loader";
+const images = new Array(6).fill('https://images.unsplash.com/photo-1556740749-887f6717d7e4');
 
+const App = () => {
+  const scrollX = useRef(new Animated.Value(0)).current;
 
-export default () => {
-    const [response, setResponse] = useState<any>("");
-    const [loading, setLoading] = useState(false);
+  const { width: windowWidth } = useWindowDimensions();
 
-    var stompClient = null
-    const connect = () => {
-        const socket = new SockJS("https://rest-sprs-wbs.herokuapp.com/wbs-sprs-nort");
-        stompClient = Stomp.over(socket)
-        stompClient.connect(
-            {},
-            function (frame) {
-                console.log('Connectedsadas: ' + frame);
-                stompClient.subscribe(
-                    `https://rest-sprs-wbs.herokuapp.com/`,
-                    message => {
-                        console.log("message", message.body)
-                    }
-                )
-            },
-            function (error) {
-                console.log("Web socket error", error);
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.scrollContainer}>
+        <ScrollView
+          horizontal={true}
+        //   style={styles.scrollViewStyle}
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={Animated.event([
+            {
+              nativeEvent: {
+                contentOffset: {
+                  x: scrollX
+                }
+              }
             }
-        );
-        stompClient.onreceive = (mess) => {
-            console.log("recive" + mess);
-        }
-        stompClient.onreceipt = (mess) => {
-            console.log("onreceipt" + mess);
-        }
-    }
-
-    const showMessage = (message) => {
-        console.log("message", message);
-    }
-
-    function sendLocation() {
-        console.log("dasdsad", stompClient.brokerURL);
-        stompClient.send("app/location", {}, JSON.stringify({ 'code': "101", 'name': "Manh", 'phone': "10000", 'longtitude': "21.0263084", 'latitude': "105.7709134" }));
-        // stompClient.publish({ destination: "https://rest-sprs-wbs.herokuapp.com/app/location", body: JSON.stringify({ 'code': "100", 'name': "Manh", 'phone': "10000", 'longtitude': "21.0263084", 'latitude': "105.7709134" }) });
-    }
-
-
-    var connect_callback = function (frame) {
-        // called back after the client is connected and authenticated to the STOMP server\
-        console.log(frame, "Contected")
-    };
-
-    var error_callback = function (error) {
-        // display the error's message header:
-        console.log(error, "ERROR");
-    };
-
-    const connect1 = () => {
-        console.log("fsdfss")
-        var client = Stomp.client("wss://rest-sprs-wbs.herokuapp.com/wbs-sprs-nort");
-        client.connect({}, connect_callback, error_callback);
-    }
-
-    // useEffect(() => {
-    //     connect1();
-    // }, [])
-    return (
-        <>
-            <ContentLoader loading={!loading} >
-                <Text>{response || "Can't not connect"}</Text>
-                <Button title="Send Location" onPress={() => { sendLocation() }}></Button>
-                {/* <Button title="Disconnect" onPress={() => { disconnect() }}></Button> */}
-            </ContentLoader>
-
-        </>
-    )
+          ])}
+          scrollEventThrottle={1}
+        >
+          {images.map((image, imageIndex) => {
+            return (
+              <View
+                style={{ width: windowWidth, height: 250 }}
+                key={imageIndex}
+              >
+                <ImageBackground source={{ uri: image }} style={styles.card}>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.infoText}>
+                      {"Image - " + imageIndex}
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </View>
+            );
+          })}
+        </ScrollView>
+        <View style={styles.indicatorContainer}>
+          {images.map((image, imageIndex) => {
+            const width = scrollX.interpolate({
+              inputRange: [
+                windowWidth * (imageIndex - 1),
+                windowWidth * imageIndex,
+                windowWidth * (imageIndex + 1)
+              ],
+              outputRange: [8, 16, 8],
+              extrapolate: "clamp"
+            });
+            return (
+              <Animated.View
+                key={imageIndex}
+                style={[styles.normalDot, { width }]}
+              />
+            );
+          })}
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  scrollContainer: {
+    height: 300,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  card: {
+    flex: 1,
+    marginVertical: 4,
+    marginHorizontal: 16,
+    borderRadius: 5,
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  textContainer: {
+    backgroundColor: "rgba(0,0,0, 0.7)",
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    borderRadius: 5
+  },
+  infoText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold"
+  },
+  normalDot: {
+    height: 8,
+    width: 8,
+    borderRadius: 4,
+    backgroundColor: "silver",
+    marginHorizontal: 4
+  },
+  indicatorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
+  }
+});
+
+export default App;

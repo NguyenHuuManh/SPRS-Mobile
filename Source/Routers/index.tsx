@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/Reducers';
 import { isEmpty } from 'lodash';
 import TabBar from '../Components/TabBar';
+import Profile from '../Screens/Profile';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -35,16 +36,23 @@ const MainStackScreen = () => (
 )
 
 const TaskScreen = () => (
-    <TaskStack.Navigator initialRouteName="Screen1" screenOptions={{ headerShown: false }} >
+    <TaskStack.Navigator initialRouteName="AddLocation" screenOptions={{ headerShown: false }} >
         <TaskStack.Screen name="Home" component={Home} options={{ title: "Home", animationEnabled: true }} />
-        <TaskStack.Screen name="Screen1" component={Screen1} options={{ title: "Screen1", animationEnabled: true }} />
+        <TaskStack.Screen name="AddLocation" component={AddLocation} options={{ title: "AddLocation", animationEnabled: true }} />
     </TaskStack.Navigator>
+)
+
+const ProfileStackScreen = () => (
+    <MainStack.Navigator initialRouteName="Profile" screenOptions={{ headerShown: false }}>
+        <MainStack.Screen name="Profile" component={Profile} options={{ title: "Profile", animationEnabled: true }} />
+    </MainStack.Navigator>
 )
 
 const TabScreens = () => (
     <Tabs.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => { return <TabBar {...props} /> }}>
-        <Tabs.Screen name="Main" component={MainStackScreen} />
-        <Tabs.Screen name="Task" component={TaskScreen} />
+        <Tabs.Screen name="Trang chủ" component={MainStackScreen} />
+        <Tabs.Screen name="Thêm địa điểm" component={TaskScreen} />
+        <Tabs.Screen name="Cá nhân" component={ProfileStackScreen} />
     </Tabs.Navigator>
 )
 
