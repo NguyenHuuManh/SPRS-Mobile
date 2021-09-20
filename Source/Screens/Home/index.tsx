@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, Text, View } from "react-native";
+import { Alert, Platform, Text, View } from "react-native";
 import GetLocation from "react-native-get-location";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Geolocation from 'react-native-geolocation-service';
@@ -81,9 +81,12 @@ export default () => {
 
     }
     // useEffect(() => {
-    //     getCurrentLocation();
+    //     // getCurrentLocation();
     //     Geolocation.watchPosition(
-    //         (response) => { console.log("responseListen", response.coords) },
+    //         (response) => {
+    //             Alert.alert("Location", response.provider);
+    //             console.log("responseListen", response.coords)
+    //         },
     //         (error) => { console.log("error", error) },
     //         {
     //             distanceFilter: 10,
@@ -93,8 +96,8 @@ export default () => {
     // }, [])
 
     return (
-        <View style={{ height: height, width: width }}>
-            <View style={{position:"absolute",backgroundColor:"#FFFF",borderRadius:15,top:10,left:10, zIndex:200}}>
+        <View style={{ flex: 1 }}>
+            <View style={{ position: "absolute", backgroundColor: "#FFFF", borderRadius: 15, top: 10, left: 10, zIndex: 200 }}>
                 <AutoCompleteSearchLocation />
             </View>
             <Filter />
@@ -104,16 +107,20 @@ export default () => {
                 showsUserLocation={true}
                 showsMyLocationButton={true}
                 region={region}
-            // onRegionChangeComplete={(e) => {
-            //     setRegion(e);
-            // }}
+                followsUserLocation
+                zoomControlEnabled
+                zoomEnabled
+                onRegionChangeComplete={(e) => {
+                    setRegion(e);
+                    console.log("e", e)
+                }}
             // onPress={(e) => {
             //     listMarker.push({ longitude: e.nativeEvent.coordinate.longitude, latitude: e.nativeEvent.coordinate.latitude })
             //     setMarker(e.nativeEvent.coordinate)
             // }}
 
             >
-                {listMarker.map((e, index) => {
+                {/* {listMarker.map((e, index) => {
                     return (
                         <Marker
                             key={index}
@@ -122,7 +129,12 @@ export default () => {
                             description={"marker.description"}
                         />
                     )
-                })}
+                })} */}
+                <Marker
+                    coordinate={region}
+                    title={"marker.title"}
+                    description={"marker.description"}
+                />
             </MapView>
         </View>
     );

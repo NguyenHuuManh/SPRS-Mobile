@@ -18,5 +18,12 @@ export const MainStyle = StyleSheet.create({
     icon: {
         width: 25,
         height: 25,
-    }
+    },
+    homeBG: {
+        // top: -wp('10%'),
+        position: 'absolute',
+        width: "100%",
+        height: "30%",
+
+    },
 });

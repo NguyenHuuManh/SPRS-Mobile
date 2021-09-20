@@ -12,6 +12,7 @@ import { RootState } from '../Redux/Reducers';
 import { isEmpty } from 'lodash';
 import TabBar from '../Components/TabBar';
 import Profile from '../Screens/Profile';
+import Signup from '../Screens/Signup';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -24,6 +25,7 @@ const RootStack = createStackNavigator();
 const AuStackScreen = () => (
     <AuStack.Navigator initialRouteName="Signin" screenOptions={{ headerShown: false }}>
         <AuStack.Screen name="Signin" component={Signin} options={{ title: "Signin", animationEnabled: true }} />
+        <AuStack.Screen name="Signup" component={Signup} options={{ title: "Signup", animationEnabled: true }} />
     </AuStack.Navigator>
 )
 

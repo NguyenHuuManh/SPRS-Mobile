@@ -13,6 +13,7 @@ export default StyleSheet.create({
 
     },
     Text: {
-        alignSelf: "center"
+        alignSelf: "center",
+        fontSize:20,
     }
 });
