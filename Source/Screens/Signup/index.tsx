@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ImageBackground, ScrollView, Text, TextInput, View } from "react-native";
+import { Button, ImageBackground, KeyboardAvoidingView, ScrollView, Text, TextInput, View } from "react-native";
 import { apiSignin, apiSigup } from "../../ApiFunction/Auth";
 import httpServices from "../../Services/httpServices";
 import { userActions } from "../../Redux/Actions";
@@ -43,76 +43,81 @@ export default () => {
             }}
         >
             {({ submitForm }) => (
-                <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "#F6BB57", }} contentContainerStyle={{ alignItems: "center", justifyContent: "center", paddingTop: "10%" }}>
-                    {/* <ImageBackground source={require('../../Assets/Images/backdgroundpng.png')}
-                        resizeMode="stretch"
-                        style={[styles.BG]}
-                    > */}
-                    <View style={[MainStyle.boxShadow, styles.containLogin]}>
-                        <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." />
-                        <Field
-                            component={Input}
-                            // title="Tài khoản:"
-                            name="username"
-                            iconLeft={faMobileAlt}
-                            placeholder="Nhập tài khoản"
-                        />
-                        <Field
-                            component={Input}
-                            name="passWord"
-                            // title="Mật khẩu:"
-                            secureTextEntry
-                            iconLeft={faLock}
-                            placeholder="Nhập mật khẩu"
-                        />
+                <ScrollView style={{ backgroundColor: "#F6BB57" }}>
 
-                        <Field
-                            component={Input}
-                            // title="Tài khoản:"
-                            name="birdthDate"
-                            iconLeft={faMobileAlt}
-                            placeholder="Nhập ngày sinh"
+                    <KeyboardAvoidingView style={styles.container}>
+                        <View style={[MainStyle.boxShadow, styles.containLogin]}>
+                            <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." />
+                            <Field
+                                component={Input}
+                                // title="Tài khoản:"
+                                name="fullName"
+                                // iconLeft={faMobileAlt}
+                                placeholder="Nhập họ và tên"
+                                title="Họ và tên"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                            />
+                            <Field
+                                component={Input}
+                                name="phoneNumber"
+                                title="Số điện thoại"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                placeholder="Nhập số điện thoại"
+                                max
+                            />
 
-                        />
+                            <Field
+                                component={Input}
+                                title="Ngày sinh"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                name="birdthDate"
+                                placeholder="Nhập ngày sinh"
 
-                        <Field
-                            component={Input}
-                            name="accountType"
-                            // title="Mật khẩu:"
-                            secureTextEntry
-                            iconLeft={faLock}
-                            placeholder="Chọn loại tài khoản"
-                        />
-                        <Field
-                            component={Input}
-                            // title="Tài khoản:"
-                            name="rePassWord"
-                            iconLeft={faMobileAlt}
-                            placeholder="Nhập lại mật khẩu"
+                            />
 
-                        />
-                        <Field
-                            component={Input}
-                            name="name"
-                            // title="Mật khẩu:"
-                            secureTextEntry
-                            iconLeft={faLock}
-                            placeholder="Nhập họ tên"
-                        />
-                        <ButtonCustom
-                            styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
-                            styleTitle={{ color: "#FFFF", fontSize: 25 }}
-                            title="Đăng ký"
-                            onPress={submitForm}
-                        />
-                        <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
-                            <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.goBack() }}>đăng nhập</Text>
+                            <Field
+                                component={Input}
+                                name="accountType"
+                                title="Loại tài khoản"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                secureTextEntry
+                                placeholder="Chọn loại tài khoản"
+                            />
+                            <Field
+                                component={Input}
+                                name="password"
+                                title="Mật khẩu"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                secureTextEntry
+                                placeholder="Nhập họ tên"
+                            />
+                            <Field
+                                component={Input}
+                                title="Nhập lại mật khẩu"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                secureTextEntry
+                                name="rePassWord"
+                                placeholder="Nhập lại mật khẩu"
+
+                            />
+                            <ButtonCustom
+                                styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
+                                styleTitle={{ color: "#FFFF", fontSize: 25 }}
+                                title="Đăng ký"
+                                onPress={submitForm}
+                            />
+                            <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
+                                <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.goBack() }}>đăng nhập</Text>
+                            </View>
                         </View>
-                    </View>
-
-                    {/* </ImageBackground> */}
-                </KeyboardAwareScrollView>
-
+                    </KeyboardAvoidingView>
+                </ScrollView>
 
             )
             }

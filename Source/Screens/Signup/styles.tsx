@@ -3,20 +3,19 @@ import { height, width } from '../../Helper/responsive';
 
 export default StyleSheet.create({
     container: {
-        flex: 1,
+        width: width,
+        height: height * 0.9,
         justifyContent: 'center',
         alignItems: 'center',
-        // paddingTop: "25%",
-        marginBottom: "10%"
     },
     containLogin: {
-        width: width * 0.8,
+        width: width * 0.9,
         backgroundColor: "#FFFF",
         borderRadius: 20,
         padding: "5%",
         paddingBottom: "5%",
-        paddingTop: "0%",
-        marginBottom:"5%"
+        marginBottom: "30%",
+        marginTop: "20%"
     },
     BG: {
         height: height,

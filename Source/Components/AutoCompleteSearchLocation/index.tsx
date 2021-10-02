@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
@@ -13,7 +13,7 @@ export default (props) => {
                 style={{
                     justifyContent: 'flex-start',
                     alignItems: 'center',
-                    paddingTop:15,
+                    paddingTop: 15,
                 }}>
                 <FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={24} />
             </View>
@@ -26,13 +26,13 @@ export default (props) => {
                     console.log(details, "details")
                 }}
                 query={{
-                    key: 'AIzaSyAGDNLFXoruC2jn3gJc47PeSGtiauRbYss',
+                    key: 'AIzaSyDlqprU1uYvSEEQIEotGG8_mL3QFfVB7vY',
                     language: 'en',
                 }}
-                listViewDisplayed={true}
+                listViewDisplayed={false}
                 styles={{ zIndex: 1000 }}
                 isRowScrollable={true}
-
+                keyboardShouldPersistTaps="always"
             />
         </View >
     )

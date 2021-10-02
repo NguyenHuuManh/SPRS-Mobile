@@ -112,7 +112,6 @@ class Services {
         } catch (error) {
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
-        // return this.axios.delete(url, config);
     }
 
     async put(url: string, data?: any, config?: AxiosRequestConfig) {

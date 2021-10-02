@@ -5,15 +5,17 @@ export default StyleSheet.create({
     containerInput: {
         width: "100%",
         // backgroundColor: "blue",
+        justifyContent: "space-around"
     },
     input: {
         height: 50,
         paddingHorizontal: 10,
         lineHeight: 30,
-        borderBottomWidth: 0.8,
+        borderBottomWidth: 0.5,
         fontSize: 18,
         borderRadius: 10,
         flex: 9,
+        // backgroundColor: "pink"
     },
 
     icon: {
@@ -25,5 +27,19 @@ export default StyleSheet.create({
     },
     text: {
         height: 30,
-    }
+    },
+    textHorizontal: {
+        // backgroundColor: "red",
+        alignContent: "center",
+        justifyContent: "center"
+    },
+    containText: {
+        height: 50,
+        // backgroundColor: "red",
+        alignContent: "center",
+        justifyContent: "center",
+        marginLeft: 5,
+        marginRight: 5
+    },
+
 });

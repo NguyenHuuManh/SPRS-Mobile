@@ -1,4 +1,4 @@
-export const URL = "https://heroku-demo-notification.herokuapp.com/api"
+export const URL = "http://ec2-3-1-50-88.ap-southeast-1.compute.amazonaws.com"
 export const STATUS = {
     success: [200, 201, 204],
     auth: [401],

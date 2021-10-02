@@ -2,9 +2,10 @@ import { Platform, SafeAreaView, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faCoffee, faHome, faIdBadge, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faHome, faIdBadge, faPlusCircle, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons'
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
+import { AppColor } from "../../Helper/propertyCSS";
 
 export default ({ state, descriptors, navigation }) => {
 
@@ -13,25 +14,31 @@ export default ({ state, descriptors, navigation }) => {
             case 'Trang chủ':
                 return (
                     <View>
-                        <FontAwesomeIcon size={24} color={color} icon={faHome} />
+                        <FontAwesomeIcon size={20} color={color} icon={faHome} />
                     </View>
                 );
             case 'Cá nhân':
                 return (
                     <View>
-                        <FontAwesomeIcon size={24} color={color} icon={faIdBadge} />
+                        <FontAwesomeIcon size={20} color={color} icon={faIdBadge} />
                     </View>
                 );
-            case 'Thêm địa điểm':
+            case 'Danh sách điểm':
                 return (
                     <View>
-                        <FontAwesomeIcon size={30} color={color} icon={faPlusCircle} />
+                        <FontAwesomeIcon size={20} color={color} icon={faBars} />
+                    </View>
+                );
+            case 'Bản đồ':
+                return (
+                    <View>
+                        <FontAwesomeIcon size={20} color={color} icon={faMapMarkedAlt} />
                     </View>
                 );
             default:
                 return (
                     <View>
-                        <FontAwesomeIcon size={24} color={color} icon={faPlusCircle} />
+                        <FontAwesomeIcon size={20} color={color} icon={faPlusCircle} />
                     </View>
                 );
         }
@@ -41,7 +48,7 @@ export default ({ state, descriptors, navigation }) => {
     return (
         <SafeAreaView
             style={{
-                height: Platform.OS == 'ios' ? 80 : 80,
+                height: Platform.OS == 'ios' ? 80 : 50,
                 borderWidth: 1,
                 borderColor: 'transparent',
                 justifyContent: "center"
@@ -60,7 +67,7 @@ export default ({ state, descriptors, navigation }) => {
                 flexDirection: 'row',
                 justifyContent: 'space-around',
                 alignItems: 'center',
-                backgroundColor: '#ffff',
+                backgroundColor: '#F6BB57',
                 height: 80,
             }]} >
                 {
@@ -92,43 +99,67 @@ export default ({ state, descriptors, navigation }) => {
                                 target: route.key,
                             });
                         };
-                        if (index == 1)
+                        // if (index == 1)
+                        //     return (
+                        //         <TouchableOpacity
+                        //             key={index}
+                        //             accessibilityRole="button"
+                        //             accessibilityState={isFocused ? { selected: true } : {}}
+                        //             accessibilityLabel={options.tabBarAccessibilityLabel}
+                        //             testID={options.tabBarTestID}
+                        //             onPress={onPress}
+                        //             onLongPress={onLongPress}
+                        //             style={{
+                        //                 justifyContent: 'flex-end',
+                        //                 alignItems: 'center',
+                        //                 flexDirection: 'column',
+                        //                 width: width / state.routes.length,
+                        //                 marginBottom:18
+                        //             }}>
+                        //             <View
+                        //                 style={[
+                        //                     {
+                        //                         width: 70,
+                        //                         height: 70,
+                        //                         borderRadius: 70,
+                        //                         backgroundColor: "blue",
+                        //                         justifyContent: 'center',
+                        //                         alignItems: 'center',
+                        //                     },
+                        //                     MainStyle.boxShadow,
+                        //                 ]}>
+                        //                 {IconRender({ name: route.name, color: "#ffff" })}
+                        //             </View>
+                        //             <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
+                        //                 {label}
+                        //             </Text>
+                        //         </TouchableOpacity>
+                        //     );
+                        if (index == 1) {
                             return (
                                 <TouchableOpacity
-                                    key={index}
                                     accessibilityRole="button"
-                                    accessibilityState={isFocused ? { selected: true } : {}}
                                     accessibilityLabel={options.tabBarAccessibilityLabel}
                                     testID={options.tabBarTestID}
-                                    onPress={onPress}
+                                    onPress={() => { navigation.navigate("TabScreen2") }}
                                     onLongPress={onLongPress}
+                                    key={index}
                                     style={{
                                         justifyContent: 'flex-end',
                                         alignItems: 'center',
                                         flexDirection: 'column',
                                         width: width / state.routes.length,
-                                        marginBottom:18
-                                    }}>
-                                    <View
-                                        style={[
-                                            {
-                                                width: 70,
-                                                height: 70,
-                                                borderRadius: 70,
-                                                backgroundColor: "blue",
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            },
-                                            MainStyle.boxShadow,
-                                        ]}>
-                                        {IconRender({ name: route.name, color: "#ffff" })}
-                                    </View>
-                                    <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
+                                    }}
+                                >
+                                    {/* <FontAwesomeIcon icon={faHome} color={isFocused ? "#D71920" : "#A0A6BE"} size={30} /> */}
+                                    {IconRender({ name: route.name, color: isFocused ? "#D71920" : "#A0A6BE" })}
+
+                                    <Text style={{ color: isFocused ? AppColor.GRAY_LIGHT : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
                                         {label}
                                     </Text>
                                 </TouchableOpacity>
                             );
-
+                        }
                         return (
                             <TouchableOpacity
                                 accessibilityRole="button"
@@ -147,7 +178,7 @@ export default ({ state, descriptors, navigation }) => {
                                 {/* <FontAwesomeIcon icon={faHome} color={isFocused ? "#D71920" : "#A0A6BE"} size={30} /> */}
                                 {IconRender({ name: route.name, color: isFocused ? "#D71920" : "#A0A6BE" })}
 
-                                <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
+                                <Text style={{ color: isFocused ? AppColor.GRAY_LIGHT : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
                                     {label}
                                 </Text>
                             </TouchableOpacity>

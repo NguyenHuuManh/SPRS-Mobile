@@ -17,9 +17,11 @@ interface Props {
     iconRight?: any;
     iconColor?: string;
     iconSize?: number;
+    horizontal?: boolean;
+    styleTitle?: any;
 }
 const Input = (props: Props) => {
-    const { form, field, onChangeCustom, placeholder, customInputStyle, title,iconSize, iconLeft, iconColor, iconRight, ...remainProps } = props
+    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, ...remainProps } = props
     const { name, value } = field
     const { errors, touched, setFieldValue } = form;
     const onChangeText = useCallback(
@@ -28,12 +30,14 @@ const Input = (props: Props) => {
         },
         [name, setFieldValue],
     )
+    console.log(horizontal, title)
     return (
         <View style={styles.containerInput}>
-            {title&&(<Text style={styles.text}>{title}</Text>)}
+            {(!horizontal && title) && (<Text style={styles.text}>{title}</Text>)}
             <View style={{ flexDirection: "row" }}>
+                {(horizontal && title) && (<View style={[styles.containText, styleTitle]}><Text style={styles.textHorizontal}>{title}</Text></View>)}
                 {
-                    iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize||26} color={iconColor || "#222"} icon={iconLeft} /></View>)
+                    iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} /></View>)
                 }
                 <TextInput
                     // {...field}
@@ -44,7 +48,7 @@ const Input = (props: Props) => {
                     placeholder={placeholder}
                 />
                 {
-                    iconRight && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize||26} color={iconColor || "#222"} icon={iconRight} /></View>)
+                    iconRight && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconRight} /></View>)
                 }
             </View>
             {touched[name] && errors[name] && <div className="err-text">{errors[name]}</div>}

@@ -1,3 +1,5 @@
 
 import * as userActions from "./UserActions"
-export { userActions }
+import * as tabBarVisibleActons from "./TabBarVisibleActions"
+import * as profileActions from "./ProfileActions"
+export { userActions, tabBarVisibleActons, profileActions }

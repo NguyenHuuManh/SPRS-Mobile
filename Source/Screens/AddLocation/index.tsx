@@ -1,125 +1,105 @@
-import React, { useRef } from "react";
+import { Field, Formik } from "formik";
+import React from "react";
 import {
-  SafeAreaView,
-  ScrollView,
-  Text,
-  StyleSheet,
-  View,
-  ImageBackground,
-  Animated,
-  useWindowDimensions
+  SafeAreaView, Text, View
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import ButtonCustom from "../../Components/ButtonCustom";
+import HeaderContainer from "../../Components/HeaderContainer";
+import Input from "../../Components/Input";
+import { height, width } from "../../Helper/responsive";
+import { MainStyle } from "../../Style/main_style";
+import MapView from "./components/MapView";
+import styles from "./styles";
 
-const images = new Array(6).fill('https://images.unsplash.com/photo-1556740749-887f6717d7e4');
 
-const App = () => {
-  const scrollX = useRef(new Animated.Value(0)).current;
-
-  const { width: windowWidth } = useWindowDimensions();
+const App = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.scrollContainer}>
-        <ScrollView
-          horizontal={true}
-        //   style={styles.scrollViewStyle}
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event([
-            {
-              nativeEvent: {
-                contentOffset: {
-                  x: scrollX
-                }
-              }
-            }
-          ])}
-          scrollEventThrottle={1}
-        >
-          {images.map((image, imageIndex) => {
-            return (
-              <View
-                style={{ width: windowWidth, height: 250 }}
-                key={imageIndex}
-              >
-                <ImageBackground source={{ uri: image }} style={styles.card}>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.infoText}>
-                      {"Image - " + imageIndex}
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </View>
-            );
-          })}
-        </ScrollView>
-        <View style={styles.indicatorContainer}>
-          {images.map((image, imageIndex) => {
-            const width = scrollX.interpolate({
-              inputRange: [
-                windowWidth * (imageIndex - 1),
-                windowWidth * imageIndex,
-                windowWidth * (imageIndex + 1)
-              ],
-              outputRange: [8, 16, 8],
-              extrapolate: "clamp"
-            });
-            return (
-              <Animated.View
-                key={imageIndex}
-                style={[styles.normalDot, { width }]}
-              />
-            );
-          })}
-        </View>
+      <View style={{ height: height * 0.1 }}>
+        <HeaderContainer
+          flexRight={0}
+          flexCenter={10}
+          isBack
+          centerEl={(
+            <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+              <Text style={{ fontSize: 20, }}>Thêm mới điểm cứu trợ</Text>
+            </View>
+          )}
+        />
       </View>
+      <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
+        <Formik
+          initialValues={{
+            username: "",
+            passWord: "",
+            birdthDate: "",
+            accountType: "",
+            rePassWord: "",
+            name: "",
+          }}
+          onSubmit={(values) => {
+            // signup(values)
+          }}
+        >
+          {({ }) => (
+            <View>
+              <Field
+                component={Input}
+                name="username"
+                title="Tên điểm cứu trợ:"
+                horizontal
+                placeholder="Tên điểm cứu trợ"
+                styleTitle={{ width: 110 }}
+              />
+              <Field
+                component={Input}
+                name="Số điện thoại"
+                title="SĐT :"
+                horizontal
+                placeholder="Số điện thoại"
+                styleTitle={{ width: 110 }}
+              />
+              <Field
+                component={Input}
+                name="username"
+                title="Loại hình cung cấp:"
+                horizontal
+                placeholder="Loại hình cung cấp"
+                styleTitle={{ width: 110 }}
+              />
+              <Field
+                component={Input}
+                name="username"
+                title="Địa chỉ:"
+                horizontal
+                placeholder="Địa chỉ"
+                styleTitle={{ width: 110 }}
+              />
+              <Field
+                component={Input}
+                name="moTa"
+                title="Mô tả:"
+                horizontal
+                placeholder="Mô tả"
+                styleTitle={{ width: 110 }}
+              />
+              <View style={{ width: width, justifyContent: "center", alignItems: "center" }}>
+                <View style={[styles.containMap, MainStyle.boxShadow]}>
+                  <MapView />
+                </View>
+              </View>
+              {/* <View style={{ flex: 1 }}> */}
+              <ButtonCustom title={"Thêm mới"} styleContain={{ backgroundColor: "#F6BB57" }} onPress={() => { navigation.goBack() }} />
+              {/* </View> */}
+            </View>
+          )}
+        </Formik>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  scrollContainer: {
-    height: 300,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  card: {
-    flex: 1,
-    marginVertical: 4,
-    marginHorizontal: 16,
-    borderRadius: 5,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  textContainer: {
-    backgroundColor: "rgba(0,0,0, 0.7)",
-    paddingHorizontal: 24,
-    paddingVertical: 8,
-    borderRadius: 5
-  },
-  infoText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold"
-  },
-  normalDot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    backgroundColor: "silver",
-    marginHorizontal: 4
-  },
-  indicatorContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
 
 export default App;

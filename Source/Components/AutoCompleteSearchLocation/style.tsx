@@ -9,8 +9,8 @@ export default StyleSheet.create({
         borderColor: "#FFFF",
         borderWidth: 1,
         backgroundColor: "#FFFF",
-        width: width*0.8,
+        width: "100%",
         zIndex: 200,
-        borderRadius:20,
+        borderRadius: 20,
     },
 });

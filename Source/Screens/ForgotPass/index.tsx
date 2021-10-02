@@ -29,7 +29,7 @@ export default () => {
                 password: "password"
             }}
             onSubmit={(values) => {
-                signin(values)
+                // signin(values)
             }}
         >
             {({ submitForm }) => (
@@ -45,7 +45,7 @@ export default () => {
                                 // title="Tài khoản:"
                                 name="username"
                                 iconLeft={faMobileAlt}
-                                placeholder="Nhập tài khoản"
+                                placeholder="Nhập số điện thoại"
 
                             />
                             <Field
@@ -60,7 +60,7 @@ export default () => {
                             <ButtonCustom
                                 styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
-                                title="Đăng nhập"
+                                title="Gửi"
                                 onPress={submitForm}
                             />
                             <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
