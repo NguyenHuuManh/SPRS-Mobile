@@ -1,19 +1,15 @@
 import { faLock, faMobileAlt } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Field, Formik } from "formik";
-import React, { useContext, useState } from "react";
-import {
-    Button, View
-} from 'react-native';
+import React from "react";
+import { View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from "react-redux";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { Store } from "../..";
-import Input from "../../Components/Input";
-import { logout } from "../../Redux/Actions/UserActions";
-import { MainStyle } from "../../Style/main_style";
-import styles from "./styles";
-import { height, width } from "../../Helper/responsive";
 import ButtonCustom from "../../Components/ButtonCustom";
+import Input from "../../Components/Input";
+import { height, width } from "../../Helper/responsive";
+import { logout } from "../../Redux/Actions/UserActions";
+import styles from "./styles";
 export default () => {
     const navigation = useNavigation()
     const dispatch = useDispatch()

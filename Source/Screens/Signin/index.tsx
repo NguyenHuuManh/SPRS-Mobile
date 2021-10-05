@@ -1,23 +1,23 @@
-import React, { useState, useContext } from "react";
-import { Button, ImageBackground, KeyboardAvoidingView, Text, TextInput, View } from "react-native";
-import { apiSignin, apiSigup } from "../../ApiFunction/Auth";
-import httpServices from "../../Services/httpServices";
-import { userActions } from "../../Redux/Actions";
-import { useDispatch, useSelector } from "react-redux";
-import { Field, Form, Formik } from "formik";
-import Input from "../../Components/Input";
-import ButtonCustom from "../../Components/ButtonCustom";
-import AwesomeLoading from 'react-native-awesome-loading';
-import { MainStyle } from "../../Style/main_style";
-import { faMobileAlt, faLock } from '@fortawesome/free-solid-svg-icons'
-import styles from "./styles";
-import { RootState } from "../../Redux/Reducers";
+import { faLock, faMobileAlt, faEyeSlash, faEye } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from "@react-navigation/core";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Field, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+import { ImageBackground, Text, View } from "react-native";
+import AwesomeLoading from 'react-native-awesome-loading';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useDispatch, useSelector } from "react-redux";
+import ButtonCustom from "../../Components/ButtonCustom";
+import Input from "../../Components/Input";
+import { userActions } from "../../Redux/Actions";
+import { RootState } from "../../Redux/Reducers";
+import { MainStyle } from "../../Style/main_style";
+import styles from "./styles";
+import Toast from 'react-native-toast-message';
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const userReducer = useSelector((state: RootState) => state.userReducer);
+    const [secureTextEntry, setSecureTextEntry] = useState(true);
     const signin = (values) => {
         dispatch(userActions.loginReques(values));
     }
@@ -42,7 +42,6 @@ export default () => {
                         <View style={[MainStyle.boxShadow, styles.containLogin]}>
                             <Field
                                 component={Input}
-                                // title="Tài khoản:"
                                 name="username"
                                 iconLeft={faMobileAlt}
                                 placeholder="Nhập tài khoản"
@@ -51,10 +50,11 @@ export default () => {
                             <Field
                                 component={Input}
                                 name="password"
-                                // title="Mật khẩu:"
-                                secureTextEntry
+                                secureTextEntry={secureTextEntry}
                                 iconLeft={faLock}
+                                iconRight={secureTextEntry ? faEyeSlash : faEye}
                                 placeholder="Nhập mật khẩu"
+                                leftIconOnpress={() => { setSecureTextEntry(!secureTextEntry) }}
                             />
 
                             <ButtonCustom
@@ -64,7 +64,7 @@ export default () => {
                                 onPress={submitForm}
                             />
                             <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
-                                <Text style={{ textDecorationLine: "underline" }}>quên mật khẩu</Text>
+                                <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.navigate("ForgotPass") }}>quên mật khẩu</Text>
                                 <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.navigate("Signup") }}>đăng ký</Text>
                             </View>
                         </View>

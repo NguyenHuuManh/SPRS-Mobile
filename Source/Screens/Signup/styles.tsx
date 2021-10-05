@@ -15,7 +15,7 @@ export default StyleSheet.create({
         padding: "5%",
         paddingBottom: "5%",
         marginBottom: "30%",
-        marginTop: "20%"
+        marginTop: "20%",
     },
     BG: {
         height: height,

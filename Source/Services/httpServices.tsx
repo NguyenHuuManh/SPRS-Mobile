@@ -1,11 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 import { isNull } from "lodash";
+import { useDispatch } from "react-redux";
 import { STATUS } from "../Constrants/url";
+import { userActions } from "../Redux/Actions";
+import { logout } from "../Redux/Actions/UserActions";
 class Services {
     axios: any;
     interceptors: null;
-
     constructor() {
         this.axios = axios;
         this.interceptors = null;
@@ -48,10 +50,6 @@ class Services {
                 if ((url || "").includes("sprs/api/authenticate")) {
                     return;
                 }
-                // clear token
-                // localStorage.removeItem("user");
-                // window.location.reload();
-                return;
             }
             return error.response;
         }

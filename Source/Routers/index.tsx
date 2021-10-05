@@ -16,6 +16,12 @@ import LocationList from '../Screens/LocationList';
 import { profileRequest } from '../Redux/Actions/ProfileActions';
 import { profileActions } from '../Redux/Actions';
 import httpServices from '../Services/httpServices';
+import ForgotPass from '../Screens/ForgotPass';
+import ComfirmOTP from '../Screens/ForgotPass/ComfirmOTP';
+import ChangePassword from '../Screens/ForgotPass/ChangePassword';
+import Toast from 'react-native-toast-message';
+import ToastReducer from '../Redux/Reducers/ToastReducer';
+
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -30,6 +36,9 @@ const AuStackScreen = () => (
     <AuStack.Navigator initialRouteName="Signin" screenOptions={{ headerShown: false }}>
         <AuStack.Screen name="Signin" component={Signin} options={{ title: "Signin", animationEnabled: true }} />
         <AuStack.Screen name="Signup" component={Signup} options={{ title: "Signup", animationEnabled: true }} />
+        <AuStack.Screen name="ForgotPass" component={ForgotPass} options={{ title: "ForgotPass", animationEnabled: true }} />
+        <AuStack.Screen name="ComfirmOTP" component={ComfirmOTP} options={{ title: "ComfirmOTP", animationEnabled: true }} />
+        <AuStack.Screen name="ChangePassword" component={ChangePassword} options={{ title: "ChangePassword", animationEnabled: true }} />
     </AuStack.Navigator>
 )
 
@@ -87,23 +96,40 @@ const RootStackScreen = () => {
     const isUserToken = !isEmpty(userReducer?.data?.token || {})
 
     const dispatch = useDispatch();
-
     useEffect(() => {
         if (isUserToken) {
             dispatch(profileActions.profileRequest())
         }
     }, [])
+
+
+    const toastReducer = useSelector((state: RootState) => state.toastReducer)
+    useEffect(() => {
+        console.log(toastReducer, "toastReducers")
+        if (toastReducer.payload.isShow) {
+            Toast.show(
+                {
+                    type: toastReducer.payload.type,
+                    text1: toastReducer.payload.message,
+                    position: toastReducer.payload.position
+                }
+            )
+        }
+    }, [toastReducer])
+
     return (
         <>
+            <Toast ref={(ref) => { Toast.setRef(ref) }} />
             <RootStack.Navigator screenOptions={{ headerShown: false }} initialRouteName={`${isUserToken ? "DrawScreen" : "AuStackScreen"}`}>
-                {isUserToken ? (
-                    <>
-                        <RootStack.Screen name="DrawScreen" component={DrawScreen} options={{ animationEnabled: true }} />
-                        <RootStack.Screen name="AddLocation" component={AddLocation} options={{ animationEnabled: true }} />
-                    </>
-                ) : (
-                    <RootStack.Screen name="AuStackScreen" component={AuStackScreen} options={{ animationEnabled: true }} />
-                )}
+                {
+                    isUserToken ? (
+                        <>
+                            <RootStack.Screen name="DrawScreen" component={DrawScreen} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="AddLocation" component={AddLocation} options={{ animationEnabled: true }} />
+                        </>
+                    ) : (
+                        <RootStack.Screen name="AuStackScreen" component={AuStackScreen} options={{ animationEnabled: true }} />
+                    )}
             </RootStack.Navigator>
         </>
     );
