@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Animated, Text, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { RectButton, TextInput } from "react-native-gesture-handler";
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import Swipeout from 'react-native-swipeout';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 const AVATA_SIZE = 100;
 const Margin_BT = 20;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
@@ -18,6 +21,31 @@ export default ({ navigation }) => {
         [{ name: "Điểm cứu trợ", id: "1" }, { name: "Thực phẩm", id: "2" }, { name: "Cắt tóc", id: "3" }, { name: "Điểm cứu trợ", id: "4" }, { name: "Thực phẩm", id: "5" }, { name: "Cắt tóc", id: "6" }, { name: "Điểm cứu trợ", id: "7" }, { name: "Thực phẩm", id: "8" }, { name: "Cắt tóc", id: "9" }, { name: "Điểm cứu trợ", id: "10" }, { name: "Thực phẩm", id: "11" }, { name: "Cắt tóc", id: "12" }]
     )
     const scrollY = React.useRef(new Animated.Value(0)).current
+
+
+    const renderLeftActions = (progress, dragX, index) => {
+        const trans = dragX.interpolate({
+            inputRange: [0, 50, 100, 101],
+            outputRange: [-20, 0, 0, 1],
+        });
+        return (
+            <RectButton
+                style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center" }}
+                onPress={() => {
+                    points.splice(index, 1);
+                    setPoints([...points])
+                }}>
+                <Animated.Text
+                    style={[
+                        {
+                            transform: [{ translateX: trans }],
+                        },
+                    ]}>
+                    <FontAwesomeIcon icon={faTrashAlt} size={20} color="#FFFF" />
+                </Animated.Text>
+            </RectButton>
+        );
+    };
 
     const renderItem = ({ item, index }) => {
 
@@ -43,29 +71,11 @@ export default ({ navigation }) => {
                 borderWidth: 1,
                 borderColor: "#FFFF",
             }, MainStyle.boxShadow, { transform: [{ scale }], opacity }]}>
-                <Swipeout
-                    right={[
-                        {
-                            onPress: () => { points.splice(index, 1) },
-                            text: 'Button',
-                        }
-                    ]}
-                    style={{ backgroundColor: "#FFF", width: "100%", borderRadius: 10, paddingLeft: 10 }}
-                    autoClose
-                    onClose={() => {
-                        if (itemSelect != null) {
-                            setItemSelect(null);
-                        }
-                    }}
-                    onOpen={() => {
-                        setItemSelect(item)
-                    }}
-
-                >
+                <Swipeable key={index} renderRightActions={(x, y) => renderLeftActions(x, y, index)} containerStyle={{ width: "100%", height: AVATA_SIZE, padding: 10 }}>
                     <View style={{ width: AVATA_SIZE, height: AVATA_SIZE }}>
                         <Text>{item.name}</Text>
                     </View>
-                </Swipeout>
+                </Swipeable>
             </Animated.View>
 
         )

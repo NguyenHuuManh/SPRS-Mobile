@@ -13,6 +13,7 @@ import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import Toast from 'react-native-toast-message';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -25,7 +26,7 @@ export default () => {
     return (
         <Formik
             initialValues={{
-                username: "duongpt",
+                username: "Duongpt00",
                 password: "password"
             }}
             onSubmit={(values) => {
@@ -34,7 +35,7 @@ export default () => {
         >
             {({ submitForm }) => (
                 <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "red", }} contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
-                    <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." />
+                    {/* <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." /> */}
                     <ImageBackground source={require('../../Assets/Images/backdgroundpng.png')}
                         resizeMode="stretch"
                         style={[styles.BG]}
@@ -66,6 +67,14 @@ export default () => {
                             <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
                                 <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.navigate("ForgotPass") }}>quên mật khẩu</Text>
                                 <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.navigate("Signup") }}>đăng ký</Text>
+                            </View>
+                            <View style={{ justifyContent: "center", alignItems: "center", paddingTop: "10%" }}>
+                                <TouchableOpacity>
+                                    <Text style={{ textDecorationLine: "underline", color: "blue" }} onPress={() => {
+                                        dispatch(userActions.loginGuest())
+                                        navigation.navigate("GuestStackScreen")
+                                    }}>Truy cập không cần đăng nhập</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
 

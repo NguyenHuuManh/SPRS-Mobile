@@ -1,3 +1,4 @@
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation } from "@react-navigation/core";
 import { Field, Formik } from "formik";
 import React, { useState } from "react";
@@ -19,19 +20,26 @@ import styles from "./styles";
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
     const navigation = useNavigation();
-    const dispatch = useDispatch();
-    const [toastProps, setToastProps] = useState({
-        visible: false,
-        message: "",
-        type: "success"
-    })
-    const signup = () => {
+    const [secureTextEntry, setSecureTextEntry] = useState(true);
+    const signup = (body) => {
         try {
-            apiSigup({ username: "manh19999", password: "spring123", phoneNumber: "0169760397911" })
+            apiSigup(body)
                 .then((e) => {
-                    console.log(e, "response");
-                    httpServices.saveLocalStorage("user", e.data);
-                }).finally(() => { })
+                    if (e.data.code + "" === "101") {
+                        Toast.show({
+                            type: "success",
+                            text1: e.data.description,
+                            position: "top"
+                        })
+                        navigation.navigate("Signin")
+                    } else {
+                        Toast.show({
+                            type: "error",
+                            text1: e.data.errors,
+                            position: "top"
+                        })
+                    }
+                })
         } catch (error) {
             console.log(error);
         }
@@ -39,31 +47,43 @@ export default () => {
     return (
         <Formik
             initialValues={{
-                username: "",
-                passWord: "",
-                birdthDate: "09-08-1999",
-                accountType: "",
-                rePassWord: "",
-                name: "",
+                username: "Duongpt35",
+                phone: "0966048002",
+                password: "password",
+                rePassWord: "password",
+                full_name: "Phạm Tùng Dương",
+                dob: "09/09/1999",
+                address: "Ha noi",
+                groupsId: "1",
             }}
             onSubmit={(values) => {
-                Toast.show({
-                    type: "error",
-                    text1: "Helloooooo",
-                    position: "top"
-                })
-                // navigation.navigate("Signin")
+                const body = {
+                    username: values.username,
+                    phone: values.phone,
+                    password: values.password,
+                    full_name: values.full_name,
+                    dob: values.dob,
+                    address: values.address,
+                    groups_user: [{ id: values.groupsId }],
+                }
+                signup(body)
             }}
         >
             {({ submitForm }) => (
                 <KeyboardAwareScrollView style={{ backgroundColor: "#F6BB57", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "10%" }} showsVerticalScrollIndicator={false}>
                     <View style={[MainStyle.boxShadow, styles.containLogin]}>
-                        <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." />
+                        {/* <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." /> */}
                         <Field
                             component={Input}
-                            // title="Tài khoản:"
-                            name="fullName"
-                            // iconLeft={faMobileAlt}
+                            name="username"
+                            placeholder="Nhập tên tài khoản"
+                            title="Tên tài khoản"
+                            horizontal
+                            styleTitle={{ width: 90 }}
+                        />
+                        <Field
+                            component={Input}
+                            name="full_name"
                             placeholder="Nhập họ và tên"
                             title="Họ và tên"
                             horizontal
@@ -72,7 +92,7 @@ export default () => {
                         <Field
                             component={Input}
                             keyboardType="numeric"
-                            name="phoneNumber"
+                            name="phone"
                             title="Số điện thoại"
                             horizontal
                             styleTitle={{ width: 90 }}
@@ -85,14 +105,14 @@ export default () => {
                             title="Ngày sinh"
                             horizontal
                             styleTitle={{ width: 90 }}
-                            name="birdthDate"
+                            name="dob"
                             placeholder="Nhập ngày sinh"
 
                         />
 
                         <Field
                             component={DropDownPicker}
-                            name="accountType"
+                            name="groupsId"
                             title="Loại tài khoản"
                             horizontal
                             styleTitle={{ width: 90 }}
@@ -104,7 +124,9 @@ export default () => {
                             title="Mật khẩu"
                             horizontal
                             styleTitle={{ width: 90 }}
-                            secureTextEntry
+                            secureTextEntry={secureTextEntry}
+                            iconRight={secureTextEntry ? faEyeSlash : faEye}
+                            leftIconOnpress={() => { setSecureTextEntry(!secureTextEntry) }}
                             placeholder="Nhập mật khẩu"
                         />
                         <Field

@@ -1,19 +1,22 @@
-import { faBell, faSearchLocation, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faSearchLocation, faUserCircle, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
-import React, { useRef, useState } from "react";
-import { KeyboardAvoidingView, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, KeyboardAvoidingView, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { handleLocationPermission } from "../../Helper/FunctionCommon";
 import { height } from "../../Helper/responsive";
+import { profileActions, userActions } from "../../Redux/Actions";
 import { RootState } from "../../Redux/Reducers";
 import Filter from "./Components/Filter";
 
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
+    const dispatch = useDispatch()
     const [region, setRegion] = useState({
         latitude: 21.0263084,
         longitude: 105.7709134,
@@ -49,7 +52,7 @@ export default () => {
 
     }
     // useEffect(() => {
-    //     // getCurrentLocation();
+    //     getCurrentLocation();
     //     Geolocation.watchPosition(
     //         (response) => {
     //             Alert.alert("Location", response.provider);
@@ -120,36 +123,55 @@ export default () => {
                             </TouchableOpacity>
                         </View>
                     )}
-
+                    flexLeft={0}
+                    flexRight={5}
                     rightEL={(
                         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                             <FontAwesomeIcon icon={faBell} color="#A0A6BE" size={24} />
-                            <FontAwesomeIcon icon={faUserCircle} color="#A0A6BE" size={24} />
+                            <TouchableOpacity onPress={() => {
+                                dispatch(profileActions.profileRequest())
+                            }}>
+                                <FontAwesomeIcon icon={faUserCircle} color="#A0A6BE" size={24} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => {
+
+
+                                if (userReducer.isGuest) {
+                                    Alert.alert(
+                                        'Yêu cầu đăng nhập',
+                                        'Bạn có muốn đăng nhập để vào màn hình chức năng?',
+                                        [
+                                            {
+                                                text: 'Đăng nhập',
+                                                onPress: () => navigation.navigate('AuStackScreen')
+
+                                            },
+                                            {
+                                                text: 'Hủy',
+                                                onPress: () => console.log('No Pressed'), style: 'cancel'
+                                            },
+                                        ],
+                                        { cancelable: false },
+                                        //clicking out side of alert will not cancel
+                                    );
+                                } else {
+                                    navigation.navigate('TabScreen')
+                                }
+                            }}>
+                                <FontAwesomeIcon icon={faHome} color="#A0A6BE" size={24} />
+                            </TouchableOpacity>
                         </View>
                     )}
                 >
                 </HeaderContainer >
             </View>
-            <View>
-                <ButtonCustom
-                    onPress={() => {
-                        if (userReducer.isGuest) {
-                            navigation.navigate('AuStackScreen')
-                        } else {
-                            navigation.navigate('TabScreen')
-                        }
-                    }}
-                    title="Go to notifications"
-                />
-            </View>
-            {/* <BottonModalSheet /> */}
             <View style={{ height: height }}>
                 <Filter />
                 <MapView
                     provider={PROVIDER_GOOGLE}
                     style={{ flex: 10 }}
                     showsUserLocation={true}
-                    // showsMyLocationButton={true}
+                    showsMyLocationButton={true}
                     region={region}
                     followsUserLocation
                     zoomControlEnabled

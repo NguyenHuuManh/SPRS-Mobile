@@ -1,10 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
-import { isNull } from "lodash";
-import { useDispatch } from "react-redux";
-import { STATUS } from "../Constrants/url";
-import { userActions } from "../Redux/Actions";
-import { logout } from "../Redux/Actions/UserActions";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import { Alert } from "react-native";
+import { pendingActions, userActions } from "../Redux/Actions";
+import { store } from "../Store"
 class Services {
     axios: any;
     interceptors: null;
@@ -44,11 +42,50 @@ class Services {
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
         if (isSuccess) {
+            if (response.data.code + "" == "501") {
+
+                if (!store.getState().pendingReducer.isPending) {
+                    store.dispatch(pendingActions.pendingLogout(true));
+                    Alert.alert(
+                        'Yêu cầu đăng nhập',
+                        'Phiên đăng nhập hết hạn?',
+                        [
+                            {
+                                text: 'Đăng nhập',
+                                onPress: () => store.dispatch(userActions.logout())
+                            },
+                        ],
+                        { cancelable: false },
+                        //clicking out side of alert will not cancel
+                    );
+                    return
+                }
+            }
             return response;
         } else {
             if (error.response && error.response.status === 401) {
+
                 if ((url || "").includes("sprs/api/authenticate")) {
                     return;
+                }
+            }
+            if (error.response.status == 501) {
+
+                if (!store.getState().pendingReducer.isPending) {
+                    store.dispatch(pendingActions.pendingLogout(true));
+                    Alert.alert(
+                        'Yêu cầu đăng nhập',
+                        'Phiên đăng nhập hết hạn?',
+                        [
+                            {
+                                text: 'Đăng nhập',
+                                onPress: () => store.dispatch(userActions.logout())
+                            },
+                        ],
+                        { cancelable: false },
+                        //clicking out side of alert will not cancel
+                    );
+                    return
                 }
             }
             return error.response;
@@ -88,6 +125,7 @@ class Services {
             const response = await this.axios.get(url, config);
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
+            console.log("error", error);
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
         // return this.axios.get(...arg);
@@ -96,8 +134,11 @@ class Services {
     async post(url: string, data?: any, config?: AxiosRequestConfig) {
         try {
             const response = await this.axios.post(url, data, config);
+            console.log("resLogin", response);
+
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
+            console.log("error", error);
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
         // return this.axios.post(url, data, config);

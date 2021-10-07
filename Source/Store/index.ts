@@ -47,8 +47,7 @@ const store = createStore(persistedReducer, undefined, compose(...enhancers));
 // Middleware: Redux Persist Persister
 const persistor = persistStore(store, config, () => {
     const stateData = store.getState();
-
-    if (!_.isEmpty(stateData?.userReducer?.data?.token || {})) {
+    if (!_.isEmpty(stateData?.userReducer?.data?.token)) {
         httpServices.attachTokenToHeader(stateData?.userReducer?.data?.token);
     }
 });

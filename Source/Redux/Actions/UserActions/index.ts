@@ -24,6 +24,13 @@ export const loginSuccess = (response) => {
     }
 }
 
+export const loginGuest = () => {
+    return {
+        type: ActionTypes.LOGIN_GUEST,
+        isLoading: false
+    }
+}
+
 export const logout = () => {
     return {
         type: ActionTypes.LOGOUT,

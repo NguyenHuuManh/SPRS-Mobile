@@ -4,6 +4,7 @@ import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFee
 import { apiGetGroups } from "../../ApiFunction/List";
 import styles from "./styles";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { checkCallAPI } from "../../Helper/FunctionCommon";
 interface Props {
     // name: any;
     form?: any;
@@ -30,23 +31,35 @@ export default (props: Props) => {
     const [data, setData] = useState([])
 
     const callGetGroupList = () => {
-        const response = apiGetGroups();
+        apiGetGroups()
+            .then((res) => {
+                checkCallAPI(
+                    res,
+                    (response) => {
+                        console.log("res", response);
+                        setData(response.lstObj);
+                    },
+                    (e) => { }
+                );
+            })
+            .catch((error) => { })
     }
     useEffect(() => {
         callGetGroupList();
     }, [])
     const onSelect = (item) => {
-        setFieldValue(name, item.value);
-        setTextInputValue(item.label);
+        setFieldValue(name, item.id);
+        setTextInputValue(item?.name);
         setShow(false)
     }
 
     const renderItem = ({ item, index }) => {
         return (
             <TouchableOpacity
-                style={{ minHeight: 50, borderBottomWidth: 1, justifyContent: "center", backgroundColor: `${item.value + "" == value + "" ? 'rgba(60, 60, 60,0.1)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
+                key={index}
+                style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? 'rgba(60, 60, 60,0.1)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
                 onPress={() => { onSelect(item) }}>
-                <Text>{item.label}</Text>
+                <Text>{item?.name}</Text>
             </TouchableOpacity>
         )
     }
@@ -89,6 +102,7 @@ export default (props: Props) => {
                                     data={data}
                                     keyExtractor={({ value }) => value}
                                     renderItem={renderItem}
+                                    key="DroplistGroup"
                                 />
                             </View>
                         </TouchableWithoutFeedback>

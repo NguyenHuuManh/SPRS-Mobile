@@ -22,6 +22,8 @@ export default StyleSheet.create({
 
     input: {
         flex: 10,
+        color: "red",
+
     },
 
     iconRight: {

@@ -1,7 +1,10 @@
 
+import { AxiosResponse } from "axios"
 import React from "react"
 import { Platform, View } from "react-native"
 import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions"
+import { useDispatch } from "react-redux"
+import { userActions } from "../Redux/Actions"
 
 export const handleLocationPermission = async () => { // 👈
     let permissionCheck = ""
@@ -33,3 +36,23 @@ export const handleLocationPermission = async () => { // 👈
 
     }
 }
+
+interface ErrorCall {
+    data: any;
+    statusText: string;
+}
+
+const SUCCESS_STATUS = [200, 201, 202, 203, 204];
+// const dispatch = useDispatch();
+export const checkCallAPI = (
+    response: AxiosResponse | any,
+    onSuccess: (data: any) => void,
+    onError: (data: ErrorCall) => void
+) => {
+    console.log("responseCheckCall", response);
+    if (response?.status && SUCCESS_STATUS.includes(response!.status)) {
+        onSuccess(response!.data);
+        return;
+    }
+    onError({ data: response?.data, statusText: response?.statusText });
+};

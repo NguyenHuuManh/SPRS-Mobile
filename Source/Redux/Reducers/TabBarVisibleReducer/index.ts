@@ -11,10 +11,11 @@ const initialState: IUserReducer = {
 
 };
 export default (state = initialState, action) => {
-    state.type = action.type;
     switch (action.type) {
         case ActionTypes.SET_VISIBLE_TAB_BAR:
             return {
+                ...state,
+                type: action.type,
                 status: action.status
             }
         default:
