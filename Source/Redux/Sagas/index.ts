@@ -6,7 +6,7 @@ import { onChangePending } from "./PendingSagas";
 
 export default function* watch() {
     yield all([
-        takeEvery(ActionTypes.LOGIN_REQUEST, userSagas.login),
+        takeLatest(ActionTypes.LOGIN_REQUEST, userSagas.login),
         takeLatest(ActionTypes.PROFILE_REQUEST, profileSagas.getProfile),
         takeLatest(ActionTypes.LOGOUT, onChangePending)
     ])

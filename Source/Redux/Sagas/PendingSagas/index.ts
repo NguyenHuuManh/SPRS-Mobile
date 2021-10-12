@@ -1,8 +1,7 @@
-import { call, put } from 'redux-saga/effects';
-import { apiGetProfile } from "../../../ApiFunction/Auth";
-import { STATUS } from '../../../Constrants/url';
+import { put } from 'redux-saga/effects';
 import httpServices from '../../../Services/httpServices';
-import { pendingActions, profileActions, userActions } from '../../Actions';
+import { pendingActions } from '../../Actions';
 export function* onChangePending() {
+    httpServices.attachTokenToHeader();
     yield put(pendingActions.pendingLogout(false));
 }

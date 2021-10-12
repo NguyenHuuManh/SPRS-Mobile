@@ -4,7 +4,7 @@ import { STATUS } from '../../../Constrants/url';
 import httpServices from '../../../Services/httpServices';
 import { userActions } from '../../Actions';
 export function* login(body) {
-    console.log("fefsd")
+    console.log("body", body)
     try {
         const response = yield call(apiSignin, body.body);
 

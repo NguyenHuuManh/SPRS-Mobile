@@ -6,6 +6,7 @@ import { Alert, KeyboardAvoidingView, Modal, Text, TextInput, TouchableOpacity, 
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useDispatch, useSelector } from "react-redux";
+import AutoCompleteSearchLocation from "../../Components/AutoCompleteSearchLocation";
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { handleLocationPermission } from "../../Helper/FunctionCommon";
@@ -13,6 +14,7 @@ import { height } from "../../Helper/responsive";
 import { profileActions, userActions } from "../../Redux/Actions";
 import { RootState } from "../../Redux/Reducers";
 import Filter from "./Components/Filter";
+import ModalSearch from "./Components/ModalSearch";
 
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
@@ -33,7 +35,7 @@ export default () => {
     const navigation = useNavigation();
     const mapRef = useRef(null);
     const [listMarker, setListMarker] = useState<any>([]);
-
+    const [text, setText] = useState("Tìm Kiếm");
     const ref = useRef(null)
 
     const getCurrentLocation = () => {
@@ -76,33 +78,7 @@ export default () => {
     const [visible, setVisible] = useState(false);
     return (
         <KeyboardAvoidingView behavior="padding">
-            <Modal visible={visible}>
-                <View style={{ height: height * 0.1 }}>
-                    <HeaderContainer
-                        centerEl={(
-                            <View style={{ flexDirection: "row", width: "70%", justifyContent: "center", alignItems: "center" }}>
-                                {/* <ModalSwipe /> */}
-                                <TouchableOpacity onPress={() => { setVisible(true) }} style={{
-                                    padding: 5,
-                                    borderWidth: 1,
-                                    borderColor: "#FFF",
-                                    alignItems: "center",
-                                    borderRadius: 10,
-                                    flexDirection: "row",
-                                    width: "100%",
-                                    backgroundColor: "#FFF"
-                                }}>
-                                    <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
-                                    <TextInput numberOfLines={1} style={{ height: 30, color: "black", backgroundColor: "red", width: "80%", paddingTop: 2, lineHeight: 20 }} />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                    >
-                    </HeaderContainer >
-                </View>
-                <ButtonCustom title="Close" onPress={() => { setVisible(false) }}></ButtonCustom>
-                {/* </View> */}
-            </Modal>
+            <ModalSearch visible={visible} setVisible={setVisible} setText={setText} />
             <View style={{ height: height * 0.1 }}>
                 <HeaderContainer
                     centerEl={(
@@ -119,23 +95,16 @@ export default () => {
                                 backgroundColor: "#FFF"
                             }}>
                                 <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
-                                <Text numberOfLines={1} style={{ height: 30 }}>Timf Kiem</Text>
+                                <Text numberOfLines={1} style={{ height: 30, alignSelf: "center", textAlignVertical: "center" }}>{text}</Text>
                             </TouchableOpacity>
                         </View>
                     )}
                     flexLeft={0}
-                    flexRight={5}
+                    flexCenter={8}
+                    flexRight={3}
                     rightEL={(
-                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                            <FontAwesomeIcon icon={faBell} color="#A0A6BE" size={24} />
+                        <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingRight: 10 }}>
                             <TouchableOpacity onPress={() => {
-                                dispatch(profileActions.profileRequest())
-                            }}>
-                                <FontAwesomeIcon icon={faUserCircle} color="#A0A6BE" size={24} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {
-
-
                                 if (userReducer.isGuest) {
                                     Alert.alert(
                                         'Yêu cầu đăng nhập',
@@ -143,7 +112,13 @@ export default () => {
                                         [
                                             {
                                                 text: 'Đăng nhập',
-                                                onPress: () => navigation.navigate('AuStackScreen')
+                                                onPress: () => {
+                                                    navigation.reset({
+                                                        index: 0,
+                                                        routes: [{ name: 'AuStackScreen' }]
+                                                    })
+                                                }
+                                                //  navigation.navigate('AuStackScreen')
 
                                             },
                                             {
@@ -155,7 +130,11 @@ export default () => {
                                         //clicking out side of alert will not cancel
                                     );
                                 } else {
-                                    navigation.navigate('TabScreen')
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'TabScreen' }]
+                                    })
+                                    // navigation.navigate('TabScreen')
                                 }
                             }}>
                                 <FontAwesomeIcon icon={faHome} color="#A0A6BE" size={24} />

@@ -11,6 +11,7 @@ class Services {
         this.interceptors = null;
         this.axios.defaults.withCredentials = true;
         this.axios.defaults.timeout = 300000;
+        this.axios.defaults.headers.common["Content-Type"] = `application/json`;
     }
 
     saveLocalStorage = async (key: String, data: any) => {
@@ -41,6 +42,7 @@ class Services {
     }
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
+        console.log("err", error.response)
         if (isSuccess) {
             if (response.data.code + "" == "501") {
 
@@ -92,34 +94,6 @@ class Services {
         }
     }
 
-    // returnData(response) {
-    //     console.log('returnData', response);
-    //     let errorMessage = '';
-    //     if (STATUS.success.includes(response.status)) {
-    //         return {
-    //             response: response.data,
-    //             error: false,
-    //         };
-    //     }
-    //     if (isNull(response.data)) {
-    //         errorMessage = response.problem;
-    //     } else if (
-    //         STATUS.notFound.includes(response.data.status) ||
-    //         STATUS.auth.includes(response.data.status)
-    //     ) {
-    //         errorMessage = `${response.data.message ? response.data.message : response.data}`;
-    //     } else if (STATUS.error.includes(response.data.status)) {
-    //         errorMessage = response.problem;
-    //     } else {
-    //         errorMessage = response.data.problem;
-    //     }
-    //     return {
-    //         errorMessage,
-    //         detail: response.data.error.details,
-    //         error: true,
-    //     };
-    // };
-
     async get(url: string, config?: AxiosRequestConfig) {
         try {
             const response = await this.axios.get(url, config);
@@ -132,7 +106,10 @@ class Services {
     }
 
     async post(url: string, data?: any, config?: AxiosRequestConfig) {
+        console.log("url", url)
+        console.log("bodyAPI", data)
         try {
+            console.log("VÀo ddd")
             const response = await this.axios.post(url, data, config);
             console.log("resLogin", response);
 

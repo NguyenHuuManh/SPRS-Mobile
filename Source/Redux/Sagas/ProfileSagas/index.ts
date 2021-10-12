@@ -9,7 +9,11 @@ export function* getProfile() {
         const response = yield call(apiGetProfile);
         console.log("responseProfile", response)
         if (STATUS.success.includes(response?.status)) {
-            yield put(profileActions.profileSuccess(response?.data));
+            if (response?.data?.code + "" == "200") {
+                yield put(profileActions.profileSuccess(response?.data.obj));
+            } else {
+                yield put(profileActions.profileSuccess(response?.error));
+            }
         } else {
             yield put(profileActions.profileFailed(response?.data));
 

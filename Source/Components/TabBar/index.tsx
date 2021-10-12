@@ -2,13 +2,15 @@ import { Platform, SafeAreaView, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faBars, faHome, faIdBadge, faPlusCircle, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faHome, faIdBadge, faPlusCircle, faMapMarkedAlt, faBell } from '@fortawesome/free-solid-svg-icons'
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import { AppColor } from "../../Helper/propertyCSS";
+import { useSelector } from "react-redux";
 
 export default ({ state, descriptors, navigation }) => {
-
+    const badgeShow = useSelector((state) => state.badgeReducer)
+    console.log("badgeShow", badgeShow)
     function IconRender({ name, color }) {
         switch (name) {
             case 'Trang chủ':
@@ -23,10 +25,10 @@ export default ({ state, descriptors, navigation }) => {
                         <FontAwesomeIcon size={20} color={color} icon={faIdBadge} />
                     </View>
                 );
-            case 'Danh sách điểm':
+            case 'Thông báo':
                 return (
                     <View>
-                        <FontAwesomeIcon size={20} color={color} icon={faBars} />
+                        <FontAwesomeIcon size={20} color={color} icon={faBell} />
                     </View>
                 );
             case 'Bản đồ':
@@ -66,7 +68,8 @@ export default ({ state, descriptors, navigation }) => {
             {
                 flexDirection: 'row',
                 justifyContent: 'space-around',
-                alignItems: 'center',
+                // alignItems: 'center',
+                paddingBottom: 20,
                 backgroundColor: '#F6BB57',
                 height: 80,
             }]} >
@@ -99,43 +102,7 @@ export default ({ state, descriptors, navigation }) => {
                                 target: route.key,
                             });
                         };
-                        // if (index == 1)
-                        //     return (
-                        //         <TouchableOpacity
-                        //             key={index}
-                        //             accessibilityRole="button"
-                        //             accessibilityState={isFocused ? { selected: true } : {}}
-                        //             accessibilityLabel={options.tabBarAccessibilityLabel}
-                        //             testID={options.tabBarTestID}
-                        //             onPress={onPress}
-                        //             onLongPress={onLongPress}
-                        //             style={{
-                        //                 justifyContent: 'flex-end',
-                        //                 alignItems: 'center',
-                        //                 flexDirection: 'column',
-                        //                 width: width / state.routes.length,
-                        //                 marginBottom:18
-                        //             }}>
-                        //             <View
-                        //                 style={[
-                        //                     {
-                        //                         width: 70,
-                        //                         height: 70,
-                        //                         borderRadius: 70,
-                        //                         backgroundColor: "blue",
-                        //                         justifyContent: 'center',
-                        //                         alignItems: 'center',
-                        //                     },
-                        //                     MainStyle.boxShadow,
-                        //                 ]}>
-                        //                 {IconRender({ name: route.name, color: "#ffff" })}
-                        //             </View>
-                        //             <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
-                        //                 {label}
-                        //             </Text>
-                        //         </TouchableOpacity>
-                        //     );
-                        if (index == 1) {
+                        if (route.name == "Bản đồ") {
                             return (
                                 <TouchableOpacity
                                     accessibilityRole="button"
@@ -151,7 +118,7 @@ export default ({ state, descriptors, navigation }) => {
                                         width: width / state.routes.length,
                                     }}
                                 >
-                                    {/* <FontAwesomeIcon icon={faHome} color={isFocused ? "#D71920" : "#A0A6BE"} size={30} /> */}
+
                                     {IconRender({ name: route.name, color: isFocused ? "#D71920" : "#A0A6BE" })}
 
                                     <Text style={{ color: isFocused ? AppColor.GRAY_LIGHT : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
@@ -173,9 +140,16 @@ export default ({ state, descriptors, navigation }) => {
                                     alignItems: 'center',
                                     flexDirection: 'column',
                                     width: width / state.routes.length,
+                                    // backgroundColor: "pink"
                                 }}
                             >
-                                {/* <FontAwesomeIcon icon={faHome} color={isFocused ? "#D71920" : "#A0A6BE"} size={30} /> */}
+                                {
+                                    (badgeShow.data.tab == route.name && badgeShow.data.number > 0) && (
+                                        <View style={{ width: 20, height: 20, backgroundColor: "#A0A6BE", borderRadius: 10, position: "absolute", top: 10, right: 25, justifyContent: "center" }} >
+                                            <Text style={{ color: "#FFF", alignSelf: "center", fontSize: 10, justifyContent: "center" }}>1</Text>
+                                        </View>
+                                    )
+                                }
                                 {IconRender({ name: route.name, color: isFocused ? "#D71920" : "#A0A6BE" })}
 
                                 <Text style={{ color: isFocused ? AppColor.GRAY_LIGHT : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>

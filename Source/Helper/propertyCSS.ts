@@ -1,4 +1,4 @@
-export const BackgoundMain = "#FFF"
+export const BackgoundMain = "#F6BB57"
 // export const FontText="#FFF"
 export const AppColor = {
     MAIN_COLOR: '#D71920',

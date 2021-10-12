@@ -1,215 +1,64 @@
-import { faBell, faSearchLocation, faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useNavigation } from "@react-navigation/core";
-import React, { useRef, useState } from "react";
-import { KeyboardAvoidingView, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
-import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useSelector } from "react-redux";
-import ButtonCustom from "../../Components/ButtonCustom";
+import React from "react";
+import { Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { height } from "../../Helper/responsive";
-import { RootState } from "../../Redux/Reducers";
-import Filter from "./Components/Filter";
+import { MainStyle } from "../../Style/main_style";
+import styles from "./styles";
+const AVATA_SIZE = 100;
+const Margin_BT = 20;
+const ITEM_SIZE = AVATA_SIZE + Margin_BT
 
-export default () => {
-    const userReducer = useSelector((state: RootState) => state.userReducer);
-    const [region, setRegion] = useState({
-        latitude: 21.0263084,
-        longitude: 105.7709134,
-        latitudeDelta: 0.006866,
-        longitudeDelta: 0.006866,
-    });
-    const [marker, setMarker] = useState({
-        latitude: 21.0263084,
-        longitude: 105.7709134
-    })
-    const [mapReady, setMapReady] = useState(false);
-    const [northEast, setNorthEast] = useState<any>({})
-    const [southWest, setSouthWest] = useState<any>({})
-    const navigation = useNavigation();
-    const mapRef = useRef(null);
-    const [listMarker, setListMarker] = useState<any>([]);
-
-    const ref = useRef(null)
-
-    const getCurrentLocation = () => {
-        Geolocation.getCurrentPosition(
-            (response) => {
-                setRegion({
-                    ...region, latitude: response.coords.latitude,
-                    longitude: response.coords.longitude,
-                })
-            },
-            (error) => { console.log("error", error) },
-            {
-                distanceFilter: 10,
-            }
-        )
-
-    }
-    // useEffect(() => {
-    //     // getCurrentLocation();
-    //     Geolocation.watchPosition(
-    //         (response) => {
-    //             Alert.alert("Location", response.provider);
-    //             console.log("responseListen", response.coords)
-    //         },
-    //         (error) => { console.log("error", error) },
-    //         {
-    //             distanceFilter: 10,
-    //         }
-    //     )
-    //     handleLocationPermission();
-    // }, [])
-
-    const onMapReady = () => {
-        mapRef.current.getMapBoundaries().then((e) => {
-            setNorthEast(e.northEast);
-            setSouthWest(e.southWest);
-            setMapReady(true);
-        });
-    }
-    const [visible, setVisible] = useState(false);
+export default ({ navigation }) => {
+    // const navigation = useNavigation()
     return (
-        <KeyboardAvoidingView behavior="padding">
-            <Modal visible={visible}>
-                <View style={{ height: height * 0.1 }}>
-                    <HeaderContainer
-                        centerEl={(
-                            <View style={{ flexDirection: "row", width: "70%", justifyContent: "center", alignItems: "center" }}>
-                                {/* <ModalSwipe /> */}
-                                <TouchableOpacity onPress={() => { setVisible(true) }} style={{
-                                    padding: 5,
-                                    borderWidth: 1,
-                                    borderColor: "#FFF",
-                                    alignItems: "center",
-                                    borderRadius: 10,
-                                    flexDirection: "row",
-                                    width: "100%",
-                                    backgroundColor: "#FFF"
-                                }}>
-                                    <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
-                                    <TextInput numberOfLines={1} style={{ height: 30, color: "black", backgroundColor: "red", width: "80%", paddingTop: 2, lineHeight: 20 }} />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                    >
-                    </HeaderContainer >
-                </View>
-                <ButtonCustom title="Close" onPress={() => { setVisible(false) }}></ButtonCustom>
-                {/* </View> */}
-            </Modal>
+        <View style={[styles.container]}>
             <View style={{ height: height * 0.1 }}>
                 <HeaderContainer
                     centerEl={(
-                        <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            {/* <ModalSwipe /> */}
-                            <TouchableOpacity onPress={() => { setVisible(true) }} style={{
-                                padding: 5,
-                                borderWidth: 1,
-                                borderColor: "#FFF",
-                                alignItems: "center",
-                                borderRadius: 10,
-                                flexDirection: "row",
-                                width: "100%",
-                                backgroundColor: "#FFF"
-                            }}>
-                                <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
-                                <Text numberOfLines={1} style={{ height: 30 }}>Timf Kiem</Text>
-                            </TouchableOpacity>
+                        <View style={{ width: "100%", alignItems: "center" }}>
+                            <Text>Điểm dịch vụ và cứu trợ</Text>
                         </View>
                     )}
+                    flexLeft={1}
+                    flexRight={1}
+                    flexCenter={10}
 
-                    rightEL={(
-                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                            <FontAwesomeIcon icon={faBell} color="#A0A6BE" size={24} />
-                            <FontAwesomeIcon icon={faUserCircle} color="#A0A6BE" size={24} />
-                        </View>
-                    )}
-                >
-                </HeaderContainer >
-            </View>
-            <View>
-                <ButtonCustom
-                    onPress={() => {
-                        if (userReducer.isGuest) {
-                            navigation.navigate('AuStackScreen')
-                        } else {
-                            navigation.navigate('TabScreen')
-                        }
-                    }}
-                    title="Go to notifications"
                 />
             </View>
-            {/* <BottonModalSheet /> */}
-            <View style={{ height: height }}>
-                <Filter />
-                <MapView
-                    provider={PROVIDER_GOOGLE}
-                    style={{ flex: 10 }}
-                    showsUserLocation={true}
-                    // showsMyLocationButton={true}
-                    region={region}
-                    followsUserLocation
-                    zoomControlEnabled
-                    zoomEnabled
-                    ref={mapRef}
-                    onRegionChangeComplete={(e) => {
-                        setRegion(e);
-                        if (mapReady) {
-                            mapRef.current.getMapBoundaries().then((e) => {
-                                // console.log("e", e)
-                                setNorthEast(e.northEast);
-                                setSouthWest(e.southWest);
-                            });
-                        }
 
-                    }}
-                    onMapReady={() => { onMapReady() }}
-
-
-
-                // onPress={(e) => {
-                //     listMarker.push({ longitude: e.nativeEvent.coordinate.longitude, latitude: e.nativeEvent.coordinate.latitude })
-                //     setMarker(e.nativeEvent.coordinate)
-                // }}
-
-                >
-                    {/* {listMarker.map((e, index) => {
-                    return (
-                        <Marker
-                            key={index}
-                            coordinate={e}
-                            title={"marker.title"}
-                            description={"marker.description"}
-                        />
-                    )
-                })} */}
-                    {mapReady && (
-                        <>
-                            <Marker
-                                coordinate={region}
-                                title={"marker.title"}
-                                description={"marker.description"}
-                            />
-                            <Marker
-                                coordinate={southWest}
-                                title={"southWest"}
-                                description={"marker.description"}
-                            />
-                            <Marker
-                                coordinate={northEast}
-                                title={"northEast"}
-                                description={"marker.description"}
-                            />
-
-                        </>
-
-                    )}
-                </MapView>
+            <View style={{ height: "35%", width: "100%", paddingTop: 10, paddingBottom: 10 }}>
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <View style={[MainStyle.boxShadow, styles.box]}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("ReliefPoint") }} style={[styles.boxTouch]}>
+                                <Text style={{ fontSize: 30 }}>SOS</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <View style={[MainStyle.boxShadow, styles.box]}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("ReliefPoint") }} style={[styles.boxTouch]}>
+                                <Text style={{ fontSize: 30 }}>Cứu Trợ</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <View style={[MainStyle.boxShadow, styles.box]}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("ReliefPoint") }} style={[styles.boxTouch]}>
+                                <Text style={{ fontSize: 30 }}>Cửa hàng</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <View style={[MainStyle.boxShadow, styles.box]}></View>
+                    </View>
+                </View>
             </View>
-        </KeyboardAvoidingView >
-    );
-
+            <View style={{ height: "40%", width: "100%", backgroundColor: "#FFFF" }}>
+            </View>
+        </View>
+    )
 }
