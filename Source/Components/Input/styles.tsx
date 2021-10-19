@@ -22,8 +22,8 @@ export default StyleSheet.create({
 
     input: {
         flex: 10,
-        color: "red",
-
+        color: "black",
+        paddingBottom: 0,
     },
 
     iconRight: {

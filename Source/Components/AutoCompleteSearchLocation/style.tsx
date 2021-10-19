@@ -5,12 +5,42 @@ export default StyleSheet.create({
     container: {
         paddingLeft: 10,
         paddingRight: 10,
-        flexDirection: "row",
+        paddingTop: 10,
+        width: "100%",
+        zIndex: 200,
+    },
+    inputContainer: {
         borderColor: "#FFFF",
         borderWidth: 1,
         backgroundColor: "#FFFF",
-        width: "100%",
-        zIndex: 200,
-        borderRadius: 20,
+        borderRadius: 10,
+        height: 50
     },
+
+    input: {
+        // backgroundColor: "red"
+    },
+
+    listItemContainer: {
+        backgroundColor: "#FFFF",
+        paddingLeft: 5,
+        paddingRight: 5,
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderWidth: 1,
+        borderColor: "#FFF",
+        borderRadius: 5,
+        marginTop: 10,
+        maxHeight: 230,
+    },
+    item: {
+        width: "100%",
+        alignItems: "center",
+        flexDirection: "row",
+        minHeight: 50,
+        // backgroundColor: "red",
+        // borderWidth: 1
+    }
+
+
 });

@@ -26,4 +26,10 @@ export const MainStyle = StyleSheet.create({
         height: "30%",
 
     },
+    flexRow: {
+        flexDirection: "row",
+    },
+    flexColumn: {
+        flexDirection: "column"
+    }
 });

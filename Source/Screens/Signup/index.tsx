@@ -7,7 +7,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import { apiSigup } from "../../ApiFunction/Auth";
-import AutoCompleteSearchLocation from "../../Components/AutoCompleteSearchLocation";
 import ButtonCustom from "../../Components/ButtonCustom";
 import DateTimePicker from "../../Components/DateTimePicker";
 import DropDownPicker from "../../Components/DropDownPicker";
@@ -19,13 +18,34 @@ import styles from "./styles";
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
     const navigation = useNavigation();
-    const [organizationInfor, setOrganizationInfor] = useState({});
+    const [organizationInfor, setOrganizationInfor] = useState<{
+        city: string,
+        province: string,
+        district: string,
+        subDistrict: string,
+        addressLine: string,
+        GPS_Long: string,
+        GPS_Lati: string,
+    }>({
+        city: "",
+        province: "",
+        district: "",
+        subDistrict: "",
+        addressLine: "",
+        GPS_Long: "",
+        GPS_Lati: "",
+    });
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const signup = (body) => {
+        const param = { ...body }
+
+        console.log("param", param);
+
         try {
-            apiSigup(body)
+            apiSigup(param)
                 .then((e) => {
-                    if (e.data.code + "" === "101") {
+                    console.log("res", e);
+                    if (e.data.code + "" === "200") {
                         Toast.show({
                             type: "success",
                             text1: e.data.description,
@@ -47,11 +67,11 @@ export default () => {
     return (
         <Formik
             initialValues={{
-                username: "Duongpt35",
+                username: "manhhe",
                 phone: "0966048002",
                 password: "password",
                 rePassWord: "password",
-                full_name: "Phạm Tùng Dương",
+                full_name: "Nguyễn Hữu Mạnh",
                 dob: "09/09/1999",
                 city: "",
                 province: "",
@@ -59,9 +79,11 @@ export default () => {
                 subDistrict: "",
                 addressLine: "",
                 groupsId: "1",
+                adresslineORG: "",
+
             }}
             onSubmit={(values) => {
-                const user = {
+                let user = {
                     username: values.username,
                     phone: values.phone,
                     password: values.password,
@@ -75,14 +97,33 @@ export default () => {
                         addressLine: values?.addressLine || "",
                     },
                     groups_user: [{ id: values.groupsId }],
+                    organization: {}
                 }
+                if (values.groupsId + "" == "4") {
+                    user.organization = {
+                        name: "",
+                        founded: "",
+                        description: "",
+                        address: {
+                            city: organizationInfor.city || "",
+                            province: organizationInfor?.province || "",
+                            district: organizationInfor?.district || "",
+                            subDistrict: organizationInfor?.subDistrict || "",
+                            addressLine: organizationInfor?.addressLine || "",
+                        }
 
+                    }
+                }
+                if (values.groupsId + "" !== "4") {
+                    delete user.organization
+                }
+                signup(user);
 
-                // signup(body)
-            }}
+            }
+            }
         >
-            {({ submitForm }) => (
-                <KeyboardAwareScrollView style={{ backgroundColor: "#F6BB57", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "10%" }} showsVerticalScrollIndicator={false}>
+            {({ submitForm, values }) => (
+                <KeyboardAwareScrollView style={{ backgroundColor: "#F6BB57", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "5%" }} showsVerticalScrollIndicator={false}>
                     <View style={[MainStyle.boxShadow, styles.containLogin]}>
                         {/* <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." /> */}
                         <Field
@@ -151,14 +192,30 @@ export default () => {
                             styleTitle={{ width: 90 }}
                             placeholder="Xã/Phường"
                         />
-                        <MapPicker
-                            title="Địa điểm tổ chức"
-                            styleTitle={{ width: 90 }}
-                            horizontal
-                            iconRight={faMapMarkedAlt}
-                            iconSize={20}
-                        />
+                        {
+                            values.groupsId == "4" && (
+                                <>
+                                    <MapPicker
+                                        title="Địa điểm tổ chức"
+                                        styleTitle={{ width: 90 }}
+                                        horizontal
+                                        iconRight={faMapMarkedAlt}
+                                        iconSize={20}
+                                        setAdress={setOrganizationInfor}
+                                        adress={organizationInfor}
+                                    />
+                                    <Field
+                                        component={Input}
+                                        name="adresslineORG"
+                                        title="Địa chỉ chi tiết tổ chức"
+                                        horizontal
+                                        styleTitle={{ width: 90 }}
+                                        placeholder="Địa chỉ chi tiết tổ chức"
+                                    />
+                                </>
 
+                            )
+                        }
                         <Field
                             component={Input}
                             name="password"
@@ -189,7 +246,6 @@ export default () => {
                         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
                             <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.goBack() }}>đăng nhập</Text>
                         </View>
-                        {/* <AutoCompleteSearchLocation onPress={() => { }} /> */}
                     </View>
                 </KeyboardAwareScrollView>
 

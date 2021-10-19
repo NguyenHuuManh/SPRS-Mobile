@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { height } from '../../Helper/responsive';
 // import { measure, padding } from '../../Helpers';
 
 export default StyleSheet.create({
@@ -19,13 +20,14 @@ export default StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        // backgroundColor: "pink"
+        // backgroundColor: "pink",
     },
 
     input: {
         flex: 10,
         color: "red",
-
+        flexWrap: "wrap",
+        overflow: "scroll"
     },
 
     iconRight: {
@@ -58,5 +60,15 @@ export default StyleSheet.create({
         marginLeft: 5,
         marginRight: 5
     },
+
+    containMap: {
+        width: "90%",
+        height: "70%",
+        marginTop: 20,
+        paddingLeft: 10,
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: "#FFF"
+    }
 
 });

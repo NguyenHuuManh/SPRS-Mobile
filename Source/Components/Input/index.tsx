@@ -19,6 +19,8 @@ interface Props {
     horizontal?: boolean;
     styleTitle?: any;
     secureTextEntry?: boolean;
+    multiline?: boolean;
+    textContentType: string;
     leftIconOnpress?: () => {};
 }
 const Input = (props: Props) => {
@@ -27,7 +29,8 @@ const Input = (props: Props) => {
         customInputStyle, title, iconSize,
         iconLeft, iconColor, iconRight, horizontal,
         styleTitle, secureTextEntry,
-        leftIconOnpress,
+        multiline, leftIconOnpress,
+        textContentType,
         ...remainProps
     } = props
     const { name, value } = field
@@ -50,6 +53,11 @@ const Input = (props: Props) => {
                         </View>)
                 }
                 <View style={[styles.inputContainer]}>
+                    {textContentType == "telephoneNumber" && (
+                        <View style={{ flex: 2, justifyContent: "flex-end", paddingBottom: 10 }}>
+                            <Text>84+ |</Text>
+                        </View>
+                    )}
                     <TextInput
                         // {...field}
                         {...remainProps}
@@ -58,6 +66,7 @@ const Input = (props: Props) => {
                         style={styles.input}
                         placeholder={placeholder}
                         secureTextEntry={secureTextEntry}
+                        multiline={multiline || false}
                     />
                     {
                         iconRight && (

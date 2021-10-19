@@ -36,7 +36,7 @@ export default (props: Props) => {
                 checkCallAPI(
                     res,
                     (response) => {
-                        console.log("res", response);
+                        console.log("resGroups", response);
                         setData(response.lstObj);
                     },
                     (e) => { }
@@ -53,10 +53,10 @@ export default (props: Props) => {
         setShow(false)
     }
 
-    const renderItem = ({ item, index }) => {
+    const renderItem = ({ item }) => {
         return (
             <TouchableOpacity
-                key={index}
+                key={item.id}
                 style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? 'rgba(60, 60, 60,0.1)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
                 onPress={() => { onSelect(item) }}>
                 <Text>{item?.name}</Text>

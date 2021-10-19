@@ -30,7 +30,7 @@ export default () => {
                     <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, justifyContent: "center" }]}>
                         <Text>{profileReducer.data?.full_name}</Text>
                         <Text>Số điện thoại: {profileReducer.data?.phone}</Text>
-                        <Text>Địa chỉ: {profileReducer.data?.address}</Text>
+                        <Text>Địa chỉ: {profileReducer.data?.address?.addressLine}</Text>
                         <Text>Tài khoản: Người dùng bình thường </Text>
                     </View>
                 </View>

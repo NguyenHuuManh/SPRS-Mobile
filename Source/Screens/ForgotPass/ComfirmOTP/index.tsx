@@ -6,22 +6,29 @@ import React from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import AwesomeLoading from 'react-native-awesome-loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { apiOtpChecking } from '../../../ApiFunction/Auth';
 import ButtonCustom from '../../../Components/ButtonCustom';
 import Input from '../../../Components/Input';
 import { MainStyle } from '../../../Style/main_style';
 import styles from '../styles';
 export default ({ route, navigation }) => {
-    const { otp } = route.params;
+    const { to } = route.params;
+    const checkOTP = (values) => {
+        console.log("valuesOTP", values);
+        apiOtpChecking(values).then((res) => {
+            if (res.status == 200) {
+                navigation.navigate('ChangePassword')
+            }
+        })
+    }
 
     return (
         <Formik
             initialValues={{
-                otpStr: ""
+                otp: ""
             }}
             onSubmit={(values) => {
-                if (otp == values.otpStr) {
-                    navigation.navigate('ChangePassword')
-                }
+                checkOTP({ otp: values.otp, to: to })
             }}
         >
             {({ submitForm }) => (
@@ -38,9 +45,10 @@ export default ({ route, navigation }) => {
                         <View style={[MainStyle.boxShadow, styles.containLogin]}>
                             <Field
                                 component={Input}
-                                name="otpStr"
+                                name="otp"
                                 iconLeft={faMobileAlt}
                                 placeholder="Nhập mã otp"
+                                keyboardType="numeric"
 
                             />
                             <ButtonCustom

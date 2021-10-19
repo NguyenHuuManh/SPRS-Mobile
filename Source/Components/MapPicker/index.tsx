@@ -1,14 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import React, { useEffect, useRef, useState } from "react";
+import { isEmpty } from "lodash";
+import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { apiPlaceDetailByLongLat } from "../../ApiFunction/GoogleApi";
+import { checkKeyNull } from "../../Helper/FunctionCommon";
+import { width } from "../../Helper/responsive";
+import { MainStyle } from "../../Style/main_style";
 import AutoCompleteSearchLocation from "../AutoCompleteSearchLocation";
 import ButtonCustom from "../ButtonCustom";
 import styles from "./styles";
 
 interface Props {
-
     onChangeCustom?: any;
     placeholder?: any;
     // memo?: boolean;
@@ -22,6 +26,8 @@ interface Props {
     styleTitle?: any;
     secureTextEntry?: boolean;
     leftIconOnpress?: () => {};
+    setAdress?: any;
+    adress?: any;
 }
 
 export default (props: Props) => {
@@ -30,6 +36,7 @@ export default (props: Props) => {
         customInputStyle, title, iconSize,
         iconLeft, iconColor, iconRight, horizontal,
         styleTitle, secureTextEntry,
+        setAdress, adress,
         leftIconOnpress,
         ...remainProps
     } = props
@@ -45,6 +52,14 @@ export default (props: Props) => {
     const [marker, setMarker] = useState<any>({ ...region })
     // const { visible, setVisible } = props
     const [visible, setVisible] = useState(false)
+    // const [adress, setAdress] = useState<{ city: string, province: string, district: string, subDistrict: string, GPS_Lati: string, GPS_long: string, }>({
+    //     city: "",
+    //     province: "",
+    //     district: "",
+    //     subDistrict: "",
+    //     GPS_Lati: "",
+    //     GPS_long: "",
+    // });
 
     const updateRegion = (region) => {
         setRegion(region);
@@ -53,12 +68,37 @@ export default (props: Props) => {
         }
     }
 
+
+    const getDetailPlace = (long: string | number, lat: string | number) => {
+        apiPlaceDetailByLongLat(long, lat).then((response) => {
+            if (response.status == 200) {
+                const place = response?.data?.results[0]?.address_components;
+                setAdress({
+                    city: place[place.length - 1]?.long_name,
+                    province: place[place.length - 2]?.long_name,
+                    district: place[place.length - 2]?.long_name,
+                    subDistrict: place[place.length - 3]?.long_name,
+                    GPS_Lati: lat + "",
+                    GPS_long: long + "",
+                })
+            }
+        });
+    }
+    useEffect(() => {
+        getDetailPlace(marker.longitude, marker.latitude);
+    }, [marker])
+
+
     const getCurrentLocation = () => {
         Geolocation.getCurrentPosition(
             (response) => {
-                console.log("res", response)
                 setRegion({
                     ...region, latitude: response.coords.latitude,
+                    longitude: response.coords.longitude,
+                })
+
+                setMarker({
+                    ...marker, latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
                 })
                 setDefaulocation({
@@ -77,9 +117,9 @@ export default (props: Props) => {
         )
 
     }
-    // useEffect(() => {
-    //     getCurrentLocation();
-    // }, [])
+    useEffect(() => {
+        getCurrentLocation();
+    }, [])
 
     var mapRef: MapView
     const MapAnimateTo = (region) => {
@@ -98,7 +138,11 @@ export default (props: Props) => {
                             </View>)
                     }
                     <View style={[styles.inputContainer]}>
-                        <Text onPress={() => { setVisible(true) }} style={styles.input}>--Chọn đia điểm--</Text>
+                        {isEmpty(checkKeyNull(adress)) ? (
+                            <Text onPress={() => { setVisible(true) }} style={styles.input}>Chọn địa điểm</Text>
+                        ) : (
+                            <Text numberOfLines={1} ellipsizeMode='tail' onPress={() => { setVisible(true) }} style={styles.input}>{`${adress?.subDistrict}-${adress?.district}-${adress?.province}`}</Text>
+                        )}
                         {
                             iconRight && (
                                 <TouchableOpacity
@@ -112,45 +156,59 @@ export default (props: Props) => {
                 </View>
             </View>
             <Modal visible={visible} animationType="fade">
-                <View style={{ flexDirection: "row", top: 10, zIndex: 1000, position: "absolute" }}>
-                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                        <AutoCompleteSearchLocation
-                            onPress={(data, detail) => {
-                                console.log("data", data);
-                                console.log("detail", detail);
+                <View style={{ flex: 1, zIndex: 200 }}>
+                    <AutoCompleteSearchLocation
+                        onPress={(data, detail) => {
+                            console.log("data", data);
+                            console.log("detail", detail);
+                        }}
+                        renderRightButton={() => (
+                            <TouchableOpacity onPress={() => { setVisible(false) }} style={{ justifyContent: "center", width: "100%", height: "100%", alignItems: "center" }}>
+                                <Text>Xong</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
+
+                </View>
+                <View style={{ width: width, justifyContent: "center", alignItems: "center", flex: 5, zIndex: 1 }}>
+                    <View style={{ alignItems: "center", padding: 10, height: "20%" }}>
+                        <Text>Tỉnh/Thanh phố: {adress?.city}</Text>
+                        <Text>Quận/Huyện: {adress?.district}</Text>
+                        <Text>Xã/Phường: {adress?.subDistrict}</Text>
+                        <Text>{marker?.latitude}-{marker?.longitude}</Text>
+                    </View>
+                    <View style={[styles.containMap, MainStyle.boxShadow]}>
+                        <MapView
+                            provider={PROVIDER_GOOGLE}
+                            style={{ flex: 3 }}
+                            showsUserLocation={true}
+                            showsMyLocationButton={false}
+                            region={region}
+                            zoomEnabled
+                            ref={(mapView) => { mapRef = mapView; }}
+                            onRegionChangeComplete={(e) => {
+                                setRegion(e);
                             }}
-                            renderRightButton={() => (<ButtonCustom title="Xong" onPress={() => { setVisible(false) }} />)}
-                        />
+                            onMapReady={() => { setMapReady(true); }}
+                            onPress={(e) => {
+                                setMarker({ ...e.nativeEvent.coordinate })
+                            }}
+
+                        >
+                            {mapReady && (
+                                <>
+                                    <Marker
+                                        coordinate={marker}
+                                        title={"marker.title"}
+                                        description={"marker.description"}
+                                    />
+                                </>
+
+                            )}
+                        </MapView>
                     </View>
                 </View>
-                <MapView
-                    provider={PROVIDER_GOOGLE}
-                    style={{ flex: 1 }}
-                    showsUserLocation={true}
-                    showsMyLocationButton={false}
-                    region={region}
-                    zoomEnabled
-                    ref={(mapView) => { mapRef = mapView; }}
-                    onRegionChangeComplete={(e) => {
-                        updateRegion(e)
-                    }}
-                    onMapReady={() => { setMapReady(true); }}
-                    onPress={(e) => {
-                        setMarker(e.nativeEvent.coordinate)
-                    }}
 
-                >
-                    {mapReady && (
-                        <>
-                            <Marker
-                                coordinate={marker}
-                                title={"marker.title"}
-                                description={"marker.description"}
-                            />
-                        </>
-
-                    )}
-                </MapView>
             </Modal>
         </>
     )

@@ -9,9 +9,14 @@ class Services {
     constructor() {
         this.axios = axios;
         this.interceptors = null;
-        this.axios.defaults.withCredentials = true;
-        this.axios.defaults.timeout = 300000;
-        this.axios.defaults.headers.common["Content-Type"] = `application/json`;
+        this.axios.defaults.withCredentials = false;
+        this.axios.defaults.timeout = 30000;
+        // this.axios.defaults.headers.common["Content-Type"] = `application/json`;
+        // this.axios.defaults.headers = {
+        //     "Access-Control-Allow-Headers": "*",
+        //     "Access-Control-Allow-Methods": "*",
+        //     "Content-Type": "application/json"
+        // };
     }
 
     saveLocalStorage = async (key: String, data: any) => {
@@ -32,20 +37,24 @@ class Services {
     }
 
     attachTokenToHeader(token?: string) {
-        if (token) {
-            this.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            this.axios.defaults.headers.common["Content-Type"] = `application/json`;
-
-        } else {
-            delete this.axios.defaults.headers.common["Authorization"];
-        }
+        console.log("token", token)
+        this.interceptors = this.axios.interceptors.request.use(
+            function (config) {
+                // Do something before request is sent
+                config.headers.Authorization = `Bearer ${token}`;
+                return config;
+            },
+            function (error) {
+                return Promise.reject(error);
+            }
+        );
     }
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
-        console.log("err", error.response)
+        console.log("err", error.response);
+        console.log("response", response);
         if (isSuccess) {
             if (response.data.code + "" == "501") {
-
                 if (!store.getState().pendingReducer.isPending) {
                     store.dispatch(pendingActions.pendingLogout(true));
                     Alert.alert(
@@ -65,13 +74,13 @@ class Services {
             }
             return response;
         } else {
-            if (error.response && error.response.status === 401) {
+            if (error.response && error.response?.status === 401) {
 
                 if ((url || "").includes("sprs/api/authenticate")) {
                     return;
                 }
             }
-            if (error.response.status == 501) {
+            if (error.response?.status == 501) {
 
                 if (!store.getState().pendingReducer.isPending) {
                     store.dispatch(pendingActions.pendingLogout(true));
@@ -99,23 +108,17 @@ class Services {
             const response = await this.axios.get(url, config);
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
-            console.log("error", error);
+            console.log("errorGet", error)
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
         // return this.axios.get(...arg);
     }
 
     async post(url: string, data?: any, config?: AxiosRequestConfig) {
-        console.log("url", url)
-        console.log("bodyAPI", data)
         try {
-            console.log("VÀo ddd")
             const response = await this.axios.post(url, data, config);
-            console.log("resLogin", response);
-
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
-            console.log("error", error);
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
         // return this.axios.post(url, data, config);

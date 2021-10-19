@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import AwesomeLoading from 'react-native-awesome-loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { apiOtpPassword } from '../../ApiFunction/Auth';
 import ButtonCustom from "../../Components/ButtonCustom";
 import Input from "../../Components/Input";
 import { MainStyle } from "../../Style/main_style";
@@ -14,16 +15,22 @@ export default () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false)
     const getOtp = (values) => {
-        navigation.navigate('ComfirmOTP', { otp: "123456" })
+        console.log("values", values);
+        apiOtpPassword(values).then((e) => {
+            console.log("e", e);
+            if (e.status == 200 && e.data.code == "200") {
+                navigation.navigate('ComfirmOTP', values);
+            }
+        })
     }
 
     return (
         <Formik
             initialValues={{
-                sdt: ""
+                to: "966048002"
             }}
             onSubmit={(values) => {
-                getOtp(values)
+                getOtp({ to: "+84" + values.to })
             }}
         >
             {({ submitForm }) => (
@@ -41,10 +48,13 @@ export default () => {
                         <View style={[MainStyle.boxShadow, styles.containLogin]}>
                             <Field
                                 component={Input}
-                                name="sdt"
+                                name="to"
                                 iconLeft={faMobileAlt}
                                 placeholder="Nhập số điện thoại"
-
+                                keyboardType="phone-pad"
+                                textContentType='telephoneNumber'
+                                dataDetectorTypes='phoneNumber'
+                                maxLength={9}
                             />
                             <ButtonCustom
                                 styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}

@@ -11,11 +11,11 @@ export default StyleSheet.create({
     containLogin: {
         width: width * 0.9,
         backgroundColor: "#FFFF",
+        height: height,
         borderRadius: 20,
         padding: "5%",
-        paddingBottom: "5%",
-        marginBottom: "30%",
-        marginTop: "20%",
+        // paddingBottom: "5%",
+        // marginBottom: "30%",
     },
     BG: {
         height: height,
