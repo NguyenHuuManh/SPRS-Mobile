@@ -4,6 +4,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import moment from 'moment'
+import { MainStyle } from '../../Style/main_style';
+import { isEmpty } from 'lodash';
 interface Props {
     // name: any;
     form?: any;
@@ -29,11 +31,13 @@ export default (props: Props) => {
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate;
         setShow(Platform.OS === 'ios');
-        setFieldValue(name, moment(currentDate).format("DD-MM-YYYY"))
+        setFieldValue(name, moment(currentDate).format("DD/MM/YYYY"))
     };
 
     const revertDate = (value) => {
-        let arr = value.split("/")
+        const dateStr = isEmpty(value) ? moment().format("DD/MM/YYYY") : value
+        console.log("dateStr", dateStr)
+        let arr = dateStr.split("/");
         return arr[2] + "/" + arr[1] + "/" + arr[0]
     }
 
@@ -48,13 +52,20 @@ export default (props: Props) => {
                         iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} /></View>)
                     }
                     <TouchableOpacity onPress={() => { setShow(true) }} style={[styles.input]}>
-                        <Text>{value} </Text>
+                        <View pointerEvents="none">
+                            <TextInput
+                                {...props}
+                                placeholder={placeholder}
+                                value={value}
+                            >
+                            </TextInput>
+                        </View>
                     </TouchableOpacity>
                     {
                         iconRight && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconRight} /></View>)
                     }
                 </View>
-                {touched[name] && errors[name] && <div className="err-text">{errors[name]}</div>}
+                {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
             </View>
             {show && (
                 <DateTimePicker

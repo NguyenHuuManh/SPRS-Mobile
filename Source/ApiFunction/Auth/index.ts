@@ -13,15 +13,10 @@ export const apiSigup = async (body) => {
             `${signupUser}`, body
         );
     }
-    if (body.groups_user[0].id == 2) {
-        // return await httpServices.post(
-        //     `${singupOrganization}`, body
-        // );
-    }
-    if (body.groups_user[0].id == 3) {
-        // return await httpServices.post(
-        //     `${singupStore}`, body
-        // );
+    if (body.groups_user[0].id == 7) {
+        return await httpServices.post(
+            `${singupStore}`, body
+        );
     }
 };
 

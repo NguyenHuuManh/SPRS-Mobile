@@ -1,5 +1,6 @@
+import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 import { Field, Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView, Text, View
 } from "react-native";
@@ -7,6 +8,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
+import MapPicker from "../../Components/MapPicker";
 import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import MapView from "./components/MapView";
@@ -14,7 +16,7 @@ import styles from "./styles";
 
 
 const App = ({ navigation }) => {
-
+  const [adressPoint, setAdressPoint] = useState<any>({})
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ height: height * 0.1 }}>
@@ -85,13 +87,17 @@ const App = ({ navigation }) => {
                 placeholder="Mô tả"
                 styleTitle={{ width: 110 }}
               />
-              <View style={{ width: width, justifyContent: "center", alignItems: "center" }}>
-                <View style={[styles.containMap, MainStyle.boxShadow]}>
-                  <MapView />
-                </View>
-              </View>
+              <MapPicker
+                title="Địa điểm"
+                styleTitle={{ width: 110 }}
+                horizontal
+                iconRight={faMapMarkedAlt}
+                iconSize={20}
+                setAdress={setAdressPoint}
+                adress={adressPoint}
+              />
               {/* <View style={{ flex: 1 }}> */}
-              <ButtonCustom title={"Thêm mới"} styleContain={{ backgroundColor: "#F6BB57" }} onPress={() => { navigation.goBack() }} />
+              <ButtonCustom title={"Thêm mới"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 50 }} onPress={() => { navigation.goBack() }} />
               {/* </View> */}
             </View>
           )}

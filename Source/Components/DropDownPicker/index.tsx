@@ -5,6 +5,7 @@ import { apiGetGroups } from "../../ApiFunction/List";
 import styles from "./styles";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { checkCallAPI } from "../../Helper/FunctionCommon";
+import { MainStyle } from "../../Style/main_style";
 interface Props {
     // name: any;
     form?: any;
@@ -73,12 +74,11 @@ export default (props: Props) => {
                     iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} /></View>)
                 }
                 <TouchableOpacity onPress={() => { setShow(true) }} style={styles.input}>
-                    <View style={{ width: "90%" }}>
+                    <View style={{ width: "90%" }} pointerEvents="none" >
                         <TextInput
                             // {...field}
                             {...remainProps}
                             value={textInputValue}
-                            editable={false}
                             placeholder={placeholder}
                         />
                     </View>
@@ -112,7 +112,7 @@ export default (props: Props) => {
                     iconRight && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconRight} /></View>)
                 }
             </View>
-            {touched[name] && errors[name] && <div className="err-text">{errors[name]}</div>}
+            {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
         </View>
     )
 }

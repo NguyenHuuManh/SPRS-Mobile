@@ -15,6 +15,7 @@ import MapPicker from "../../Components/MapPicker";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
+import { register } from "./validate";
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
     const navigation = useNavigation();
@@ -65,71 +66,74 @@ export default () => {
         }
     }
     return (
-        <Formik
-            initialValues={{
-                username: "manhhe",
-                phone: "0966048002",
-                password: "password",
-                rePassWord: "password",
-                full_name: "Nguyễn Hữu Mạnh",
-                dob: "09/09/1999",
-                city: "",
-                province: "",
-                district: "",
-                subDistrict: "",
-                addressLine: "",
-                groupsId: "1",
-                adresslineORG: "",
+        <KeyboardAwareScrollView style={{ backgroundColor: "#F6BB57", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "5%", paddingBottom: 50 }} showsVerticalScrollIndicator={false}>
+            <Formik
+                initialValues={{
+                    username: "manhhe",
+                    phone: "0966048002",
+                    password: "password",
+                    rePassWord: "password",
+                    full_name: "Nguyễn Hữu Mạnh",
+                    dob: "",
+                    city: "",
+                    province: "",
+                    district: "",
+                    subDistrict: "",
+                    addressLine: "",
+                    groupsId: "",
+                    adresslineORG: "",
 
-            }}
-            onSubmit={(values) => {
-                let user = {
-                    username: values.username,
-                    phone: values.phone,
-                    password: values.password,
-                    full_name: values.full_name,
-                    dob: values.dob,
-                    address: {
-                        city: values.city || "",
-                        province: values?.province || "",
-                        district: values?.district || "",
-                        subDistrict: values?.subDistrict || "",
-                        addressLine: values?.addressLine || "",
-                    },
-                    groups_user: [{ id: values.groupsId }],
-                    organization: {}
-                }
-                if (values.groupsId + "" == "4") {
-                    user.organization = {
-                        name: "",
-                        founded: "",
-                        description: "",
+                }}
+                validationSchema={register}
+                onSubmit={(values) => {
+                    let user = {
+                        username: values.username,
+                        phone: values.phone,
+                        password: values.password,
+                        full_name: values.full_name,
+                        dob: values.dob,
                         address: {
-                            city: organizationInfor.city || "",
-                            province: organizationInfor?.province || "",
-                            district: organizationInfor?.district || "",
-                            subDistrict: organizationInfor?.subDistrict || "",
-                            addressLine: organizationInfor?.addressLine || "",
-                        }
-
+                            city: values.city || "",
+                            province: values?.province || "",
+                            district: values?.district || "",
+                            subDistrict: values?.subDistrict || "",
+                            addressLine: values?.addressLine || "",
+                        },
+                        groups_user: [{ id: values.groupsId }],
+                        organization: {}
                     }
-                }
-                if (values.groupsId + "" !== "4") {
-                    delete user.organization
-                }
-                signup(user);
+                    if (values.groupsId + "" == "4") {
+                        user.organization = {
+                            name: "",
+                            founded: "",
+                            description: "",
+                            address: {
+                                city: organizationInfor.city || "",
+                                province: organizationInfor?.province || "",
+                                district: organizationInfor?.district || "",
+                                subDistrict: organizationInfor?.subDistrict || "",
+                                addressLine: organizationInfor?.addressLine || "",
+                            }
 
-            }
-            }
-        >
-            {({ submitForm, values }) => (
-                <KeyboardAwareScrollView style={{ backgroundColor: "#F6BB57", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "5%" }} showsVerticalScrollIndicator={false}>
+                        }
+                    }
+                    if (values.groupsId + "" !== "4") {
+                        delete user.organization
+                    }
+                    signup(user);
+
+                }
+                }
+            >
+                {({ submitForm, values, errors }) => (
                     <View style={[MainStyle.boxShadow, styles.containLogin]}>
                         {/* <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." /> */}
+                        {console.log("errors", errors)}
+
                         <Field
                             component={DropDownPicker}
                             name="groupsId"
-                            title="Loại tài khoản"
+                            // title="Loại tài khoản"
                             horizontal
                             styleTitle={{ width: 90 }}
                             placeholder="Chọn loại tài khoản"
@@ -138,7 +142,7 @@ export default () => {
                             component={Input}
                             name="username"
                             placeholder="Nhập tên tài khoản"
-                            title="Tên tài khoản"
+                            // title="Tên tài khoản"
                             horizontal
                             styleTitle={{ width: 90 }}
                         />
@@ -146,7 +150,7 @@ export default () => {
                             component={Input}
                             name="full_name"
                             placeholder="Nhập họ và tên"
-                            title="Họ và tên"
+                            // title="Họ và tên"
                             horizontal
                             styleTitle={{ width: 90 }}
                         />
@@ -154,7 +158,7 @@ export default () => {
                             component={Input}
                             keyboardType="numeric"
                             name="phone"
-                            title="Số điện thoại"
+                            // title="Số điện thoại"
                             horizontal
                             styleTitle={{ width: 90 }}
                             placeholder="Nhập số điện thoại"
@@ -162,7 +166,7 @@ export default () => {
 
                         <Field
                             component={DateTimePicker}
-                            title="Ngày sinh"
+                            // title="Ngày sinh"
                             horizontal
                             styleTitle={{ width: 90 }}
                             name="dob"
@@ -171,7 +175,7 @@ export default () => {
                         <Field
                             component={Input}
                             name="city"
-                            title="Tỉnh/Thành phố"
+                            // title="Tỉnh/Thành phố"
                             horizontal
                             styleTitle={{ width: 90 }}
                             placeholder="Tỉnh/Thành phố"
@@ -179,7 +183,7 @@ export default () => {
                         <Field
                             component={Input}
                             name="district"
-                            title="Quận/Huyện"
+                            // title="Quận/Huyện"
                             horizontal
                             styleTitle={{ width: 90 }}
                             placeholder="Quận/Huyện"
@@ -187,7 +191,7 @@ export default () => {
                         <Field
                             component={Input}
                             name="subDistrict"
-                            title="Xã/Phường"
+                            // title="Xã/Phường"
                             horizontal
                             styleTitle={{ width: 90 }}
                             placeholder="Xã/Phường"
@@ -196,7 +200,7 @@ export default () => {
                             values.groupsId == "4" && (
                                 <>
                                     <MapPicker
-                                        title="Địa điểm tổ chức"
+                                        // title="Địa điểm tổ chức"
                                         styleTitle={{ width: 90 }}
                                         horizontal
                                         iconRight={faMapMarkedAlt}
@@ -207,7 +211,7 @@ export default () => {
                                     <Field
                                         component={Input}
                                         name="adresslineORG"
-                                        title="Địa chỉ chi tiết tổ chức"
+                                        // title="Địa chỉ chi tiết tổ chức"
                                         horizontal
                                         styleTitle={{ width: 90 }}
                                         placeholder="Địa chỉ chi tiết tổ chức"
@@ -219,7 +223,7 @@ export default () => {
                         <Field
                             component={Input}
                             name="password"
-                            title="Mật khẩu"
+                            // title="Mật khẩu"
                             horizontal
                             styleTitle={{ width: 90 }}
                             secureTextEntry={secureTextEntry}
@@ -230,7 +234,7 @@ export default () => {
                         />
                         <Field
                             component={Input}
-                            title="Nhập lại mật khẩu"
+                            // title="Nhập lại mật khẩu"
                             horizontal
                             styleTitle={{ width: 90 }}
                             secureTextEntry
@@ -247,10 +251,10 @@ export default () => {
                             <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.goBack() }}>đăng nhập</Text>
                         </View>
                     </View>
-                </KeyboardAwareScrollView>
+                )
+                }
+            </Formik >
+        </KeyboardAwareScrollView>
 
-            )
-            }
-        </Formik >
     )
 }

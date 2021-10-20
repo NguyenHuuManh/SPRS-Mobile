@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React, { useCallback } from "react";
 import { Text, TextInput, View, ViewStyle } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 interface Props {
     // name: any;
@@ -79,7 +80,7 @@ const Input = (props: Props) => {
                     }
                 </View>
             </View>
-            {touched[name] && errors[name] && <div className="err-text">{errors[name]}</div>}
+            {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
         </View>
     )
 }

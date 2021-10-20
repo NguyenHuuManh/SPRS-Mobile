@@ -11,7 +11,7 @@ export default StyleSheet.create({
     containLogin: {
         width: width * 0.9,
         backgroundColor: "#FFFF",
-        height: height,
+        // height: height,
         borderRadius: 20,
         padding: "5%",
         // paddingBottom: "5%",

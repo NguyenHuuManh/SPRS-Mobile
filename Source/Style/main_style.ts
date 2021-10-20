@@ -31,5 +31,11 @@ export const MainStyle = StyleSheet.create({
     },
     flexColumn: {
         flexDirection: "column"
+    },
+    texError: {
+        color: "red",
+        marginLeft: 10,
+        fontSize: 10,
     }
+
 });

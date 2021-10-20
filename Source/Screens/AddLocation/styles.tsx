@@ -13,6 +13,8 @@ export default StyleSheet.create({
         width: width,
         // alignItems: "center",
         justifyContent: "flex-start",
+        paddingLeft: 10,
+        paddingRight: 10
     },
     containMap: {
         width: "90%",
