@@ -2,10 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React, { useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import { apiGetGroups } from "../../ApiFunction/List";
-import styles from "./styles";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { checkCallAPI } from "../../Helper/FunctionCommon";
 import { MainStyle } from "../../Style/main_style";
+import styles from "./styles"
+import { findIndex, isEmpty } from "lodash";
 interface Props {
     // name: any;
     form?: any;
@@ -21,10 +22,12 @@ interface Props {
     iconSize?: number;
     horizontal?: boolean;
     styleTitle?: any;
+    defaultValue?: any;
+    disabled?: boolean;
 }
 
 export default (props: Props) => {
-    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, ...remainProps } = props
+    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, disabled, ...remainProps } = props
     const { name, value } = field
     const { errors, touched, setFieldValue } = form;
     const [textInputValue, setTextInputValue] = useState("");
@@ -37,7 +40,7 @@ export default (props: Props) => {
                 checkCallAPI(
                     res,
                     (response) => {
-                        console.log("resGroups", response);
+                        // console.log("resGroups", response);
                         setData(response.lstObj);
                     },
                     (e) => { }
@@ -45,12 +48,24 @@ export default (props: Props) => {
             })
             .catch((error) => { })
     }
+
+    useEffect(() => {
+        if (field?.value && !isEmpty(field?.value + "") && data.length > 0) {
+            // data ? data?.find((option) => option?.value?.toString() === field?.value?.toString()) : '';
+            const index = findIndex(data, function (e) {
+                return e.id == field.value;
+            })
+            const option = data[index];
+            setTextInputValue(option?.name);
+        }
+    }, [field?.value, data])
+
     useEffect(() => {
         callGetGroupList();
     }, [])
     const onSelect = (item) => {
         setFieldValue(name, item.id);
-        setTextInputValue(item?.name);
+        // setTextInputValue(item?.name);
         setShow(false)
     }
 
@@ -60,7 +75,7 @@ export default (props: Props) => {
                 key={item.id}
                 style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? 'rgba(60, 60, 60,0.1)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
                 onPress={() => { onSelect(item) }}>
-                <Text>{item?.name}</Text>
+                <Text key={item.id}>{item?.name}</Text>
             </TouchableOpacity>
         )
     }
@@ -73,7 +88,7 @@ export default (props: Props) => {
                 {
                     iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} /></View>)
                 }
-                <TouchableOpacity onPress={() => { setShow(true) }} style={styles.input}>
+                <TouchableOpacity onPress={() => { setShow(true) }} style={styles.input} disabled={disabled}>
                     <View style={{ width: "90%" }} pointerEvents="none" >
                         <TextInput
                             // {...field}
@@ -88,12 +103,12 @@ export default (props: Props) => {
                 </TouchableOpacity>
                 <Modal
                     visible={show}
-                    animationType="slide"
+                    animationType="fade"
                     transparent={true}
                 >
                     <TouchableOpacity
                         onPress={() => { setShow(false) }}
-                        style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: 'rgba(60, 60, 60,0.9)' }}>
+                        style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: 'rgba(60, 60, 60,0.2)' }}>
                         <TouchableWithoutFeedback
                             onPress={(e) => { e.preventDefault() }}
                             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -102,7 +117,6 @@ export default (props: Props) => {
                                     data={data}
                                     keyExtractor={({ value }) => value}
                                     renderItem={renderItem}
-                                    key="DroplistGroup"
                                 />
                             </View>
                         </TouchableWithoutFeedback>

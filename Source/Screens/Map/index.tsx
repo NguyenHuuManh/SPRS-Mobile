@@ -1,6 +1,7 @@
 import { faBell, faSearchLocation, faUserCircle, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
+import { debounce } from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, KeyboardAvoidingView, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
@@ -10,7 +11,7 @@ import AutoCompleteSearchLocation from "../../Components/AutoCompleteSearchLocat
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { handleLocationPermission } from "../../Helper/FunctionCommon";
-import { height } from "../../Helper/responsive";
+import { height, width } from "../../Helper/responsive";
 import { profileActions, userActions } from "../../Redux/Actions";
 import { RootState } from "../../Redux/Reducers";
 import Filter from "./Components/Filter";
@@ -67,6 +68,7 @@ export default () => {
     //     )
     //     handleLocationPermission();
     // }, [])
+
 
     const onMapReady = () => {
         mapRef.current.getMapBoundaries().then((e) => {
@@ -165,28 +167,13 @@ export default () => {
                                 setSouthWest(e.southWest);
                             });
                         }
+                        console.log(
+                            Math.log2(360 * (width / 256 / region.longitudeDelta)) + 1, "level"
+                        );
 
                     }}
                     onMapReady={() => { onMapReady() }}
-
-
-
-                // onPress={(e) => {
-                //     listMarker.push({ longitude: e.nativeEvent.coordinate.longitude, latitude: e.nativeEvent.coordinate.latitude })
-                //     setMarker(e.nativeEvent.coordinate)
-                // }}
-
                 >
-                    {/* {listMarker.map((e, index) => {
-                    return (
-                        <Marker
-                            key={index}
-                            coordinate={e}
-                            title={"marker.title"}
-                            description={"marker.description"}
-                        />
-                    )
-                })} */}
                     {mapReady && (
                         <>
                             <Marker

@@ -3,7 +3,6 @@ import { useNavigation } from "@react-navigation/core";
 import { Field, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { ImageBackground, Text, View } from "react-native";
-import AwesomeLoading from 'react-native-awesome-loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch, useSelector } from "react-redux";
 import ButtonCustom from "../../Components/ButtonCustom";
@@ -14,6 +13,7 @@ import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import Toast from 'react-native-toast-message';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Loading from '../../Components/Loading';
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -26,7 +26,7 @@ export default () => {
     return (
         <Formik
             initialValues={{
-                username: "Manh",
+                username: "Manh130564",
                 password: "password"
             }}
             onSubmit={(values) => {
@@ -35,7 +35,7 @@ export default () => {
         >
             {({ submitForm }) => (
                 <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "red", }} contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
-                    {/* <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." /> */}
+                    <Loading isVisible={userReducer.isLoading} />
                     <ImageBackground source={require('../../Assets/Images/backdgroundpng.png')}
                         resizeMode="stretch"
                         style={[styles.BG]}

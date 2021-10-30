@@ -46,6 +46,7 @@
     "react-native-maps": "^0.28.0",
     "react-native-masked-loader": "^1.1.4",
     "react-native-masked-view": "^0.2.0",
+    "react-native-modal": "^13.0.0",
     "react-native-pager-view": "^5.4.4",
     "react-native-permissions": "3.0.1",
     "react-native-placesearch": "^3.0.3",

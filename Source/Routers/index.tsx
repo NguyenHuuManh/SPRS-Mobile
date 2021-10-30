@@ -95,12 +95,12 @@ const RootStackScreen = () => {
         if (!isEmpty(userReducer?.data?.token || {})) {
             dispatch(profileActions.profileRequest())
         }
-        // if (isEmpty(userReducer?.data?.token || {}) && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
-        //     navigation.reset({
-        //         index: 0,
-        //         routes: [{ name: 'AuStackScreen' }]
-        //     })
-        // }
+        if (isEmpty(userReducer?.data?.token || {}) && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'AuStackScreen' }]
+            })
+        }
     }, [userReducer])
 
     return (

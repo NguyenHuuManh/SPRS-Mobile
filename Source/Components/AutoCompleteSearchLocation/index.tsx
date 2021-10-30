@@ -1,9 +1,11 @@
 import { faMapMarkerAlt, faSearchLocation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { isEmpty } from 'lodash';
-import React, { useEffect, useState } from "react";
+import { debounce, isEmpty } from 'lodash';
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import Toast from 'react-native-toast-message';
+import { apiPlaceAutoComplete, apiPlaceDetailById } from '../../ApiFunction/PlaceAPI';
 import { MainStyle } from "../../Style/main_style";
 import style from "./style";
 interface Props {
@@ -16,56 +18,38 @@ export default (props: Props) => {
     const [data, setData] = useState([]);
     const [itemSelect, setItemSelect] = useState<any>({})
     const [isShow, setIsShow] = useState(false)
-    const dataDum = [
-        {
-            name: "Hà nội",
-            id: 1,
-        },
-        {
-            name: "Quảng ninh",
-            id: 2,
-        },
-        {
-            name: "Hải phòng",
-            id: 3,
-        },
-        {
-            name: "Hải dương",
-            id: 4,
-        },
-        {
-            name: "Lào cai",
-            id: 5,
-        },
-        {
-            name: "Yên bái",
-            id: 6,
-        },
-        {
-            name: "Lạng sơn",
-            id: 7,
-        },
-        {
-            name: "Lào cai",
-            id: 8,
-        },
-        {
-            name: "Yên bái",
-            id: 9,
-        },
-        {
-            name: "Lạng sơn",
-            id: 10,
-        },
-    ]
+    const callAutoComplete = (key) => {
+        apiPlaceAutoComplete(key).then((e) => {
+            if (e.data.status == "OK") {
+                setData(e.data.predictions);
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: e.data.status,
+                    position: "top"
+                })
+            }
+        })
+    }
+
+    const debounceDropDown = useCallback(debounce((nextValue) => callAutoComplete(nextValue), 100), [])
+
+    function handleInputOnchange(e) {
+        setInputState(e);
+        debounceDropDown(e);
+    }
 
     useEffect(() => {
-
-    }, [inputState])
+        if (isEmpty(data)) setIsShow(false)
+        if (!isShow) setIsShow(true);
+    }, [data])
 
     useEffect(() => {
         if (isEmpty(itemSelect)) return
-        setInputState(itemSelect.name)
+        setInputState(itemSelect.description)
+        apiPlaceDetailById(itemSelect.place_id).then((e) => {
+            onPress(e.data.result);
+        })
     }, [itemSelect])
 
     const renderItem = ({ item, index }) => {
@@ -73,11 +57,11 @@ export default (props: Props) => {
             <TouchableOpacity style={style.item} onPress={() => {
                 setIsShow(false)
                 setItemSelect(item)
-            }} key={item.id}>
+            }} key={item.place_id}>
                 <View style={{ width: "10%" }}>
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                 </View>
-                <Text>{item.name}</Text>
+                <Text>{item.description}</Text>
             </TouchableOpacity>
         )
     }
@@ -97,12 +81,11 @@ export default (props: Props) => {
                 <View style={{ width: "70%" }}>
                     <TextInput
                         style={style.input}
-                        onFocus={() => {
-                            setData(dataDum)
-                            setIsShow(true)
-                        }}
+                        // onFocus={() => {
+                        //     setIsShow(true)
+                        // }}
                         value={inputState}
-                    // onBlur={() => { setData([]) }}
+                        onChangeText={handleInputOnchange}
                     />
                 </View>
                 <View style={{ width: "15%" }}>
@@ -115,7 +98,6 @@ export default (props: Props) => {
             <Modal
                 visible={isShow}
                 transparent={true}
-            // animationType="fade"
             >
 
                 <TouchableOpacity

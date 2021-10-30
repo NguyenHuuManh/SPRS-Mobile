@@ -7,9 +7,12 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import { apiSigup } from "../../ApiFunction/Auth";
+import AppSelectAccount from "../../Components/AppSelectAccount";
+import AppSelectHuyen from "../../Components/AppSelectHuyen";
+import AppSelectTinh from "../../Components/AppSelectTinh";
+import AppSelectXa from "../../Components/AppSelectXa";
 import ButtonCustom from "../../Components/ButtonCustom";
 import DateTimePicker from "../../Components/DateTimePicker";
-import DropDownPicker from "../../Components/DropDownPicker";
 import Input from "../../Components/Input";
 import MapPicker from "../../Components/MapPicker";
 import { RootState } from "../../Redux/Reducers";
@@ -19,6 +22,8 @@ import { register } from "./validate";
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
     const navigation = useNavigation();
+    const [idTinh, setIdTinh] = useState("");
+    const [idHuyen, setIdHuyen] = useState("");
     const [organizationInfor, setOrganizationInfor] = useState<{
         city: string,
         province: string,
@@ -39,9 +44,7 @@ export default () => {
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const signup = (body) => {
         const param = { ...body }
-
         console.log("param", param);
-
         try {
             apiSigup(param)
                 .then((e) => {
@@ -56,7 +59,7 @@ export default () => {
                     } else {
                         Toast.show({
                             type: "error",
-                            text1: e.data.errors,
+                            text1: e.data.message,
                             position: "top"
                         })
                     }
@@ -84,6 +87,7 @@ export default () => {
                     adresslineORG: "",
 
                 }}
+                validateOnChange={false}
                 validationSchema={register}
                 onSubmit={(values) => {
                     let user = {
@@ -93,45 +97,34 @@ export default () => {
                         full_name: values.full_name,
                         dob: values.dob,
                         address: {
-                            city: values.city || "",
-                            province: values?.province || "",
-                            district: values?.district || "",
-                            subDistrict: values?.subDistrict || "",
-                            addressLine: values?.addressLine || "",
+                            city: {
+                                code: "",
+                                id: values.city,
+                                name: ""
+                            },
+                            district: {
+                                code: "",
+                                id: values?.district,
+                                name: ""
+                            },
+                            subDistrict: {
+                                code: "",
+                                id: values?.subDistrict,
+                                name: "",
+                            },
+                            addressLine: values?.addressLine,
                         },
                         groups_user: [{ id: values.groupsId }],
-                        organization: {}
-                    }
-                    if (values.groupsId + "" == "4") {
-                        user.organization = {
-                            name: "",
-                            founded: "",
-                            description: "",
-                            address: {
-                                city: organizationInfor.city || "",
-                                province: organizationInfor?.province || "",
-                                district: organizationInfor?.district || "",
-                                subDistrict: organizationInfor?.subDistrict || "",
-                                addressLine: organizationInfor?.addressLine || "",
-                            }
-
-                        }
-                    }
-                    if (values.groupsId + "" !== "4") {
-                        delete user.organization
                     }
                     signup(user);
-
                 }
                 }
             >
                 {({ submitForm, values, errors }) => (
                     <View style={[MainStyle.boxShadow, styles.containLogin]}>
                         {/* <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." /> */}
-                        {console.log("errors", errors)}
-
                         <Field
-                            component={DropDownPicker}
+                            component={AppSelectAccount}
                             name="groupsId"
                             // title="Loại tài khoản"
                             horizontal
@@ -173,28 +166,32 @@ export default () => {
                             placeholder="Nhập ngày sinh"
                         />
                         <Field
-                            component={Input}
+                            component={AppSelectTinh}
                             name="city"
                             // title="Tỉnh/Thành phố"
                             horizontal
                             styleTitle={{ width: 90 }}
                             placeholder="Tỉnh/Thành phố"
+                            onSelectOption={(item) => { setIdTinh(item?.id) }}
                         />
                         <Field
-                            component={Input}
+                            component={AppSelectHuyen}
                             name="district"
                             // title="Quận/Huyện"
                             horizontal
                             styleTitle={{ width: 90 }}
                             placeholder="Quận/Huyện"
+                            idTinh={idTinh}
+                            onSelectOption={(item) => { setIdHuyen(item?.id) }}
                         />
                         <Field
-                            component={Input}
+                            component={AppSelectXa}
                             name="subDistrict"
-                            // title="Xã/Phường"
+                            // title="Quận/Huyện"
                             horizontal
                             styleTitle={{ width: 90 }}
-                            placeholder="Xã/Phường"
+                            placeholder="Quận/Huyện"
+                            idHuyen={idHuyen}
                         />
                         {
                             values.groupsId == "4" && (

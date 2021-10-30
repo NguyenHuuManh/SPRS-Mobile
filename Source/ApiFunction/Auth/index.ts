@@ -1,4 +1,4 @@
-import { OTP_CHECKING, OTP_PASSWORD, profile, signin, signupUser, singupOrganization, singupStore } from "../../Constrants/api";
+import { OTP_CHECKING, OTP_PASSWORD, profile, signin, signupUser, singupOrganization, singupStore, UPDATE_PASS, UPDATE_PROFILE } from "../../Constrants/api";
 import httpServices from "../../Services/httpServices";
 
 export const apiSignin = async (body) => {
@@ -24,8 +24,8 @@ export const apiGetProfile = async () => {
     return await httpServices.get(`${profile}`);
 };
 
-export const apiUpdate = async (param, body) => {
-    return await httpServices.put(`${profile}/${param}`, body);
+export const apiUpdate = async (body) => {
+    return await httpServices.put(`${UPDATE_PROFILE}`, body);
 };
 
 export const apiOtpPassword = async (body) => {
@@ -35,3 +35,8 @@ export const apiOtpPassword = async (body) => {
 export const apiOtpChecking = async (body) => {
     return await httpServices.post(`${OTP_CHECKING}`, body);
 };
+
+export const apiUpdatePass = async (body) => {
+    return await httpServices.put(`${UPDATE_PASS}`, body);
+};
+

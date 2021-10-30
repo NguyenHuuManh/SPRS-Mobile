@@ -1,13 +1,12 @@
 import { call, put } from 'redux-saga/effects';
 import { apiGetProfile } from "../../../ApiFunction/Auth";
 import { STATUS } from '../../../Constrants/url';
-import httpServices from '../../../Services/httpServices';
-import { profileActions, userActions } from '../../Actions';
+import { profileActions } from '../../Actions';
 export function* getProfile() {
 
     try {
         const response = yield call(apiGetProfile);
-        console.log("responseProfile", response)
+        // console.log("responseProfile", response)
         if (STATUS.success.includes(response?.status)) {
             if (response?.data?.code + "" == "200") {
                 yield put(profileActions.profileSuccess(response?.data.obj));

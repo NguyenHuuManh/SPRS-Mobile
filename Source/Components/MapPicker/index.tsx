@@ -4,12 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { apiPlaceDetailByLongLat } from "../../ApiFunction/GoogleApi";
+import { apiPlaceDetailByLongLat } from "../../ApiFunction/PlaceAPI";
 import { checkKeyNull } from "../../Helper/FunctionCommon";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import AutoCompleteSearchLocation from "../AutoCompleteSearchLocation";
-import ButtonCustom from "../ButtonCustom";
 import styles from "./styles";
 
 interface Props {
@@ -47,26 +46,8 @@ export default (props: Props) => {
         longitudeDelta: 0.006866,
     });
     const [mapReady, setMapReady] = useState(false);
-    const [affterSearch, setAffterSearch] = useState(false)
-    const [defaultLocation, setDefaulocation] = useState({})
     const [marker, setMarker] = useState<any>({ ...region })
-    // const { visible, setVisible } = props
     const [visible, setVisible] = useState(false)
-    // const [adress, setAdress] = useState<{ city: string, province: string, district: string, subDistrict: string, GPS_Lati: string, GPS_long: string, }>({
-    //     city: "",
-    //     province: "",
-    //     district: "",
-    //     subDistrict: "",
-    //     GPS_Lati: "",
-    //     GPS_long: "",
-    // });
-
-    const updateRegion = (region) => {
-        setRegion(region);
-        if (affterSearch) {
-            setMarker(region)
-        }
-    }
 
 
     const getDetailPlace = (long: string | number, lat: string | number) => {
@@ -101,16 +82,12 @@ export default (props: Props) => {
                     ...marker, latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
                 })
-                setDefaulocation({
-                    ...region, latitude: response.coords.latitude,
-                    longitude: response.coords.longitude,
-                })
                 setMarker({
                     ...region, latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
                 })
             },
-            (error) => { console.log("error", error) },
+            (error) => { console.log("errorCurrentLocation", error) },
             {
                 distanceFilter: 10,
             }
@@ -123,6 +100,7 @@ export default (props: Props) => {
 
     var mapRef: MapView
     const MapAnimateTo = (region) => {
+        console.log("region", region);
         mapRef.animateToRegion(region)
     }
     return (
@@ -158,9 +136,10 @@ export default (props: Props) => {
             <Modal visible={visible} animationType="fade">
                 <View style={{ flex: 1, zIndex: 200 }}>
                     <AutoCompleteSearchLocation
-                        onPress={(data, detail) => {
+                        onPress={(data) => {
                             console.log("data", data);
-                            console.log("detail", detail);
+                            setMarker({ ...marker, longitude: data.geometry.location.lng, latitude: data.geometry.location.lat });
+                            MapAnimateTo({ ...region, latitude: data.geometry.location.lat, longitude: data.geometry.location.lng });
                         }}
                         renderRightButton={() => (
                             <TouchableOpacity onPress={() => { setVisible(false) }} style={{ justifyContent: "center", width: "100%", height: "100%", alignItems: "center" }}>
