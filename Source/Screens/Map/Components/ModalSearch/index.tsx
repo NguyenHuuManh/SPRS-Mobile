@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty } from "lodash";
 import React, { useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { apiGetReliefPoint } from "../../../../ApiFunction/ReliefPoint";
 import ButtonCustom from "../../../../Components/ButtonCustom";
 import HeaderContainer from "../../../../Components/HeaderContainer";
 import { height } from "../../../../Helper/responsive";
@@ -10,79 +11,51 @@ interface Props {
     visible: boolean;
     setVisible: any;
     setText: any;
+    map: any;
+    setRegion?: any;
+    region?: any
 }
 export default (props: Props) => {
-    const { visible, setVisible, setText } = props
+    const { visible, setVisible, setText, map, setRegion, region } = props
     const [itemSelected, setItemSelected] = useState<any>({});
     useEffect(() => {
         if (isEmpty(itemSelected)) setText("");
         setText(itemSelected.label);
     }, [itemSelected])
-    const [data, setData] = useState([
-        {
-            value: 1,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 2,
-            label: "Thạch hòa thạch thất hà nội"
-        },
-        {
-            value: 3,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 4,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 5,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 6,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 7,
-            label: "Thạch hòa thạch thất hà nội"
-        },
-        {
-            value: 8,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 9,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 10,
-            label: "Minh Đức tứ kỳ hải dương xịn"
-        }, {
-            value: 11,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 12,
-            label: "Minh Đức tứ kỳ hải dương"
-        },
-        {
-            value: 13,
-            label: "Minh Đức tứ kỳ hải dương xịn"
-        }
-    ])
+    const [data, setData] = useState([])
+
+    const getPoint = () => {
+        apiGetReliefPoint().then((e) => {
+            if (e.status == 200) {
+                if (e.data.code === "200") {
+                    setData(e.data.obj);
+                }
+            }
+        })
+    }
+
+
+
+    useEffect(() => { getPoint() }, [])
     const renderItem = ({ item, index }) => {
-        console.log("item", item);
         return (
             <TouchableOpacity
                 style={{ flexDirection: "row", height: 50, alignItems: "center", borderBottomWidth: 0.5, paddingLeft: 20, paddingRight: 20 }}
                 onPress={() => {
                     setItemSelected(item);
+                    map.current.animateToRegion({ // Takes a region object as parameter
+                        latitude: Number(item.address.gps_lati),
+                        longitude: Number(item.address.gps_long),
+                        latitudeDelta: 0.006866,
+                        longitudeDelta: 0.006866,
+                    }, 1000);
                     setVisible(false)
+                    console.log("map", map.current);
                 }}
+                key={item.id}
             >
                 <FontAwesomeIcon icon={faMapMarkedAlt} />
-                <Text style={{ paddingLeft: 10 }}>{item.label}</Text>
+                <Text style={{ paddingLeft: 10 }}>{item.name}</Text>
             </TouchableOpacity>
         )
     }
@@ -119,7 +92,7 @@ export default (props: Props) => {
             </View>
             <FlatList
                 data={data}
-                keyExtractor={(item) => item.value + ""}
+                keyExtractor={(item) => item.id + ""}
                 renderItem={renderItem}
             />
         </Modal>

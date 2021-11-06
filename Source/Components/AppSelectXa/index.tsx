@@ -1,26 +1,27 @@
-import { isEmpty, isNull } from "lodash";
+import { isEmpty, isNull, isUndefined } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity } from "react-native";
-import { apiGetGroups } from "../../ApiFunction/List";
-import { apiCity, apiDistrict, apiSubDistrict } from "../../ApiFunction/PlaceAPI";
+import { Text } from "react-native";
+import { apiSubDistrict } from "../../ApiFunction/PlaceAPI";
 import { checkCallAPI } from "../../Helper/FunctionCommon";
 import { MainStyle } from "../../Style/main_style";
-import AppSelect from "../AppSelect"
+import AppSelect from "../AppSelect";
 interface Props {
     form?: any;
     field?: any;
     idHuyen?: string | number;
-    defaultValue?: boolean;
+    // defaultValue?: boolean;
 }
 export default (props: Props) => {
-    const { field, form, idHuyen, defaultValue, ...remainProps } = props
+    const { field, form, idHuyen, ...remainProps } = props
     const { name, value } = field
-    const { errors, setFieldValue, touched, values } = form
-    const [data, setData] = useState([])
+    const { errors, setFieldValue, touched } = form
+    const [data, setData] = useState(null)
+    const [disableClear, setDisableClear] = useState(true);
 
     const callGetGroupList = () => {
-        if ((!idHuyen || isEmpty(idHuyen + "") || isNull(idHuyen)) && !defaultValue) {
-            setFieldValue(name, "");
+        if ((!idHuyen || isEmpty(idHuyen + "") || isNull(idHuyen)) && !isNull(data)) {
+            // setFieldValue(name, "");
+            setDisableClear(false);
             setData([]);
             return;
         }
@@ -29,12 +30,14 @@ export default (props: Props) => {
                 checkCallAPI(
                     res,
                     (response) => {
-                        setData(response.obj);
+                        setData([...response.obj]);
                     },
                     (e) => { }
                 );
             })
-            .catch((error) => { })
+            .catch((error) => {
+                console.log(error);
+            })
     }
     useEffect(() => {
         callGetGroupList();
@@ -52,11 +55,13 @@ export default (props: Props) => {
                     {...remainProps}
                     value={value}
                     data={data}
-                    onSelectCustum={onSelect}
-                    idKey="id"
-                    lableKey="name"
+                    onItemSelect={onSelect}
+                    keyValue={(item) => item.id}
+                    labelValue={(item) => item?.name}
+                    inputValue={(item) => item?.name}
+                    disableClear={disableClear}
                 />
-                {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
+                {errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
             </>
         )
     }
@@ -65,6 +70,10 @@ export default (props: Props) => {
             {...remainProps}
             value={value}
             data={data}
+            onItemSelect={onSelect}
+            keyValue={(item) => item.id}
+            labelValue={(item) => item?.name}
+            inputValue={(item) => item?.name}
         />
     )
 }

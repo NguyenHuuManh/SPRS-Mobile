@@ -12,11 +12,14 @@ export default StyleSheet.create({
         height: 50,
         paddingHorizontal: 10,
         lineHeight: 30,
-        borderBottomWidth: 0.5,
         borderRadius: 10,
         flex: 9,
         flexDirection: "row",
         alignItems: "center"
+    },
+
+    underLine: {
+        borderBottomWidth: 0.5,
     },
 
     icon: {

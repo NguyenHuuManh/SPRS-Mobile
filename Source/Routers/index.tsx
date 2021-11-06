@@ -4,25 +4,29 @@ import { useNavigation } from '@react-navigation/core';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { isEmpty } from 'lodash';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
 import { profileActions } from '../Redux/Actions';
 import ActionTypes from '../Redux/ActionTypes';
 import { RootState } from '../Redux/Reducers';
-import { AddLocation, Home, Signin } from '../Screens';
+import { Home, Signin } from '../Screens';
+import AddReliefPoint from '../Screens/AddReliefPoint';
+import AddStorePoint from '../Screens/AddStorePoint';
+import ChangePasswordAuth from '../Screens/ChangePasswordAuth';
 import ForgotPass from '../Screens/ForgotPass';
 import ChangePassword from '../Screens/ForgotPass/ChangePassword';
 import ComfirmOTP from '../Screens/ForgotPass/ComfirmOTP';
-import ReliefPoints from '../Screens/ReliefPoints';
+import StorePoints from '../Screens/StorePoints';
 import Map from '../Screens/Map';
+import Notification from '../Screens/Notification';
 import Profile from '../Screens/Profile';
 import Personal from '../Screens/Profile/Personal';
+import ReliefPoints from '../Screens/ReliefPoints';
 import Signup from '../Screens/Signup';
-import Notification from '../Screens/Notification';
-import ChangePasswordAuth from '../Screens/ChangePasswordAuth';
-import UserReducer from '../Redux/Reducers/UserReducer';
+import UpdateReliefPoint from '../Screens/UpdateReliefPoint';
+import UpdateStorePoint from '../Screens/UpdateStorePoint';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -118,8 +122,12 @@ const RootStackScreen = () => {
                     !isEmpty(userReducer?.data?.token || {}) && (
                         <>
                             <RootStack.Screen name="DrawScreen" component={DrawScreen} options={{ animationEnabled: true }} />
-                            <RootStack.Screen name="AddLocation" component={AddLocation} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="AddReliefPoint" component={AddReliefPoint} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="AddStorePoint" component={AddStorePoint} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="UpdateReliefPoint" component={UpdateReliefPoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="ReliefPoint" component={ReliefPoints} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="StorePoints" component={StorePoints} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="UpdateStorePoint" component={UpdateStorePoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="Personal" component={Personal} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="ChangePasswordAuth" component={ChangePasswordAuth} options={{ animationEnabled: true }} />
                         </>

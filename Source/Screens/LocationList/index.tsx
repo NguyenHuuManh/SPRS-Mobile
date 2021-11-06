@@ -1,15 +1,10 @@
-import React, { useState } from "react";
-import { Animated, Text, View } from "react-native";
-import { RectButton, TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import ButtonCustom from "../../Components/ButtonCustom";
+import React from "react";
+import { Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import HeaderContainer from "../../Components/HeaderContainer";
-import { height, width } from "../../Helper/responsive";
+import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
-import Swipeout from 'react-native-swipeout';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 const AVATA_SIZE = 100;
 const Margin_BT = 20;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
@@ -52,7 +47,7 @@ export default ({ navigation }) => {
                 <View style={{ flex: 1, flexDirection: "row" }}>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                         <View style={[MainStyle.boxShadow, styles.box]}>
-                            <TouchableOpacity onPress={() => { navigation.navigate("ReliefPoint") }} style={[styles.boxTouch]}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("StorePoints") }} style={[styles.boxTouch]}>
                                 <Text style={{ fontSize: 30 }}>Cửa hàng</Text>
                             </TouchableOpacity>
                         </View>

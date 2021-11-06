@@ -47,7 +47,7 @@ export default ({ navigation }) => {
                 <View style={{ flex: 1, flexDirection: "row" }}>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                         <View style={[MainStyle.boxShadow, styles.box]}>
-                            <TouchableOpacity onPress={() => { navigation.navigate("ReliefPoint") }} style={[styles.boxTouch]}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("StorePoints") }} style={[styles.boxTouch]}>
                                 <Text style={{ fontSize: 30 }}>Cửa hàng</Text>
                             </TouchableOpacity>
                         </View>

@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty } from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
@@ -27,6 +27,8 @@ interface Props {
     leftIconOnpress?: () => {};
     setAdress?: any;
     adress?: any;
+    defaultAdress?: any;
+    underLine?: boolean;
 }
 
 export default (props: Props) => {
@@ -37,33 +39,35 @@ export default (props: Props) => {
         styleTitle, secureTextEntry,
         setAdress, adress,
         leftIconOnpress,
+        defaultAdress,
+        underLine,
         ...remainProps
     } = props
-    const [region, setRegion] = useState({
-        latitude: 21.0263084,
-        longitude: 105.7709134,
-        latitudeDelta: 0.006866,
-        longitudeDelta: 0.006866,
-    });
+    const [region, setRegion] = useState<any>({});
     const [mapReady, setMapReady] = useState(false);
-    const [marker, setMarker] = useState<any>({ ...region })
+    const [marker, setMarker] = useState<any>({})
     const [visible, setVisible] = useState(false)
-
+    const mapRef = createRef<any>();
 
     const getDetailPlace = (long: string | number, lat: string | number) => {
-        apiPlaceDetailByLongLat(long, lat).then((response) => {
-            if (response.status == 200) {
-                const place = response?.data?.results[0]?.address_components;
-                setAdress({
-                    city: place[place.length - 1]?.long_name,
-                    province: place[place.length - 2]?.long_name,
-                    district: place[place.length - 2]?.long_name,
-                    subDistrict: place[place.length - 3]?.long_name,
-                    GPS_Lati: lat + "",
-                    GPS_long: long + "",
-                })
-            }
-        });
+        try {
+            apiPlaceDetailByLongLat(long, lat).then((response) => {
+                if (response.status == 200) {
+                    const place = response?.data?.results[0]?.address_components;
+                    // console.log("place", place);
+                    setAdress({
+                        city: place[place?.length - 1]?.long_name,
+                        province: place[place?.length - 2]?.long_name,
+                        district: place[place?.length - 2]?.long_name,
+                        subDistrict: place[place?.length - 3]?.long_name,
+                        GPS_Lati: lat + "",
+                        GPS_long: long + "",
+                    })
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
     useEffect(() => {
         getDetailPlace(marker.longitude, marker.latitude);
@@ -76,11 +80,8 @@ export default (props: Props) => {
                 setRegion({
                     ...region, latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
-                })
-
-                setMarker({
-                    ...marker, latitude: response.coords.latitude,
-                    longitude: response.coords.longitude,
+                    latitudeDelta: 0.006866,
+                    longitudeDelta: 0.006866,
                 })
                 setMarker({
                     ...region, latitude: response.coords.latitude,
@@ -95,13 +96,27 @@ export default (props: Props) => {
 
     }
     useEffect(() => {
+        if (defaultAdress) {
+            console.log("AdressDeffault", defaultAdress);
+            setRegion({
+                ...region,
+                latitude: Number(defaultAdress.GPS_Lati),
+                longitude: Number(defaultAdress.GPS_long),
+                latitudeDelta: 0.006866,
+                longitudeDelta: 0.006866,
+            })
+            setMarker(
+                {
+                    latitude: Number(defaultAdress.GPS_Lati),
+                    longitude: Number(defaultAdress.GPS_long),
+                }
+            )
+            return;
+        }
         getCurrentLocation();
     }, [])
-
-    var mapRef: MapView
-    const MapAnimateTo = (region) => {
-        console.log("region", region);
-        mapRef.animateToRegion(region)
+    const onMapReady = () => {
+        setMapReady(true);
     }
     return (
         <>
@@ -115,11 +130,11 @@ export default (props: Props) => {
                                 <FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} />
                             </View>)
                     }
-                    <View style={[styles.inputContainer]}>
+                    <View style={[styles.inputContainer, underLine ? styles.underLine : {}]}>
                         {isEmpty(checkKeyNull(adress)) ? (
                             <Text onPress={() => { setVisible(true) }} style={styles.input}>Chọn địa điểm</Text>
                         ) : (
-                            <Text numberOfLines={1} ellipsizeMode='tail' onPress={() => { setVisible(true) }} style={styles.input}>{`${adress?.subDistrict}-${adress?.district}-${adress?.province}`}</Text>
+                            <Text numberOfLines={1} ellipsizeMode='tail' onPress={() => { setVisible(true) }} style={styles.input}>{`${adress?.subDistrict}-${adress?.district}-${adress?.city}`}</Text>
                         )}
                         {
                             iconRight && (
@@ -137,10 +152,10 @@ export default (props: Props) => {
                 <View style={{ flex: 1, zIndex: 200 }}>
                     <AutoCompleteSearchLocation
                         onPress={(data) => {
-                            console.log("data", data);
                             setMarker({ ...marker, longitude: data.geometry.location.lng, latitude: data.geometry.location.lat });
-                            MapAnimateTo({ ...region, latitude: data.geometry.location.lat, longitude: data.geometry.location.lng });
                         }}
+                        mapRef={mapRef}
+                        region={region}
                         renderRightButton={() => (
                             <TouchableOpacity onPress={() => { setVisible(false) }} style={{ justifyContent: "center", width: "100%", height: "100%", alignItems: "center" }}>
                                 <Text>Xong</Text>
@@ -157,34 +172,34 @@ export default (props: Props) => {
                         <Text>{marker?.latitude}-{marker?.longitude}</Text>
                     </View>
                     <View style={[styles.containMap, MainStyle.boxShadow]}>
-                        <MapView
-                            provider={PROVIDER_GOOGLE}
-                            style={{ flex: 3 }}
-                            showsUserLocation={true}
-                            showsMyLocationButton={false}
-                            region={region}
-                            zoomEnabled
-                            ref={(mapView) => { mapRef = mapView; }}
-                            onRegionChangeComplete={(e) => {
-                                setRegion(e);
-                            }}
-                            onMapReady={() => { setMapReady(true); }}
-                            onPress={(e) => {
-                                setMarker({ ...e.nativeEvent.coordinate })
-                            }}
+                        {
+                            !isEmpty(region) && visible && <MapView
+                                provider={PROVIDER_GOOGLE}
+                                initialRegion={region}
+                                style={{ flex: 10 }}
+                                showsUserLocation={true}
+                                showsMyLocationButton={true}
+                                followsUserLocation
+                                zoomControlEnabled
+                                zoomEnabled
+                                ref={mapRef}
+                                onMapReady={onMapReady}
+                                onPress={(e) => {
+                                    setMarker({ ...e.nativeEvent.coordinate })
+                                }}
+                            >
+                                {mapReady && !isEmpty(marker) && (
+                                    <>
+                                        <Marker
+                                            coordinate={marker}
+                                            title={"marker.title"}
+                                            description={"marker.description"}
+                                        />
+                                    </>
 
-                        >
-                            {mapReady && (
-                                <>
-                                    <Marker
-                                        coordinate={marker}
-                                        title={"marker.title"}
-                                        description={"marker.description"}
-                                    />
-                                </>
-
-                            )}
-                        </MapView>
+                                )}
+                            </MapView>
+                        }
                     </View>
                 </View>
 

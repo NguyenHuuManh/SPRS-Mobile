@@ -19,6 +19,8 @@ export const OTP_PASSWORD = `${URL}/sprs/api/generateOtp`
 
 export const OTP_CHECKING = `${URL}/sprs/api/validateOtp`
 
+export const RESET_PASSWORD = `${URL}/sprs/api/forgotPassword`
+
 // export const PLACE_AUTOCOMPLETE = `${URL_GOOGLE}/place/autocomplete/json`
 
 export const PLACE_AUTOCOMPLETE = `${URL_GOONG}/Place/AutoComplete`
@@ -33,10 +35,15 @@ export const DISTRICT = `${URL}/sprs/api/address/district/`
 export const SUBDISTRICT = `${URL}/sprs/api/address/subdistrict/`
 
 //api tao diem cuu tro
-
 export const CREATE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/create`
 export const GET_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/get`
+export const UPDATE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/update`
+//api store
+export const CREATE_STORE_POINT = `${URL}/sprs/api/store-manage/create`
+export const UPDATE_STORE_POINT = `${URL}/sprs/api/store-manage/update`
+export const GET_STORE_POINT = `${URL}/sprs/api/store-manage/get`
 //
+
 
 
 

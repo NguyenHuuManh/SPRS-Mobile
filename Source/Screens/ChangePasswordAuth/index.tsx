@@ -41,7 +41,7 @@ export default ({ navigation }) => {
     return (
         <Formik
             initialValues={{
-                oldPasword: "",
+                oldPasword: "u3WvyfOA",
                 newPassword: "",
                 reNewPassword: "",
             }}

@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { AppColor } from '../../Helper/propertyCSS';
 import { height } from '../../Helper/responsive';
 // import { measure, padding } from '../../Helpers';
 
@@ -13,19 +14,20 @@ export default StyleSheet.create({
         height: 50,
         paddingHorizontal: 10,
         lineHeight: 30,
-        borderBottomWidth: 0.5,
-        // fontSize: 18,
         borderRadius: 10,
         flex: 9,
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        // backgroundColor: "pink",
+    },
+
+    underLine: {
+        borderBottomWidth: 0.5,
     },
 
     input: {
         flex: 10,
-        color: "red",
+        color: AppColor.CORLOR_TEXT,
         flexWrap: "wrap",
         overflow: "scroll"
     },

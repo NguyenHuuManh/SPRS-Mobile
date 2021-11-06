@@ -14,7 +14,6 @@ export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const profileReducer = useSelector((state) => state.profileReducer);
-    console.log("profileReducer", profileReducer);
     return (
         <View style={{ width: width, height: height, paddingBottom: 80, backgroundColor: BackgoundMain, }}>
             <View style={{ flex: 2, alignItems: "center", zIndex: 100, backgroundColor: "pink", justifyContent: "center" }}>

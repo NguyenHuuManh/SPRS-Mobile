@@ -19,7 +19,7 @@ export default (state = initialState, action) => {
         case ActionTypes.LOGIN_REQUEST:
             return {
                 type: action.type,
-                isLoading: action.isLoading,
+                isLoading: true,
                 isGuest: false,
             }
         case ActionTypes.LOGIN_FAILED:
@@ -27,7 +27,7 @@ export default (state = initialState, action) => {
                 ...state,
                 type: action.type,
                 errMessage: action.err,
-                isLoading: action.isLoading,
+                isLoading: false,
                 isGuest: false,
             }
         case ActionTypes.LOGIN_SUCCESS:
@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
                 ...state,
                 type: action.type,
                 data: action.response,
-                isLoading: action.isLoading,
+                isLoading: false,
                 isGuest: false,
             }
         case ActionTypes.LOGIN_GUEST:

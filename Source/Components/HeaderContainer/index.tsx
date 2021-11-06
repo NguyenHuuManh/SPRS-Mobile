@@ -8,6 +8,8 @@ import styles from "./styles";
 
 interface Props {
     isBack?: boolean;
+    isBackReLoad?: string;
+    isBackNavigate?: string;
     children?: any;
     centerEl?: any;
     rightEL?: any;
@@ -17,17 +19,36 @@ interface Props {
 }
 
 export default (props: Props) => {
-    const { isBack, children, centerEl, rightEL, flexLeft, flexCenter, flexRight } = props
+    const { isBack, isBackReLoad, isBackNavigate, children, centerEl, rightEL, flexLeft, flexCenter, flexRight } = props
     const navigation = useNavigation();
+    const renderIsBack = () => {
+        if (isBackReLoad) {
+            return (
+                <TouchableOpacity onPress={() => { navigation.push(isBackReLoad) }}>
+                    <FontAwesomeIcon icon={faChevronLeft} size={24} color="#FFF" />
+                </TouchableOpacity>
+            )
+        }
+        if (isBackNavigate) {
+            return (
+                <TouchableOpacity onPress={() => { navigation.navigate(isBackNavigate) }}>
+                    <FontAwesomeIcon icon={faChevronLeft} size={24} color="#FFF" />
+                </TouchableOpacity>
+            )
+        }
+        if (isBack) {
+            return (
+                <TouchableOpacity onPress={() => { navigation.goBack() }}>
+                    <FontAwesomeIcon icon={faChevronLeft} size={24} color="#FFF" />
+                </TouchableOpacity>
+            )
+        }
 
+    }
     return (
         <View style={[styles.container]}>
             <View style={{ flex: flexLeft ? flexLeft : 1, paddingLeft: isBack ? 5 : 0 }}>
-                {isBack && (
-                    <TouchableOpacity onPress={() => { navigation.goBack() }}>
-                        <FontAwesomeIcon icon={faChevronLeft} size={24} color="#FFF" />
-                    </TouchableOpacity>
-                )}
+                {renderIsBack()}
             </View>
             <View style={{ flex: flexCenter ? flexCenter : 5 }}>
                 {centerEl}

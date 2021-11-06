@@ -8,6 +8,7 @@ export default StyleSheet.create({
         paddingTop: 10,
         width: "100%",
         zIndex: 200,
+        height: "100%"
     },
     inputContainer: {
         borderColor: "#FFFF",

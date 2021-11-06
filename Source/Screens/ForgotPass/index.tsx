@@ -11,6 +11,7 @@ import ButtonCustom from "../../Components/ButtonCustom";
 import Input from "../../Components/Input";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
+import { SubmitPhone } from './validate';
 export default () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false)
@@ -29,6 +30,7 @@ export default () => {
             initialValues={{
                 to: "966048002"
             }}
+            validationSchema={SubmitPhone}
             onSubmit={(values) => {
                 getOtp({ to: "+84" + values.to })
             }}
@@ -55,6 +57,7 @@ export default () => {
                                 textContentType='telephoneNumber'
                                 dataDetectorTypes='phoneNumber'
                                 maxLength={9}
+                                underLine
                             />
                             <ButtonCustom
                                 styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}

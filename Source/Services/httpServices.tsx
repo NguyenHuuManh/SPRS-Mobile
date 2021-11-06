@@ -3,6 +3,8 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { Alert } from "react-native";
 import { pendingActions, userActions } from "../Redux/Actions";
 import { store } from "../Store"
+import { isUndefined } from "lodash"
+import Toast from "react-native-toast-message";
 class Services {
     axios: any;
     interceptors: null;
@@ -41,7 +43,7 @@ class Services {
 
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
-        console.log("err", error.response);
+        console.log("err", error?.response);
         console.log("response", response);
         if (isSuccess) {
             if (response.data.code + "" == "501") {
@@ -88,6 +90,14 @@ class Services {
                     );
                     return
                 }
+            }
+            if (isUndefined(error?.response)) {
+                Toast.show({
+                    type: "error",
+                    text1: "Không có kết nốt internet",
+                    position: "top"
+                })
+                return
             }
             return error.response;
         }

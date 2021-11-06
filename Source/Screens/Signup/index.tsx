@@ -8,10 +8,12 @@ import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import { apiSigup } from "../../ApiFunction/Auth";
 import AppSelectAccount from "../../Components/AppSelectAccount";
+import AppSelectGroupUser from "../../Components/AppSelectGroupUser";
 import AppSelectHuyen from "../../Components/AppSelectHuyen";
 import AppSelectTinh from "../../Components/AppSelectTinh";
 import AppSelectXa from "../../Components/AppSelectXa";
 import ButtonCustom from "../../Components/ButtonCustom";
+import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
 import Input from "../../Components/Input";
 import MapPicker from "../../Components/MapPicker";
@@ -123,121 +125,107 @@ export default () => {
                 {({ submitForm, values, errors }) => (
                     <View style={[MainStyle.boxShadow, styles.containLogin]}>
                         {/* <AwesomeLoading indicatorId={16} size={50} isActive={userReducer?.isLoading} text="watting.." /> */}
-                        <Field
-                            component={AppSelectAccount}
-                            name="groupsId"
-                            // title="Loại tài khoản"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            placeholder="Chọn loại tài khoản"
-                        />
-                        <Field
-                            component={Input}
-                            name="username"
-                            placeholder="Nhập tên tài khoản"
-                            // title="Tên tài khoản"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                        />
-                        <Field
-                            component={Input}
-                            name="full_name"
-                            placeholder="Nhập họ và tên"
-                            // title="Họ và tên"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                        />
-                        <Field
-                            component={Input}
-                            keyboardType="numeric"
-                            name="phone"
-                            // title="Số điện thoại"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            placeholder="Nhập số điện thoại"
-                        />
+                        <ContainerField title="Loại tài khoản">
+                            <Field
+                                component={AppSelectGroupUser}
+                                name="groupsId"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                placeholder="Chọn loại tài khoản"
+                            />
+                        </ContainerField>
+                        <ContainerField title="Tên tài khoản">
+                            <Field
+                                component={Input}
+                                name="username"
+                                placeholder="Nhập tên tài khoản"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                            />
+                        </ContainerField>
+                        <ContainerField title="Họ và tên">
+                            <Field
+                                component={Input}
+                                name="full_name"
+                                placeholder="Nhập họ và tên"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                            />
+                        </ContainerField>
+                        <ContainerField title="Số điện thoại">
+                            <Field
+                                component={Input}
+                                keyboardType="numeric"
+                                name="phone"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                placeholder="Nhập số điện thoại"
+                            />
+                        </ContainerField>
+                        <ContainerField title="Ngày sinh">
+                            <Field
+                                component={DateTimePicker}
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                name="dob"
+                                placeholder="Nhập ngày sinh"
+                            />
+                        </ContainerField>
+                        <ContainerField title="Tỉnh/Thành phố">
+                            <Field
+                                component={AppSelectTinh}
+                                name="city"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                placeholder="Tỉnh/Thành phố"
+                                onSelectOption={(item) => { setIdTinh(item?.id) }}
+                            />
+                        </ContainerField>
+                        <ContainerField title="Quận/Huyện">
+                            <Field
+                                component={AppSelectHuyen}
+                                name="district"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                placeholder="Quận/Huyện"
+                                idTinh={idTinh}
+                                onSelectOption={(item) => { setIdHuyen(item?.id) }}
+                            />
+                        </ContainerField>
+                        <ContainerField title="Quận/Huyện">
+                            <Field
+                                component={AppSelectXa}
+                                name="subDistrict"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                placeholder="Quận/Huyện"
+                                idHuyen={idHuyen}
+                            />
+                        </ContainerField>
+                        <ContainerField title="Mật khẩu">
+                            <Field
+                                component={Input}
+                                name="password"
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                secureTextEntry={secureTextEntry}
+                                iconRight={secureTextEntry ? faEyeSlash : faEye}
+                                leftIconOnpress={() => { setSecureTextEntry(!secureTextEntry) }}
+                                placeholder="Nhập mật khẩu"
+                                iconSize={20}
+                            />
+                        </ContainerField>
+                        <ContainerField title="Nhập lại mật khẩu">
+                            <Field
+                                component={Input}
+                                horizontal
+                                styleTitle={{ width: 90 }}
+                                secureTextEntry
+                                name="rePassWord"
+                                placeholder="Nhập lại mật khẩu"
+                            />
+                        </ContainerField>
 
-                        <Field
-                            component={DateTimePicker}
-                            // title="Ngày sinh"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            name="dob"
-                            placeholder="Nhập ngày sinh"
-                        />
-                        <Field
-                            component={AppSelectTinh}
-                            name="city"
-                            // title="Tỉnh/Thành phố"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            placeholder="Tỉnh/Thành phố"
-                            onSelectOption={(item) => { setIdTinh(item?.id) }}
-                        />
-                        <Field
-                            component={AppSelectHuyen}
-                            name="district"
-                            // title="Quận/Huyện"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            placeholder="Quận/Huyện"
-                            idTinh={idTinh}
-                            onSelectOption={(item) => { setIdHuyen(item?.id) }}
-                        />
-                        <Field
-                            component={AppSelectXa}
-                            name="subDistrict"
-                            // title="Quận/Huyện"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            placeholder="Quận/Huyện"
-                            idHuyen={idHuyen}
-                        />
-                        {
-                            values.groupsId == "4" && (
-                                <>
-                                    <MapPicker
-                                        // title="Địa điểm tổ chức"
-                                        styleTitle={{ width: 90 }}
-                                        horizontal
-                                        iconRight={faMapMarkedAlt}
-                                        iconSize={20}
-                                        setAdress={setOrganizationInfor}
-                                        adress={organizationInfor}
-                                    />
-                                    <Field
-                                        component={Input}
-                                        name="adresslineORG"
-                                        // title="Địa chỉ chi tiết tổ chức"
-                                        horizontal
-                                        styleTitle={{ width: 90 }}
-                                        placeholder="Địa chỉ chi tiết tổ chức"
-                                    />
-                                </>
-
-                            )
-                        }
-                        <Field
-                            component={Input}
-                            name="password"
-                            // title="Mật khẩu"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            secureTextEntry={secureTextEntry}
-                            iconRight={secureTextEntry ? faEyeSlash : faEye}
-                            leftIconOnpress={() => { setSecureTextEntry(!secureTextEntry) }}
-                            placeholder="Nhập mật khẩu"
-                            iconSize={20}
-                        />
-                        <Field
-                            component={Input}
-                            // title="Nhập lại mật khẩu"
-                            horizontal
-                            styleTitle={{ width: 90 }}
-                            secureTextEntry
-                            name="rePassWord"
-                            placeholder="Nhập lại mật khẩu"
-                        />
                         <ButtonCustom
                             styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
                             styleTitle={{ color: "#FFFF", fontSize: 25 }}

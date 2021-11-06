@@ -23,6 +23,8 @@ interface Props {
     multiline?: boolean;
     textContentType: string;
     leftIconOnpress?: () => {};
+    underLine?: boolean;
+    editable?: boolean;
 }
 const Input = (props: Props) => {
     const {
@@ -31,7 +33,8 @@ const Input = (props: Props) => {
         iconLeft, iconColor, iconRight, horizontal,
         styleTitle, secureTextEntry,
         multiline, leftIconOnpress,
-        textContentType,
+        textContentType, underLine,
+        editable,
         ...remainProps
     } = props
     const { name, value } = field
@@ -43,20 +46,20 @@ const Input = (props: Props) => {
         [name, setFieldValue],
     )
     return (
-        <View style={styles.containerInput}>
+        <View style={[styles.containerInput, editable ? { opacity: 1 } : { opacity: 0.7 }]}>
             {(!horizontal && title) && (<Text style={styles.text}>{title}</Text>)}
             <View style={{ flexDirection: "row" }}>
                 {(horizontal && title) && (<View style={[styles.containText, styleTitle]}><Text style={styles.textHorizontal}>{title}</Text></View>)}
                 {
                     iconLeft && (
                         <View style={[styles.icon]}>
-                            <FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} />
+                            <FontAwesomeIcon size={iconSize || 17} color={iconColor || "#222"} icon={iconLeft} />
                         </View>)
                 }
-                <View style={[styles.inputContainer]}>
+                <View style={[styles.inputContainer, underLine ? styles.underLine : {}]}>
                     {textContentType == "telephoneNumber" && (
-                        <View style={{ flex: 2, justifyContent: "flex-end", paddingBottom: 10 }}>
-                            <Text>84+ |</Text>
+                        <View style={{ flex: 3, justifyContent: "flex-end", paddingBottom: 10 }}>
+                            <Text>+84 |</Text>
                         </View>
                     )}
                     <TextInput
@@ -68,19 +71,29 @@ const Input = (props: Props) => {
                         placeholder={placeholder}
                         secureTextEntry={secureTextEntry}
                         multiline={multiline || false}
+                        editable={editable}
+                        spellCheck={false}
                     />
                     {
                         iconRight && (
                             <TouchableOpacity
                                 onPress={leftIconOnpress}
                                 style={[styles.iconRight]}>
-                                <FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconRight} />
+                                <FontAwesomeIcon size={iconSize || 17} color={iconColor || "#222"} icon={iconRight} />
                             </TouchableOpacity>
                         )
                     }
                 </View>
             </View>
-            {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
+            {touched[name] && errors[name] && (
+                <View style={{ flexDirection: "row" }}>
+                    {iconLeft && (
+                        <View style={[styles.icon]}>
+                        </View>
+                    )}
+                    <Text style={[styles.input, MainStyle.texError,]}>{errors[name]}</Text>
+                </View>
+            )}
         </View>
     )
 }

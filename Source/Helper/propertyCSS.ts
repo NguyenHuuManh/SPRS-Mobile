@@ -18,4 +18,5 @@ export const AppColor = {
 
     RED: '#C6322C',
     WHITE: '#ffffff',
+    CORLOR_TEXT: "#736e6e"
 };

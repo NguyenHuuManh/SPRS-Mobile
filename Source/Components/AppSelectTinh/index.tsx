@@ -1,3 +1,4 @@
+import { findIndex } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { apiGetGroups } from "../../ApiFunction/List";
@@ -46,11 +47,12 @@ export default (props: Props) => {
                     {...remainProps}
                     value={value}
                     data={data}
-                    onSelectCustum={onSelect}
-                    idKey="id"
-                    lableKey="name"
+                    onItemSelect={onSelect}
+                    keyValue={(item) => item.id}
+                    labelValue={(item) => item?.name}
+                    inputValue={(item) => item?.name}
                 />
-                {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
+                {errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
             </>
         )
     }
@@ -59,6 +61,9 @@ export default (props: Props) => {
             {...remainProps}
             value={value}
             data={data}
+            keyValue={(item) => item.id}
+            labelValue={(item) => item?.name}
+            inputValue={(item) => item?.name}
         />
     )
 }

@@ -14,6 +14,7 @@ import styles from "./styles";
 import Toast from 'react-native-toast-message';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Loading from '../../Components/Loading';
+import { signinForm } from './validate';
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -26,9 +27,10 @@ export default () => {
     return (
         <Formik
             initialValues={{
-                username: "Manh130564",
-                password: "password"
+                username: "manh",
+                password: "u3WvyfOA"
             }}
+            validationSchema={signinForm}
             onSubmit={(values) => {
                 signin(values)
             }}
@@ -46,6 +48,7 @@ export default () => {
                                 name="username"
                                 iconLeft={faMobileAlt}
                                 placeholder="Nhập tài khoản"
+                                underLine
 
                             />
                             <Field
@@ -56,8 +59,8 @@ export default () => {
                                 iconRight={secureTextEntry ? faEyeSlash : faEye}
                                 placeholder="Nhập mật khẩu"
                                 leftIconOnpress={() => { setSecureTextEntry(!secureTextEntry) }}
+                                underLine
                             />
-
                             <ButtonCustom
                                 styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}

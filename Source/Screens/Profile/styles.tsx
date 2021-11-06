@@ -12,11 +12,11 @@ export default StyleSheet.create({
         alignItems: "center"
     },
     avata: {
-        width: 150,
-        height: 150,
-        borderRadius: 150,
+        width: 100,
+        height: 100,
+        borderRadius: 100,
         backgroundColor: "#FFFF",
-        marginTop: 5
+        marginBottom: -50
     },
 
     boxShadowAvata: {

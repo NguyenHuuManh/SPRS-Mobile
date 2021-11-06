@@ -78,7 +78,7 @@ const App = ({ navigation }) => {
                 return {
                   quantity: e.quantity,
                   item: {
-                    id: e.item
+                    id: e.id
                   }
                 }
               }),
@@ -100,7 +100,7 @@ const App = ({ navigation }) => {
                 },
                 addressLine: "",
                 addressLine2: "",
-                GPS_Lati: adressPoint?.GPS_Lati,
+                GPS_lati: adressPoint?.GPS_Lati,
                 GPS_long: adressPoint?.GPS_long
               },
             }

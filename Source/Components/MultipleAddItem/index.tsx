@@ -19,13 +19,13 @@ export default (props: Props) => {
     const [itemTypeSelect, setItemTypeSelect] = useState<any>({});
     const renderItem = ({ item }) => {
         return (
-            <View style={{ flex: 1, padding: 10, width: 150 }} key={item.item}>
+            <View style={{ flex: 1, padding: 10, width: 150 }} key={item.id}>
                 <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", height: 50, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center" }]}>
                     <Text>{item.quantity + " " + item.unit}</Text>
                     <Text> | {item.name}</Text>
                     <TouchableOpacity
                         onPress={() => {
-                            const arr = items.filter(e => e.item !== item.item);
+                            const arr = items.filter(e => e.id !== item.id);
                             console.log("Arr", arr)
                             setItems(arr);
                         }}
@@ -44,6 +44,7 @@ export default (props: Props) => {
                 data={items}
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                keyExtractor={(item) => item.id}
             />
             <View>
                 <Formik
@@ -53,16 +54,15 @@ export default (props: Props) => {
                     onSubmit={(values) => {
 
                         const itemObj = {
-                            item: itemTypeSelect.id,
+                            id: itemTypeSelect.id,
                             quantity: values.quantity,
                             name: itemTypeSelect.name,
                             unit: itemTypeSelect.unit
 
                         }
                         const id = findIndex(items, (e: any) => {
-                            return Number(e.item) == Number(itemObj.item)
+                            return Number(e.id) == Number(itemObj.id)
                         })
-                        console.log("id", id);
                         if (id >= 0) {
                             items[id] = {
                                 ...items[id],
@@ -91,7 +91,7 @@ export default (props: Props) => {
                                 <View style={{ flex: 2 }}>
                                     <Field
                                         component={AppSelectItems}
-                                        name="item"
+                                        name="id"
                                         keyboardType="phone-pad"
                                         dataDetectorTypes='phoneNumber'
                                         onSelectOption={setItemTypeSelect}

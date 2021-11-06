@@ -1,4 +1,4 @@
-import { isEmpty, isNull } from "lodash";
+import { isEmpty, isNull, isUndefined } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { apiGetGroups } from "../../ApiFunction/List";
@@ -11,18 +11,19 @@ interface Props {
     field?: any;
     idTinh?: string | number;
     onSelectOption?: any;
-    defaultValue?: boolean;
+    // defaultValue?: boolean;
 }
 export default (props: Props) => {
-    const { field, form, idTinh, onSelectOption, defaultValue, ...remainProps } = props
+    const { field, form, idTinh, onSelectOption, ...remainProps } = props
     const { name, value } = field
     const { errors, setFieldValue, touched, values } = form
-    const [data, setData] = useState([])
+    const [data, setData] = useState(null)
+    const [disableClear, setDisableClear] = useState(true);
 
     const callGetGroupList = () => {
-        // console.log()
-        if ((!idTinh || isEmpty(idTinh + "") || isNull(idTinh)) && !defaultValue) {
-            setFieldValue(name, "");
+        if ((!idTinh || isEmpty(idTinh + "") || isNull(idTinh)) && !isNull(data)) {
+            console.log("vao đây");
+            setDisableClear(false);
             setData([]);
             return;
         }
@@ -31,19 +32,21 @@ export default (props: Props) => {
                 checkCallAPI(
                     res,
                     (response) => {
-                        setData(response.obj);
+                        setData([...response.obj]);
                     },
                     (e) => { }
                 );
             })
             .catch((error) => { })
     }
+    console.log("FiedHuyen", value)
+
     useEffect(() => {
         callGetGroupList();
     }, [idTinh])
 
     const onSelect = (item) => {
-        setFieldValue(name, item.id);
+        setFieldValue(name, item?.id);
         onSelectOption && (onSelectOption(item));
     }
 
@@ -55,11 +58,13 @@ export default (props: Props) => {
                     {...remainProps}
                     value={value}
                     data={data}
-                    onSelectCustum={onSelect}
-                    idKey="id"
-                    lableKey="name"
+                    onItemSelect={onSelect}
+                    keyValue={(item) => item.id}
+                    labelValue={(item) => item?.name}
+                    inputValue={(item) => item?.name}
+                    disableClear={disableClear}
                 />
-                {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
+                {errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
             </>
         )
     }
@@ -68,6 +73,11 @@ export default (props: Props) => {
             {...remainProps}
             value={value}
             data={data}
+            onItemSelect={onSelect}
+            keyValue={(item) => item.id}
+            labelValue={(item) => item?.name}
+            inputValue={(item) => item?.name}
+            disableClear={disableClear}
         />
     )
 }

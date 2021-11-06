@@ -4,7 +4,6 @@ import Modal from 'react-native-modal';
 import styles from './styles';
 
 export default ({ isVisible }: { isVisible: boolean }) => {
-  console.log("isVisible", isVisible);
   return (
     <Modal
       isVisible={isVisible}

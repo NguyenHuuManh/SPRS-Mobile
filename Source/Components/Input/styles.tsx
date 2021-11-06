@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { AppColor } from '../../Helper/propertyCSS';
 // import { measure, padding } from '../../Helpers';
 
 export default StyleSheet.create({
@@ -12,7 +13,6 @@ export default StyleSheet.create({
         height: 50,
         paddingHorizontal: 10,
         lineHeight: 30,
-        borderBottomWidth: 0.5,
         // fontSize: 18,
         borderRadius: 10,
         flex: 9,
@@ -20,9 +20,13 @@ export default StyleSheet.create({
         // backgroundColor: "pink"
     },
 
+    underLine: {
+        borderBottomWidth: 0.5,
+    },
+
     input: {
         flex: 10,
-        color: "black",
+        color: AppColor.CORLOR_TEXT,
         paddingBottom: 0,
     },
 

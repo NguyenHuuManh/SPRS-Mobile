@@ -6,18 +6,34 @@ import React from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import AwesomeLoading from 'react-native-awesome-loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { apiOtpChecking } from '../../../ApiFunction/Auth';
+import Toast from 'react-native-toast-message';
+import { apiOtpChecking, apiResetPass } from '../../../ApiFunction/Auth';
 import ButtonCustom from '../../../Components/ButtonCustom';
 import Input from '../../../Components/Input';
 import { MainStyle } from '../../../Style/main_style';
 import styles from '../styles';
+import { SubmitOTP } from '../validate';
 export default ({ route, navigation }) => {
     const { to } = route.params;
     const checkOTP = (values) => {
         console.log("valuesOTP", values);
-        apiOtpChecking(values).then((res) => {
+        apiResetPass(values).then((res) => {
             if (res.status == 200) {
-                navigation.navigate('ChangePassword')
+                navigation.navigate('ChangePassword');
+                if (res.data.code == "200") {
+                    Toast.show({
+                        type: "success",
+                        text1: "Khôi phục mật khẩu thành",
+                        position: "top"
+                    })
+                    navigation.navigate("Signin");
+                } else {
+                    Toast.show({
+                        type: "error",
+                        text1: res?.data?.descreptions,
+                        position: "top"
+                    })
+                }
             }
         })
     }
@@ -27,6 +43,7 @@ export default ({ route, navigation }) => {
             initialValues={{
                 otp: ""
             }}
+            validationSchema={SubmitOTP}
             onSubmit={(values) => {
                 checkOTP({ otp: values.otp, to: to })
             }}
@@ -49,7 +66,7 @@ export default ({ route, navigation }) => {
                                 iconLeft={faMobileAlt}
                                 placeholder="Nhập mã otp"
                                 keyboardType="numeric"
-
+                                underLine
                             />
                             <ButtonCustom
                                 styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}

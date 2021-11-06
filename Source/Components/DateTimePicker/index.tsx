@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import moment from 'moment'
 import { MainStyle } from '../../Style/main_style';
 import { isEmpty } from 'lodash';
+import { AppColor } from '../../Helper/propertyCSS';
 interface Props {
     // name: any;
     form?: any;
@@ -21,9 +22,10 @@ interface Props {
     iconSize?: number;
     horizontal?: boolean;
     styleTitle?: any;
+    underLine?: any;
 }
 export default (props: Props) => {
-    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, ...remainProps } = props
+    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, ...remainProps } = props
     const [show, setShow] = useState(false);
     const { name, value } = field
     // const [date, setDate] = useState(new Date());
@@ -49,14 +51,15 @@ export default (props: Props) => {
                 <View style={{ flexDirection: "row" }}>
                     {(horizontal && title) && (<View style={[styles.containText, styleTitle]}><Text style={styles.textHorizontal}>{title}</Text></View>)}
                     {
-                        iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} /></View>)
+                        iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 17} color={iconColor || "#222"} icon={iconLeft} /></View>)
                     }
-                    <TouchableOpacity onPress={() => { setShow(true) }} style={[styles.input]}>
+                    <TouchableOpacity onPress={() => { setShow(true) }} style={[styles.input, underLine ? styles.underLine : {}]}>
                         <View pointerEvents="none">
                             <TextInput
                                 {...props}
                                 placeholder={placeholder}
                                 value={value}
+                                style={{ color: AppColor.CORLOR_TEXT }}
                             >
                             </TextInput>
                         </View>

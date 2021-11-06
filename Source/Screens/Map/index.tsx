@@ -1,43 +1,48 @@
-import { faBell, faSearchLocation, faUserCircle, faHome } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faSearchLocation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
-import { debounce } from "lodash";
-import React, { useEffect, useRef, useState } from "react";
-import { Alert, KeyboardAvoidingView, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { isEmpty } from "lodash";
+import React, { createRef, useEffect, useState } from "react";
+import { Alert, KeyboardAvoidingView, Text, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useDispatch, useSelector } from "react-redux";
-import AutoCompleteSearchLocation from "../../Components/AutoCompleteSearchLocation";
-import ButtonCustom from "../../Components/ButtonCustom";
+import MapViewDirections from 'react-native-maps-directions';
+import { useSelector } from "react-redux";
+import { apiGetReliefPoint } from "../../ApiFunction/ReliefPoint";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { API_KEY } from "../../Constrants/url";
 import { handleLocationPermission } from "../../Helper/FunctionCommon";
 import { height, width } from "../../Helper/responsive";
-import { profileActions, userActions } from "../../Redux/Actions";
 import { RootState } from "../../Redux/Reducers";
 import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
 
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
-    const dispatch = useDispatch()
-    const [region, setRegion] = useState({
-        latitude: 21.0263084,
-        longitude: 105.7709134,
-        latitudeDelta: 0.006866,
-        longitudeDelta: 0.006866,
-    });
+    const [region, setRegion] = useState<any>({});
     const [marker, setMarker] = useState({
         latitude: 21.0263084,
         longitude: 105.7709134
     })
+
+    const [myLocation, setMylocation] = useState<any>({});
     const [mapReady, setMapReady] = useState(false);
     const [northEast, setNorthEast] = useState<any>({})
     const [southWest, setSouthWest] = useState<any>({})
     const navigation = useNavigation();
-    const mapRef = useRef(null);
+    const mapRef = createRef<any>();
     const [listMarker, setListMarker] = useState<any>([]);
     const [text, setText] = useState("Tìm Kiếm");
-    const ref = useRef(null)
+
+    const getPoint = () => {
+        apiGetReliefPoint().then((e) => {
+            if (e.status == 200) {
+                if (e.data.code === "200") {
+                    setListMarker(e.data.obj);
+                }
+            }
+        })
+    }
 
     const getCurrentLocation = () => {
         Geolocation.getCurrentPosition(
@@ -45,6 +50,8 @@ export default () => {
                 setRegion({
                     ...region, latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
+                    latitudeDelta: 0.006866,
+                    longitudeDelta: 0.006866,
                 })
             },
             (error) => { console.log("error", error) },
@@ -54,20 +61,25 @@ export default () => {
         )
 
     }
-    // useEffect(() => {
-    //     getCurrentLocation();
-    //     Geolocation.watchPosition(
-    //         (response) => {
-    //             Alert.alert("Location", response.provider);
-    //             console.log("responseListen", response.coords)
-    //         },
-    //         (error) => { console.log("error", error) },
-    //         {
-    //             distanceFilter: 10,
-    //         }
-    //     )
-    //     handleLocationPermission();
-    // }, [])
+    useEffect(() => {
+        getCurrentLocation();
+        Geolocation.watchPosition(
+            (response) => {
+                // Alert.alert("Location", response.provider);
+                console.log("responseListen", response.coords)
+                setMylocation({
+                    latitude: response.coords.latitude,
+                    longitude: response.coords.longitude
+                })
+            },
+            (error) => { console.log("error", error) },
+            {
+                distanceFilter: 100,
+            }
+        )
+        handleLocationPermission();
+        getPoint();
+    }, [])
 
 
     const onMapReady = () => {
@@ -80,7 +92,7 @@ export default () => {
     const [visible, setVisible] = useState(false);
     return (
         <KeyboardAvoidingView behavior="padding">
-            <ModalSearch visible={visible} setVisible={setVisible} setText={setText} />
+            <ModalSearch visible={visible} setVisible={setVisible} setText={setText} map={mapRef} setRegion={setRegion} region={region} />
             <View style={{ height: height * 0.1 }}>
                 <HeaderContainer
                     centerEl={(
@@ -148,54 +160,61 @@ export default () => {
             </View>
             <View style={{ height: height }}>
                 <Filter />
-                <MapView
-                    provider={PROVIDER_GOOGLE}
-                    style={{ flex: 10 }}
-                    showsUserLocation={true}
-                    showsMyLocationButton={true}
-                    region={region}
-                    followsUserLocation
-                    zoomControlEnabled
-                    zoomEnabled
-                    ref={mapRef}
-                    onRegionChangeComplete={(e) => {
-                        setRegion(e);
-                        if (mapReady) {
-                            mapRef.current.getMapBoundaries().then((e) => {
-                                // console.log("e", e)
-                                setNorthEast(e.northEast);
-                                setSouthWest(e.southWest);
-                            });
-                        }
-                        console.log(
-                            Math.log2(360 * (width / 256 / region.longitudeDelta)) + 1, "level"
-                        );
+                {
+                    !isEmpty(region) && <MapView
+                        provider={PROVIDER_GOOGLE}
+                        initialRegion={region}
+                        style={{ flex: 10 }}
+                        showsUserLocation={true}
+                        showsMyLocationButton={true}
+                        // region={region}
+                        followsUserLocation
+                        zoomControlEnabled
+                        zoomEnabled
+                        ref={mapRef}
+                        onRegionChangeComplete={(e) => {
+                            setRegion(e);
+                            if (mapReady) {
+                                mapRef.current.getMapBoundaries().then((e) => {
+                                    // console.log("e", e)
+                                    setNorthEast(e.northEast);
+                                    setSouthWest(e.southWest);
+                                });
+                            }
+                            console.log(
+                                Math.log2(360 * (width / 256 / region.longitudeDelta)) + 1, "level"
+                            );
 
-                    }}
-                    onMapReady={() => { onMapReady() }}
-                >
-                    {mapReady && (
-                        <>
-                            <Marker
-                                coordinate={region}
-                                title={"marker.title"}
-                                description={"marker.description"}
+                        }}
+                        onMapReady={() => { onMapReady() }}
+                    >
+                        {mapReady && listMarker.map((e) => {
+                            const coordinate = {
+                                latitude: Number(e?.address.gps_lati),
+                                longitude: Number(e?.address.gps_long)
+                            }
+                            return (
+                                <Marker
+                                    key={e.id}
+                                    coordinate={coordinate}
+                                    title={e.name}
+                                    description={"marker.description"}
+                                // renderToHardwareTextureAndroid
+                                />
+                            )
+                        })}
+                        {!isEmpty(myLocation) && (
+                            <MapViewDirections
+                                origin={myLocation}
+                                destination={marker}
+                                apikey={API_KEY}
+                                // strokeWidth={10}
+                                mode="BICYCLING"
                             />
-                            <Marker
-                                coordinate={southWest}
-                                title={"southWest"}
-                                description={"marker.description"}
-                            />
-                            <Marker
-                                coordinate={northEast}
-                                title={"northEast"}
-                                description={"marker.description"}
-                            />
+                        )}
+                    </MapView>
+                }
 
-                        </>
-
-                    )}
-                </MapView>
             </View>
         </KeyboardAvoidingView >
     );

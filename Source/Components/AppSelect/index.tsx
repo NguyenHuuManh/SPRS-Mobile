@@ -1,12 +1,10 @@
+import { faChevronDown, faTimes, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import React, { useEffect, useState } from "react";
-import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
-import { apiGetGroups } from "../../ApiFunction/List";
-import styles from "./styles";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { checkCallAPI } from "../../Helper/FunctionCommon";
-import { MainStyle } from "../../Style/main_style";
 import { findIndex, isEmpty } from "lodash";
+import React, { memo, useEffect, useState } from "react";
+import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
+import { AppColor } from "../../Helper/propertyCSS";
+import styles from "./styles";
 interface Props {
     // name: any;
     onChangeCustom?: any;
@@ -22,14 +20,17 @@ interface Props {
     styleTitle?: any;
     data?: any;
     value?: any;
-    onSelectCustum?: any;
-    lableKey?: string;
-    idKey?: string;
-    // renderItem?: any;
+    keyValue: any;
+    labelValue: any;
+    inputValue: any;
+    onItemSelect?: any
+    disableClear?: boolean
+    underLine?: any;
+    disabled?: boolean
 
 }
 
-export default (props: Props) => {
+export default memo((props: Props) => {
     const {
         onChangeCustom,
         placeholder,
@@ -40,43 +41,56 @@ export default (props: Props) => {
         styleTitle,
         data,
         value,
-        onSelectCustum,
-        lableKey,
-        idKey,
-        // renderItem,
+        keyValue,
+        labelValue,
+        inputValue,
+        onItemSelect,
+        disableClear = true,
+        underLine,
+        disabled,
         ...remainProps
     } = props
-    const [textInputValue, setTextInputValue] = useState("");
     const [show, setShow] = useState(false)
+    const [itemSelect, setItemSelect] = useState<any>({});
 
     useEffect(() => {
-        if (value && !isEmpty(value + "") && data.length > 0) {
+        if (data && data.length > 0) {
             const index = findIndex(data, function (e) {
-                return e[idKey] + "" == value + "";
+                return keyValue(e) + "" == value + "";
             })
-            if (index == -1) {
-                onSelectCustum({});
-                setTextInputValue("");
+            if (index >= 0) {
+                onSelect(data[index]);
                 return;
             }
-            const option = data[index];
-            onSelectCustum(option);
-            setTextInputValue(option[lableKey]);
+            // ClearOption();
         }
-    }, [value, data])
+        if (disableClear) return
+        ClearOption();
+
+    }, [data])
+
+
+
+
 
     const onSelect = (item) => {
-        onSelectCustum(item);
+        onItemSelect && onItemSelect(item);
+        setItemSelect(item);
         setShow(false)
+    }
+
+    const ClearOption = () => {
+        setItemSelect({});
+        onItemSelect && onItemSelect({});
     }
 
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity
-                key={item[`${idKey}`]}
+                key={keyValue(item)}
                 style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? 'rgba(60, 60, 60,0.1)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
                 onPress={() => { onSelect(item) }}>
-                <Text>{item[`${lableKey}`]}</Text>
+                <Text>{labelValue(item)}</Text>
             </TouchableOpacity>
         )
     }
@@ -87,23 +101,42 @@ export default (props: Props) => {
             <View style={{ flexDirection: "row" }}>
                 {(horizontal && title) && (<View style={[styles.containText, styleTitle]}><Text style={styles.textHorizontal}>{title}</Text></View>)}
                 {
-                    iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} /></View>)
+                    iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 17} color={iconColor || "#222"} icon={iconLeft} /></View>)
                 }
-                <TouchableOpacity onPress={() => { setShow(true) }} style={styles.input}>
-                    <View style={{ width: "90%" }} pointerEvents="none" >
+                <TouchableOpacity
+                    onPress={() => {
+                        if (disabled) return;
+                        setShow(true)
+                    }}
+                    style={[styles.input, underLine ? styles.underLine : {}]}>
+                    <View style={{ width: "80%" }} pointerEvents="none" >
                         <TextInput
                             // {...field}
                             {...remainProps}
-                            value={textInputValue}
+                            value={inputValue(itemSelect)}
                             placeholder={placeholder}
+                            style={{ color: AppColor.CORLOR_TEXT }}
                         />
                     </View>
-                    <View style={{ width: "10%" }}>
-                        <FontAwesomeIcon icon={faChevronDown} size={iconSize || 20} color={iconColor || "#c3c1c1"} />
+                    <View style={{ width: "20%", flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
+                        {
+                            (!isEmpty(itemSelect) && !disabled)
+                                ? (<TouchableWithoutFeedback
+                                    onPress={(e) => {
+                                        e.preventDefault();
+                                        ClearOption();
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faTimesCircle} size={iconSize || 15} color={iconColor || "black"} style={{ marginRight: 10 }} />
+                                </TouchableWithoutFeedback>)
+                                : (<View ></View>)
+                        }
+
+                        <FontAwesomeIcon icon={faChevronDown} size={iconSize || 15} color={iconColor || "black"} />
                     </View>
                 </TouchableOpacity>
-                <Modal
-                    visible={show}
+                {show && <Modal
+                    visible={true}
                     animationType="fade"
                     transparent={true}
                 >
@@ -116,17 +149,18 @@ export default (props: Props) => {
                             <View style={{ maxHeight: "50%", width: "80%", minHeight: "30%", backgroundColor: "#FFFF", borderRadius: 10, paddingTop: 10, paddingBottom: 10 }}>
                                 <FlatList
                                     data={data}
-                                    keyExtractor={({ value }) => value}
+                                    keyExtractor={({ item }) => item?.id}
                                     renderItem={renderItem}
                                 />
                             </View>
                         </TouchableWithoutFeedback>
                     </TouchableOpacity>
                 </Modal>
+                }
                 {
                     iconRight && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconRight} /></View>)
                 }
             </View>
-        </View>
+        </View >
     )
-}
+})

@@ -6,7 +6,7 @@ export default StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        // backgroundColor:"pink",
+        backgroundColor: "#FFF",
     },
     scrollContainer: {
         height: height,
