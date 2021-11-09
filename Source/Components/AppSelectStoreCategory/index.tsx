@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text } from "react-native";
-import { apiGetItemType } from "../../ApiFunction/List";
+import { apiGetItemType, apiGetStoreCategory } from "../../ApiFunction/List";
 import { checkCallAPI } from "../../Helper/FunctionCommon";
 import { MainStyle } from "../../Style/main_style";
 import AppSelect from "../AppSelect";
@@ -17,7 +17,7 @@ export default (props: Props) => {
     const [data, setData] = useState([])
 
     const callGetItems = () => {
-        apiGetItemType()
+        apiGetStoreCategory()
             .then((res) => {
                 checkCallAPI(
                     res,

@@ -9,6 +9,8 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from 'react-native-maps-directions';
 import { useSelector } from "react-redux";
 import { apiGetReliefPoint } from "../../ApiFunction/ReliefPoint";
+import { apiGetStore } from "../../ApiFunction/StorePoint";
+import SOS from "../../Assets/Images/locationSOS.svg";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { API_KEY } from "../../Constrants/url";
 import { handleLocationPermission } from "../../Helper/FunctionCommon";
@@ -16,6 +18,7 @@ import { height, width } from "../../Helper/responsive";
 import { RootState } from "../../Redux/Reducers";
 import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
+
 
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
@@ -33,9 +36,15 @@ export default () => {
     const mapRef = createRef<any>();
     const [listMarker, setListMarker] = useState<any>([]);
     const [text, setText] = useState("Tìm Kiếm");
-
     const getPoint = () => {
-        apiGetReliefPoint().then((e) => {
+        // apiGetReliefPoint().then((e) => {
+        //     if (e.status == 200) {
+        //         if (e.data.code === "200") {
+        //             setListMarker(e.data.obj);
+        //         }
+        //     }
+        // })
+        apiGetStore().then((e) => {
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setListMarker(e.data.obj);
@@ -64,9 +73,9 @@ export default () => {
     useEffect(() => {
         getCurrentLocation();
         Geolocation.watchPosition(
-            (response) => {
-                // Alert.alert("Location", response.provider);
-                console.log("responseListen", response.coords)
+            (response: any) => {
+                // Alert.alert("Location", response);
+                console.log("response", response)
                 setMylocation({
                     latitude: response.coords.latitude,
                     longitude: response.coords.longitude
@@ -74,13 +83,14 @@ export default () => {
             },
             (error) => { console.log("error", error) },
             {
+                enableHighAccuracy: true,
                 distanceFilter: 100,
             }
         )
         handleLocationPermission();
         getPoint();
     }, [])
-
+    console.log("myLocation", myLocation);
 
     const onMapReady = () => {
         mapRef.current.getMapBoundaries().then((e) => {
@@ -90,6 +100,29 @@ export default () => {
         });
     }
     const [visible, setVisible] = useState(false);
+    const renderMarker = (e) => {
+        const coordinate = {
+            latitude: Number(e?.address.gps_lati),
+            longitude: Number(e?.address.gps_long)
+        }
+        return (
+            <Marker
+                key={e.id}
+                coordinate={coordinate}
+                title={e.name}
+                description={"marker.description"}
+                onSelect={(e) => { console.log("Mark", e) }}
+                onCalloutPress={() => {
+                    navigation.navigate("DetailPoint", { point: e });
+                }}
+
+            >
+                <SOS fill={'#F4A921'} width={30} height={30} />
+                {/* <Relief fill={'#F4A921'} width={30} height={30} /> */}
+                {/* <SOS fill={'#F4A921'} width={30} height={30} /> */}
+            </Marker>
+        )
+    }
     return (
         <KeyboardAvoidingView behavior="padding">
             <ModalSearch visible={visible} setVisible={setVisible} setText={setText} map={mapRef} setRegion={setRegion} region={region} />
@@ -97,7 +130,6 @@ export default () => {
                 <HeaderContainer
                     centerEl={(
                         <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            {/* <ModalSwipe /> */}
                             <TouchableOpacity onPress={() => { setVisible(true) }} style={{
                                 padding: 5,
                                 borderWidth: 1,
@@ -167,7 +199,6 @@ export default () => {
                         style={{ flex: 10 }}
                         showsUserLocation={true}
                         showsMyLocationButton={true}
-                        // region={region}
                         followsUserLocation
                         zoomControlEnabled
                         zoomEnabled
@@ -176,7 +207,6 @@ export default () => {
                             setRegion(e);
                             if (mapReady) {
                                 mapRef.current.getMapBoundaries().then((e) => {
-                                    // console.log("e", e)
                                     setNorthEast(e.northEast);
                                     setSouthWest(e.southWest);
                                 });
@@ -184,31 +214,16 @@ export default () => {
                             console.log(
                                 Math.log2(360 * (width / 256 / region.longitudeDelta)) + 1, "level"
                             );
-
                         }}
                         onMapReady={() => { onMapReady() }}
                     >
-                        {mapReady && listMarker.map((e) => {
-                            const coordinate = {
-                                latitude: Number(e?.address.gps_lati),
-                                longitude: Number(e?.address.gps_long)
-                            }
-                            return (
-                                <Marker
-                                    key={e.id}
-                                    coordinate={coordinate}
-                                    title={e.name}
-                                    description={"marker.description"}
-                                // renderToHardwareTextureAndroid
-                                />
-                            )
-                        })}
+                        {mapReady && listMarker.map((e) => { return renderMarker(e) })}
                         {!isEmpty(myLocation) && (
                             <MapViewDirections
                                 origin={myLocation}
                                 destination={marker}
                                 apikey={API_KEY}
-                                // strokeWidth={10}
+                                strokeWidth={10}
                                 mode="BICYCLING"
                             />
                         )}

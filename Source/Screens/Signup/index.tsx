@@ -46,7 +46,6 @@ export default () => {
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const signup = (body) => {
         const param = { ...body }
-        console.log("param", param);
         try {
             apiSigup(param)
                 .then((e) => {

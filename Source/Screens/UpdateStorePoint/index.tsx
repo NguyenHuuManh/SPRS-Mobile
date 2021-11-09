@@ -19,6 +19,7 @@ import StoreCategory from "../../Components/StoreCategory";
 import TimePicker from "../../Components/TimePicker";
 import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
+import { updateStore } from "./validate";
 
 
 const UpdateStorePoint = ({ navigation }) => {
@@ -45,6 +46,7 @@ const UpdateStorePoint = ({ navigation }) => {
       if (res.status == 200) {
         if (res.data.code == "200") {
           setData(res.data.obj);
+          setItems(res.data.obj.store_category);
         } else {
           Toast.show({
             type: "error",
@@ -62,15 +64,16 @@ const UpdateStorePoint = ({ navigation }) => {
     })
   }
 
-  const callCreatePoint = (body) => {
+  const UpdateStore = (body) => {
     apiUpdateStore(body).then((res) => {
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
             type: "success",
-            text1: "Tạo điểm cửa hàng thành công",
+            text1: "Cập nhật cửa hàng thành công",
             position: "top"
           })
+          getStorePoint(item.id);
         }
       } else {
         Toast.show({
@@ -122,6 +125,7 @@ const UpdateStorePoint = ({ navigation }) => {
             name: data?.name || "",
             description: data?.description || "",
           }}
+          validationSchema={updateStore}
           enableReinitialize
           onSubmit={(values) => {
 
@@ -129,10 +133,8 @@ const UpdateStorePoint = ({ navigation }) => {
               ...values,
               storeDetail: items.map((e) => {
                 return {
-                  quantity: e.quantity,
-                  item: {
-                    id: e.id
-                  }
+                  id: e.id,
+                  name: e.name
                 }
               }),
               address: {
@@ -157,14 +159,19 @@ const UpdateStorePoint = ({ navigation }) => {
                 GPS_long: adressPoint?.GPS_long
               },
             }
-            console.log("body", body);
-            callCreatePoint(body);
+            // console.log("body", body);
+            const data = new FormData();
+            for (let i = 0; i < imageList.length; i++) {
+              data.append(imageList[i].fileName, imageList[i].base64);
+            }
+            console.log("data", data);
+            UpdateStore(body);
           }}
         >
-          {({ submitForm }) => (
+          {({ submitForm, errors }) => (
             <View>
 
-              <ContainerField title="Tên điểm cứu trợ">
+              <ContainerField title="Tên cửa hàng">
                 <Field
                   component={Input}
                   name="name"
@@ -173,7 +180,6 @@ const UpdateStorePoint = ({ navigation }) => {
                   styleTitle={{ width: 110 }}
                 />
               </ContainerField>
-
               <View style={{ flexDirection: "row" }}>
                 <View style={{ width: "50%", paddingRight: 5 }}>
                   <ContainerField title="Giờ mở cửa">
@@ -226,11 +232,11 @@ const UpdateStorePoint = ({ navigation }) => {
 
               <ContainerField title="Mặt hàng">
                 <StoreCategory items={items} setItems={setItems} />
+                {isEmpty(items) && (
+                  <Text style={[MainStyle.texError,]}>chọn mặt hàng cung cấp</Text>
+                )}
               </ContainerField>
-
-              {/* <View style={{ flex: 1 }}> */}
               <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, width: "90%" }} onPress={() => { submitForm() }} />
-              {/* </View> */}
             </View>
           )}
         </Formik>

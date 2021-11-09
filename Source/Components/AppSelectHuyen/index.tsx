@@ -1,17 +1,15 @@
-import { isEmpty, isNull, isUndefined } from "lodash";
+import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity } from "react-native";
-import { apiGetGroups } from "../../ApiFunction/List";
-import { apiCity, apiDistrict } from "../../ApiFunction/PlaceAPI";
+import { Text } from "react-native";
+import { apiDistrict } from "../../ApiFunction/PlaceAPI";
 import { checkCallAPI } from "../../Helper/FunctionCommon";
 import { MainStyle } from "../../Style/main_style";
-import AppSelect from "../AppSelect"
+import AppSelect from "../AppSelect";
 interface Props {
     form?: any;
     field?: any;
     idTinh?: string | number;
     onSelectOption?: any;
-    // defaultValue?: boolean;
 }
 export default (props: Props) => {
     const { field, form, idTinh, onSelectOption, ...remainProps } = props
@@ -19,10 +17,8 @@ export default (props: Props) => {
     const { errors, setFieldValue, touched, values } = form
     const [data, setData] = useState(null)
     const [disableClear, setDisableClear] = useState(true);
-
     const callGetGroupList = () => {
         if ((!idTinh || isEmpty(idTinh + "") || isNull(idTinh)) && !isNull(data)) {
-            console.log("vao đây");
             setDisableClear(false);
             setData([]);
             return;
@@ -39,7 +35,6 @@ export default (props: Props) => {
             })
             .catch((error) => { })
     }
-    console.log("FiedHuyen", value)
 
     useEffect(() => {
         callGetGroupList();

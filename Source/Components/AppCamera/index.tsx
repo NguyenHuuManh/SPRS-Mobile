@@ -4,6 +4,7 @@
 // Import React
 import { faCamera, faFileImage, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { size } from 'lodash';
 import React, { useState } from 'react';
 // Import required components
 import {
@@ -79,12 +80,10 @@ const ImagePicker = (props: Props) => {
     const captureImage = async (type) => {
         let options: CameraOptions = {
             mediaType: type,
-            maxWidth: 300,
-            maxHeight: 550,
-            quality: 1,
-            videoQuality: 'low',
-            durationLimit: 30, //Video max duration in seconds
+            quality: 0,
             saveToPhotos: true,
+            includeBase64: true,
+
         };
         let isCameraPermitted = await requestCameraPermission();
         let isStoragePermitted = await requestExternalWritePermission();
@@ -110,6 +109,15 @@ const ImagePicker = (props: Props) => {
 
     const catListImage = (arr1, arr2) => {
         const arr = arr1.concat(arr2);
+        let size = 0;
+        for (let i = 0; i < arr.length; i++) {
+            size += arr[i].fileSize / 1000000;
+        }
+        if (size > 8) {
+            alert(" số lượng ảnh chọn vượt quá 8MB");
+            return arr1;
+        }
+        console.log(size, "size")
         if (arr.length > 4) {
             alert("giới hạn chọn 4 ảnh")
             return arr.slice(arr.length - 4, arr.length);
@@ -120,10 +128,9 @@ const ImagePicker = (props: Props) => {
     const chooseFile = (type) => {
         let options: ImageLibraryOptions = {
             mediaType: type,
-            maxWidth: 300,
-            maxHeight: 550,
             quality: 1,
             selectionLimit: 5,
+            includeBase64: true,
         };
         launchImageLibrary(options, (response: any) => {
             if (response.didCancel) {
@@ -190,7 +197,6 @@ const ImagePicker = (props: Props) => {
                     showsHorizontalScrollIndicator={false}
                     horizontal
                 />}
-
             </View>
         </SafeAreaView>
     );

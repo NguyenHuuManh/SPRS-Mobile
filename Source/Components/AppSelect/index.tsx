@@ -30,7 +30,7 @@ interface Props {
 
 }
 
-export default memo((props: Props) => {
+export default (props: Props) => {
     const {
         onChangeCustom,
         placeholder,
@@ -66,12 +66,17 @@ export default memo((props: Props) => {
         }
         if (disableClear) return
         ClearOption();
-
     }, [data])
 
-
-
-
+    useEffect(() => {
+        const index = findIndex(data, function (e) {
+            return keyValue(e) + "" == value + "";
+        })
+        if (index >= 0) {
+            onSelect(data[index]);
+            return;
+        }
+    }, [value])
 
     const onSelect = (item) => {
         onItemSelect && onItemSelect(item);
@@ -163,4 +168,4 @@ export default memo((props: Props) => {
             </View>
         </View >
     )
-})
+}

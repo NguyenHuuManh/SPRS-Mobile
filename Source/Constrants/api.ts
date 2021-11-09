@@ -33,6 +33,7 @@ export const DETAIL_PLACE_ID = `${URL_GOONG}/Place/Detail`
 export const CITY = `${URL}/sprs/api/address/city`
 export const DISTRICT = `${URL}/sprs/api/address/district/`
 export const SUBDISTRICT = `${URL}/sprs/api/address/subdistrict/`
+export const STORE_CATEGORY = `${URL}/sprs/api/store-category/get`
 
 //api tao diem cuu tro
 export const CREATE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/create`
@@ -42,6 +43,10 @@ export const UPDATE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/update`
 export const CREATE_STORE_POINT = `${URL}/sprs/api/store-manage/create`
 export const UPDATE_STORE_POINT = `${URL}/sprs/api/store-manage/update`
 export const GET_STORE_POINT = `${URL}/sprs/api/store-manage/get`
+export const SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/subcribe`
+export const UNSUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/unsubcribe`
+export const GET_SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/get`
+
 //
 
 

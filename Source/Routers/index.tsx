@@ -27,6 +27,8 @@ import ReliefPoints from '../Screens/ReliefPoints';
 import Signup from '../Screens/Signup';
 import UpdateReliefPoint from '../Screens/UpdateReliefPoint';
 import UpdateStorePoint from '../Screens/UpdateStorePoint';
+import SOS from '../Screens/SOS';
+import DetailPoint from '../Screens/DetailPoint';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -127,6 +129,8 @@ const RootStackScreen = () => {
                             <RootStack.Screen name="UpdateReliefPoint" component={UpdateReliefPoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="ReliefPoint" component={ReliefPoints} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="StorePoints" component={StorePoints} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="SOS" component={SOS} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="DetailPoint" component={DetailPoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="UpdateStorePoint" component={UpdateStorePoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="Personal" component={Personal} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="ChangePasswordAuth" component={ChangePasswordAuth} options={{ animationEnabled: true }} />

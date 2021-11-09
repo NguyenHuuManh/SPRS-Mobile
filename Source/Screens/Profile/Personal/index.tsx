@@ -2,10 +2,12 @@ import { faCalendar, faCity, faEdit, faPhone, faUserAlt, faUserCircle, faUserEdi
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
+import moment from "moment";
 import React, { useState } from "react";
 import { Text, View, TouchableOpacity } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useDispatch } from "react-redux";
+import Toast from "react-native-toast-message";
+import { useDispatch, useSelector } from "react-redux";
 import { apiUpdate } from "../../../ApiFunction/Auth";
 import AppSelectGroupUser from "../../../Components/AppSelectGroupUser";
 import AppSelectHuyen from "../../../Components/AppSelectHuyen";
@@ -18,34 +20,61 @@ import HeaderContainer from "../../../Components/HeaderContainer";
 import Input from "../../../Components/Input";
 import { AppColor } from "../../../Helper/propertyCSS";
 import { height, width } from "../../../Helper/responsive";
+import { profileActions } from "../../../Redux/Actions";
 import styles from "../styles";
 import { updateForm } from "../validate";
 export default () => {
     const dispatch = useDispatch()
     const param = useRoute<any>();
-    const profile = param?.params?.profile
-    const upateProfile = (values) => {
-        console.log("values", values)
-        apiUpdate(values).then((res) => { console.log("resonseUpate", res) })
-    }
+    // const profile = param?.params?.profile
     const [idTinh, setIdTinh] = useState("");
     const [idHuyen, setIdHuyen] = useState("");
     const [disable, setDisable] = useState(true);
+    const profile = useSelector((state) => state.profileReducer);
+    const upateProfile = (values) => {
+        apiUpdate(values).then((res) => {
+            if (res.status == 200) {
+                if (res.data.code == "200") {
+                    Toast.show({
+                        type: "success",
+                        text1: "Cập nhật thông tin thành công",
+                        position: "top"
+                    });
+                    dispatch(profileActions.profileRequest())
+                    setDisable(true);
+                    return;
+                }
+                Toast.show({
+                    type: "error",
+                    text1: res.data.message,
+                    position: "top"
+                })
+                return
+            }
+            Toast.show({
+                type: "error",
+                text1: "Chức năng đang bảo trì",
+                position: "top"
+            })
+        })
+    }
+
     return (
         <KeyboardAwareScrollView style={{ backgroundColor: "#FFF", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center" }} showsVerticalScrollIndicator={false}>
             <Formik
                 initialValues={{
-                    username: profile?.username || "",
-                    dob: profile?.dob || "",
-                    groupsId: profile?.groups_user[0].id || "",
-                    full_name: profile?.full_name || "",
-                    phone: profile?.phone || "",
-                    city: profile?.address?.city?.id,
-                    district: profile?.address?.district?.id,
-                    subDistrict: profile?.address?.subDistrict?.id,
+                    username: profile?.data?.username || "",
+                    dob: moment(profile?.data?.dob).format("DD/MM/YYYY") || "",
+                    groupsId: profile?.data?.groups_user[0].id || "",
+                    full_name: profile?.data?.full_name || "",
+                    phone: profile?.data?.phone || "",
+                    city: profile?.data?.address?.city?.id,
+                    district: profile?.data?.address?.district?.id,
+                    subDistrict: profile?.data?.address?.subDistrict?.id,
                     addressLine: "",
                 }}
                 validationSchema={updateForm}
+                enableReinitialize
                 onSubmit={(values) => {
                     const { city, district, subDistrict, addressLine, groupsId, ...body } = values
 
@@ -87,6 +116,7 @@ export default () => {
                                     onPress={() => {
                                         if (disable) {
                                             setDisable(false);
+                                            // setody({ ...body })
                                         } else {
                                             resetForm();
                                             setDisable(true);
@@ -142,7 +172,7 @@ export default () => {
                                     editable={!disable}
                                 />
                             </ContainerField>
-                            <ContainerField title="Ngày sinh">
+                            <ContainerField title="Ngày sinh" disabled={disable}>
                                 <Field
                                     component={DateTimePicker}
                                     iconLeft={faCalendar}

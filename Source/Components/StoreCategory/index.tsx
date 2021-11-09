@@ -4,16 +4,18 @@ import { Field, Formik } from "formik";
 import { findIndex } from "lodash";
 import React, { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { AppColor } from "../../Helper/propertyCSS";
 import { MainStyle } from "../../Style/main_style";
 import AppSelectStoreCategory from "../AppSelectStoreCategory";
 
 interface Props {
-    items: any;
-    setItems: any;
+    items?: any;
+    setItems?: any;
+    readonly?: any;
 }
 
 export default (props: Props) => {
-    const { items, setItems } = props
+    const { items, setItems, readonly } = props
     // const [items, setItems] = useState<any>([]);
     const [itemTypeSelect, setItemTypeSelect] = useState<any>({});
     const renderItem = ({ item }) => {
@@ -33,6 +35,14 @@ export default (props: Props) => {
             </View>
         )
     }
+
+    const renderEmptyCompoent = () => {
+        return (
+            <View style={{ height: 50, justifyContent: "center", paddingLeft: 20 }}>
+                <Text style={{ color: AppColor.CORLOR_TEXT, textAlign: "center" }}>Chưa có sản phẩn</Text>
+            </View>
+        )
+    }
     return (
         <View>
             <FlatList
@@ -42,55 +52,51 @@ export default (props: Props) => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item) => item.id}
+                ListEmptyComponent={renderEmptyCompoent}
             />
-            <View>
-                <Formik
-                    initialValues={{
-                        quantity: "",
-                    }}
-                    onSubmit={(values) => {
+            {!readonly && (
+                <View>
+                    <Formik
+                        initialValues={{}}
+                        onSubmit={(values) => {
 
-                        const itemObj = {
-                            id: itemTypeSelect.id,
-                            quantity: values.quantity,
-                            name: itemTypeSelect.name,
-                            unit: itemTypeSelect.unit
-
-                        }
-                        const id = findIndex(items, (e: any) => {
-                            return Number(e.id) == Number(itemObj.id)
-                        })
-                        if (id >= 0) return;
-                        items.push(itemObj);
-                        setItems([...items]);
-                    }}
-                >
-                    {({ submitForm }) => (
-                        <>
-                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                <View style={{ flex: 1 }}>
-                                    <Field
-                                        component={AppSelectStoreCategory}
-                                        name="id"
-                                        keyboardType="phone-pad"
-                                        dataDetectorTypes='phoneNumber'
-                                        onSelectOption={setItemTypeSelect}
-                                        placeholder="Mặt hàng"
-                                    />
+                            const itemObj = {
+                                id: itemTypeSelect.id,
+                                name: itemTypeSelect.name,
+                            }
+                            const id = findIndex(items, (e: any) => {
+                                return Number(e.id) == Number(itemObj.id)
+                            })
+                            if (id >= 0) return;
+                            items.push(itemObj);
+                            setItems([...items]);
+                        }}
+                    >
+                        {({ submitForm }) => (
+                            <>
+                                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                    <View style={{ flex: 9 }}>
+                                        <Field
+                                            component={AppSelectStoreCategory}
+                                            name="id"
+                                            onSelectOption={setItemTypeSelect}
+                                            placeholder="Mặt hàng"
+                                        />
+                                    </View>
+                                    <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
+                                        <TouchableOpacity
+                                            onPress={submitForm}
+                                            style={{}}
+                                        >
+                                            <FontAwesomeIcon icon={faShoppingBasket} color="red" size={30} />
+                                        </TouchableOpacity >
+                                    </View>
                                 </View>
-                                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                    <TouchableOpacity
-                                        onPress={submitForm}
-                                        style={{}}
-                                    >
-                                        <FontAwesomeIcon icon={faShoppingBasket} color="red" size={30} />
-                                    </TouchableOpacity >
-                                </View>
-                            </View>
-                        </>
-                    )}
-                </Formik>
-            </View>
+                            </>
+                        )}
+                    </Formik>
+                </View>
+            )}
         </View >
     )
 }

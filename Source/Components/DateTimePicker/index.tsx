@@ -23,9 +23,10 @@ interface Props {
     horizontal?: boolean;
     styleTitle?: any;
     underLine?: any;
+    disabled?: boolean;
 }
 export default (props: Props) => {
-    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, ...remainProps } = props
+    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, disabled, ...remainProps } = props
     const [show, setShow] = useState(false);
     const { name, value } = field
     // const [date, setDate] = useState(new Date());
@@ -77,6 +78,7 @@ export default (props: Props) => {
                     mode="date"
                     display="default"
                     onChange={onChange}
+                    disabled={disabled}
                 />
             )}
         </View>

@@ -5,12 +5,12 @@ export default StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         width: 50,
-        height: 200,
         zIndex: 10,
         position: "absolute",
         top: 100,
         left: 5,
         margin: 10,
+        // backgroundColor: "blue"
     },
 
     item: {
@@ -22,6 +22,6 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 1,
-        borderColor:"#FFFF",
+        borderColor: "#FFFF",
     },
 });

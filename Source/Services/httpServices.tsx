@@ -13,7 +13,7 @@ class Services {
         this.interceptors = null;
         this.axios.defaults.withCredentials = false;
         this.axios.defaults.timeout = 30000;
-        // this.axios.defaults.headers.common["Content-Type"] = `application/json`;
+        // this.axios.defaults.headers.common["Content-Type"] = `application/json; multipart/form-data`;
         // this.axios.defaults.headers = {
         //     "Access-Control-Allow-Headers": "*",
         //     "Access-Control-Allow-Methods": "*",
