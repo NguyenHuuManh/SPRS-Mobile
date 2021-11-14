@@ -5,7 +5,7 @@ import styles from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import moment from 'moment'
 import { MainStyle } from '../../Style/main_style';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNull } from 'lodash';
 import { AppColor } from '../../Helper/propertyCSS';
 interface Props {
     // name: any;
@@ -24,26 +24,36 @@ interface Props {
     styleTitle?: any;
     underLine?: any;
     disabled?: boolean;
+    dateFormat?: string;
 }
 export default (props: Props) => {
-    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, disabled, ...remainProps } = props
+    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, disabled, dateFormat, ...remainProps } = props
     const [show, setShow] = useState(false);
     const { name, value } = field
     // const [date, setDate] = useState(new Date());
     const { errors, touched, setFieldValue } = form;
     const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setShow(Platform.OS === 'ios');
-        setFieldValue(name, moment(currentDate).format("DD/MM/YYYY"))
+        if (event.type + '' === 'neutralButtonPressed') {
+            setShow(false);
+            setFieldValue(name, "");
+        }
+        if (event.type + '' === 'set') {
+            const currentDate = selectedDate;
+            setShow(false);
+            setFieldValue(name, moment(currentDate).format("DD-MM-YYYY"))
+        }
+        if (event.type + '' === 'dismissed') {
+            setShow(false);
+        }
     };
 
-    const revertDate = (value) => {
-        const dateStr = isEmpty(value) ? moment().format("DD/MM/YYYY") : value
-        console.log("dateStr", dateStr)
-        let arr = dateStr.split("/");
-        return arr[2] + "/" + arr[1] + "/" + arr[0]
-    }
 
+    const revertDate = (value) => {
+        const dateStr = (isEmpty(value) || isNull(value)) ? moment().format("DD-MM-YYYY") : value;
+        const arr = dateStr.split("-");
+        const newDate = arr[1] + "-" + arr[0] + "-" + arr[2]
+        return newDate;
+    }
     return (
         <View>
             <View style={[styles.containerInput]}>
@@ -76,9 +86,11 @@ export default (props: Props) => {
                     testID="dateTimePicker"
                     value={new Date(Date.parse(revertDate(value)))}
                     mode="date"
-                    display="default"
+                    display="spinner"
                     onChange={onChange}
                     disabled={disabled}
+                    dateFormat='day month year'
+                    neutralButtonLabel="clear"
                 />
             )}
         </View>

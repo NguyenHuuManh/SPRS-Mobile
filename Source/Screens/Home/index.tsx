@@ -53,7 +53,11 @@ export default ({ navigation }) => {
                         </View>
                     </View>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                        <View style={[MainStyle.boxShadow, styles.box]}></View>
+                        <View style={[MainStyle.boxShadow, styles.box]}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("SubcribeList") }} style={[styles.boxTouch]}>
+                                <Text style={{ fontSize: 30 }}>ưa thích</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>

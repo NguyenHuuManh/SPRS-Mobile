@@ -40,7 +40,6 @@ export default (props: Props) => {
                 checkCallAPI(
                     res,
                     (response) => {
-                        // console.log("resGroups", response);
                         setData(response.lstObj);
                     },
                     (e) => { }

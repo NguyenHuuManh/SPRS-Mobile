@@ -1,7 +1,7 @@
 import { faShoppingBasket, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Field, Formik } from "formik";
-import { findIndex } from "lodash";
+import { findIndex, isEmpty } from "lodash";
 import React, { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { AppColor } from "../../Helper/propertyCSS";
@@ -59,7 +59,7 @@ export default (props: Props) => {
                     <Formik
                         initialValues={{}}
                         onSubmit={(values) => {
-
+                            if (isEmpty(itemTypeSelect)) return;
                             const itemObj = {
                                 id: itemTypeSelect.id,
                                 name: itemTypeSelect.name,

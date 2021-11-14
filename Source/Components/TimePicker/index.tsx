@@ -23,10 +23,9 @@ interface Props {
     horizontal?: boolean;
     styleTitle?: any;
     underLine?: any;
-    mode?: 'data' | 'time';
 }
 export default (props: Props) => {
-    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, mode, ...remainProps } = props
+    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, ...remainProps } = props
     const [show, setShow] = useState(false);
     const { name, value } = field
     // const [date, setDate] = useState(new Date());
@@ -75,7 +74,7 @@ export default (props: Props) => {
                     testID="dateTimePicker"
                     value={new Date(Date.parse(revertTime(value)))}
                     mode="time"
-                    display="default"
+                    display="spinner"
                     onChange={onChange}
                     is24Hour
                 />

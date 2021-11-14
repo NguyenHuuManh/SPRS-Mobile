@@ -6,10 +6,11 @@ export default StyleSheet.create({
         padding: 7,
         backgroundColor: "#d0d4cb",
         borderRadius: 10,
-        // marginTop: 10,
+        marginTop: 5,
         alignSelf: "center",
         paddingLeft: 12,
-        paddingRight: 12
+        paddingRight: 12,
+        flexDirection: "row"
 
     },
     Text: {

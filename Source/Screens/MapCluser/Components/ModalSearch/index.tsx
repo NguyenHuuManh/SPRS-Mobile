@@ -27,13 +27,13 @@ export default (props: Props) => {
     const [data, setData] = useState([])
 
     const getPoint = () => {
-        apiGetReliefPoint().then((e) => {
-            if (e.status == 200) {
-                if (e.data.code === "200") {
-                    setData(e.data.obj);
-                }
-            }
-        })
+        // apiGetReliefPoint().then((e) => {
+        //     if (e.status == 200) {
+        //         if (e.data.code === "200") {
+        //             setData(e.data.obj);
+        //         }
+        //     }
+        // })
     }
 
     useEffect(() => {
@@ -57,7 +57,7 @@ export default (props: Props) => {
                         longitudeDelta: 0.006866
                     }
 
-                    map.current.animateToRegion(marker, 1000);
+                    map.animateToRegion(marker, 1000);
                     setRegion(marker)
                     setMarkerTo && setMarkerTo({
                         latitude: Number(marker.latitude),

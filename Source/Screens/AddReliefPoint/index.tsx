@@ -42,18 +42,26 @@ const AddReliefPoint = ({ navigation }) => {
   }, [adressPoint])
   const callCreatePoint = (body) => {
     apiCreateReliefPoint(body).then((res) => {
+      console.log("res", res)
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
             type: "success",
-            text1: "Tạo điểm cửa hàng thành công",
+            text1: "Tạo điểm cứu trợ thành công",
             position: "top"
-          })
+          });
+          return;
         }
-      } else {
         Toast.show({
           type: "error",
           text1: res.data.message,
+          position: "top"
+        });
+        return;
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Chức năng đang được bảo trì",
           position: "top"
         })
       }
@@ -88,8 +96,10 @@ const AddReliefPoint = ({ navigation }) => {
         <Formik
           innerRef={formikRef}
           initialValues={{
-            open_time: "",
-            close_time: "",
+            open_Hour_time: "",
+            close_Hour_time: "",
+            open_Date_time: "",
+            close_Date_time: "",
             status: "",
             name: "SPRS",
             description: "",
@@ -98,6 +108,8 @@ const AddReliefPoint = ({ navigation }) => {
           onSubmit={(values) => {
             const body = {
               ...values,
+              open_time: values.open_Date_time + " " + values.open_Hour_time,
+              close_time: values.close_Date_time + " " + values.close_Hour_time,
               reliefInformations: items.map((e) => {
                 return {
                   quantity: e.quantity,
@@ -128,7 +140,10 @@ const AddReliefPoint = ({ navigation }) => {
                 GPS_long: adressPoint?.GPS_long
               },
             }
-            console.log("body", body);
+            delete body.close_Date_time;
+            delete body.close_Hour_time;
+            delete body.open_Date_time;
+            delete body.open_Hour_time;
             callCreatePoint(body);
           }}
         >
@@ -145,34 +160,50 @@ const AddReliefPoint = ({ navigation }) => {
                 />
               </ContainerField>
 
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ width: "50%", paddingRight: 5 }}>
-                  <ContainerField title="Giờ mở cửa">
+              <ContainerField title="Thời gian hoạt động">
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
                     <Field
-                      component={TimePicker}
-                      name="open_time"
-                      // title="Thời gian hoạt động"
-                      mode="time"
+                      component={DateTimePicker}
+                      name="open_Date_time"
                       horizontal
-                      placeholder="Mở cửa"
+                      placeholder="Ngày nở cửa"
                       styleTitle={{ width: 110 }}
                     />
-                  </ContainerField>
-                </View>
-                <View style={{ width: "50%", paddingLeft: 5 }}>
-                  <ContainerField title="Giờ đóng cửa">
+                  </View>
+                  <View style={{ flex: 2 }}>
                     <Field
                       component={TimePicker}
-                      name="close_time"
-                      // title="Thời gian kết thúc"
-                      mode="time"
+                      name="open_Hour_time"
                       horizontal
-                      placeholder="Đóng cửa"
+                      placeholder="Giờ mở cửa"
                       styleTitle={{ width: 110 }}
                     />
-                  </ContainerField>
+                  </View>
                 </View>
-              </View>
+              </ContainerField>
+              <ContainerField title="Thời gian kết thúc">
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
+                    <Field
+                      component={DateTimePicker}
+                      name="close_Date_time"
+                      horizontal
+                      placeholder="Ngày đóng cửa"
+                      styleTitle={{ width: 110 }}
+                    />
+                  </View>
+                  <View style={{ flex: 2 }}>
+                    <Field
+                      component={TimePicker}
+                      name="close_Hour_time"
+                      horizontal
+                      placeholder="Giờ đóng cửa"
+                      styleTitle={{ width: 110 }}
+                    />
+                  </View>
+                </View>
+              </ContainerField>
 
               <ContainerField title="Mô tả">
                 <Field

@@ -1,31 +1,34 @@
 import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 import { Field, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  SafeAreaView, Text, View
+  SafeAreaView, Text, View, ScrollView
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
-import { apiCreateReliefPoint } from "../../ApiFunction/ReliefPoint";
+import { apiCreateReliefPoint, apiGetReliefPointDetail, apiUpdateReliefPoint } from "../../ApiFunction/ReliefPoint";
 import ButtonCustom from "../../Components/ButtonCustom";
 import DateTimePicker from "../../Components/DateTimePicker";
+import TimePicker from "../../Components/TimePicker";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
 import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
-import { height } from "../../Helper/responsive";
+import { height, width } from "../../Helper/responsive";
 import styles from "../AddLocation/styles";
 import { useRoute } from "@react-navigation/core";
 import MapView from "./components/MapView";
 import { MainStyle } from "../../Style/main_style";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
 import ContainerField from "../../Components/ContainerField";
+import { isNull, isUndefined } from "lodash";
+import { update } from "./validate";
 
 const UpdateReliefPoint = ({ navigation }) => {
   const [items, setItems] = useState<any>([]);
+  const [data, setData] = useState<any>({})
 
   const item = useRoute<any>().params;
-  console.log("item", item);
   const [adressPoint, setAdressPoint] = useState<any>({
     GPS_Lati: item.address.GPS_lati,
     GPS_long: item.address.GPS_long,
@@ -33,16 +36,16 @@ const UpdateReliefPoint = ({ navigation }) => {
     district: "",
     subDistrict: "",
   })
-  console.log("address", adressPoint)
-  const callCreatePoint = (body) => {
-    apiCreateReliefPoint(body).then((res) => {
+  const callUpdateReliefPoint = (body) => {
+    apiUpdateReliefPoint(body).then((res) => {
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
             type: "success",
-            text1: "Tạo điểm cửa hàng thành công",
+            text1: "Cập nhật thành công",
             position: "top"
           })
+          return;
         }
       } else {
         Toast.show({
@@ -53,16 +56,44 @@ const UpdateReliefPoint = ({ navigation }) => {
       }
     })
   }
+
+  const callGetReliefPointDetail = () => {
+    apiGetReliefPointDetail({ id: item.id }).then((res) => {
+      if (res.status == 200) {
+        if (res.data.code == "200") {
+          setData(res.data.obj);
+          setAdressPoint({
+            GPS_Lati: res.data.obj.address.GPS_lati,
+            GPS_long: res.data.obj.address.GPS_long,
+            city: res.data.obj.address.city.name || "",
+            district: res.data.obj.address.district.name || "",
+            subDistrict: res.data.obj.address.subDistrict.name || "",
+          })
+          setItems(res.data.obj.reliefInformations);
+          return;
+        }
+      } else {
+        Toast.show({
+          type: "error",
+          text1: res.data.message,
+          position: "top"
+        })
+      }
+    })
+  }
+  useEffect(() => {
+    callGetReliefPointDetail();
+  }, [item])
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ height: "7%" }}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={{ height: height * 0.07 }}>
         <HeaderContainer
           flexRight={0}
           flexCenter={10}
           isBackReLoad="ReliefPoint"
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ fontSize: 20, }}>Cập nhật điểm cứu trợ</Text>
+              <Text style={{ fontSize: 20, color: "#FFF" }}>Cập nhật điểm cứu trợ</Text>
             </View>
           )}
         />
@@ -78,16 +109,22 @@ const UpdateReliefPoint = ({ navigation }) => {
         </View>
         <Formik
           initialValues={{
-            open_time: item?.open_time || "",
-            close_time: item?.close_time || "",
-            status: item?.status || "",
-            name: item?.name || "",
-            description: item?.description || "",
+            id: data?.id,
+            open_Hour_time: (!isNull(data?.open_time) && !isUndefined(data?.open_time)) ? data?.open_time.split(" ")[1] : "",
+            close_Hour_time: (!isNull(data?.close_time) && !isUndefined(data?.close_time)) ? data?.close_time.split(" ")[1] : "",
+            open_Date_time: (!isNull(data?.open_time) && !isUndefined(data?.open_time)) ? data?.open_time.split(" ")[0] : "",
+            close_Date_time: (!isNull(data?.close_time) && !isUndefined(data?.close_time)) ? data?.close_time.split(" ")[0] : "",
+            status: data?.status || "",
+            name: data?.name || "",
+            description: data?.description || "",
           }}
+          validationSchema={update}
+          enableReinitialize
           onSubmit={(values) => {
-
             const body = {
               ...values,
+              open_time: values.open_Date_time + " " + values.open_Hour_time,
+              close_time: values.close_Date_time + " " + values.close_Hour_time,
               reliefInformations: items.map((e) => {
                 return {
                   quantity: e.quantity,
@@ -118,8 +155,12 @@ const UpdateReliefPoint = ({ navigation }) => {
                 GPS_long: adressPoint?.GPS_long
               },
             }
+            delete body.close_Date_time;
+            delete body.close_Hour_time;
+            delete body.open_Date_time;
+            delete body.open_Hour_time;
             console.log("body", body);
-            callCreatePoint(body);
+            callUpdateReliefPoint(body);
           }}
         >
           {({ submitForm }) => (
@@ -136,22 +177,48 @@ const UpdateReliefPoint = ({ navigation }) => {
               </ContainerField>
 
               <ContainerField title="Thời gian hoạt động">
-                <Field
-                  component={DateTimePicker}
-                  name="open_time"
-                  horizontal
-                  placeholder="Mở cửa"
-                  styleTitle={{ width: 110 }}
-                />
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
+                    <Field
+                      component={DateTimePicker}
+                      name="open_Date_time"
+                      horizontal
+                      placeholder="Mở cửa"
+                      styleTitle={{ width: 110 }}
+                    />
+                  </View>
+                  <View style={{ flex: 2 }}>
+                    <Field
+                      component={TimePicker}
+                      name="open_Hour_time"
+                      horizontal
+                      placeholder="Mở cửa"
+                      styleTitle={{ width: 110 }}
+                    />
+                  </View>
+                </View>
               </ContainerField>
               <ContainerField title="Thời gian kết thúc">
-                <Field
-                  component={DateTimePicker}
-                  name="close_time"
-                  horizontal
-                  placeholder="Đóng cửa"
-                  styleTitle={{ width: 110 }}
-                />
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
+                    <Field
+                      component={DateTimePicker}
+                      name="close_Date_time"
+                      horizontal
+                      placeholder="Đóng cửa"
+                      styleTitle={{ width: 110 }}
+                    />
+                  </View>
+                  <View style={{ flex: 2 }}>
+                    <Field
+                      component={TimePicker}
+                      name="close_Hour_time"
+                      horizontal
+                      placeholder="Mở cửa"
+                      styleTitle={{ width: 110 }}
+                    />
+                  </View>
+                </View>
               </ContainerField>
               <ContainerField title="Mô tả">
                 <Field
@@ -186,7 +253,7 @@ const UpdateReliefPoint = ({ navigation }) => {
           )}
         </Formik>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </ScrollView >
   );
 }
 

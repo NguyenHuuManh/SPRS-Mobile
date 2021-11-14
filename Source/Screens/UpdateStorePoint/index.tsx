@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
-import { apiGetStoreDetail, apiUpdateStore } from "../../ApiFunction/StorePoint";
+import { apiGetStoreDetail, apiUpdateStore, apiUploadImg } from "../../ApiFunction/StorePoint";
 import AppCamera from "../../Components/AppCamera";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
@@ -26,6 +26,7 @@ const UpdateStorePoint = ({ navigation }) => {
   const [items, setItems] = useState<any>([]);
   const item = useRoute<any>().params;
   const [data, setData] = useState<any>({});
+  const [loadingImg, setLoadingImg] = useState(false);
   const [adressPoint, setAdressPoint] = useState<any>({
     GPS_Lati: item.address.GPS_lati,
     GPS_long: item.address.GPS_long,
@@ -84,6 +85,22 @@ const UpdateStorePoint = ({ navigation }) => {
       }
     })
   }
+
+  const updateImg = () => {
+    const data = new FormData();
+    for (let i = 0; i < imageList.length; i++) {
+      data.append(imageList[i].fileName, imageList[i].base64);
+    }
+    console.log("data", data);
+    const body = {
+      file: data,
+      storeDto: { id: item.id }
+    }
+    setLoadingImg(true);
+    apiUploadImg(body).then((response) => {
+      console.log("reponseImg", response);
+    }).finally(() => { setLoadingImg(false) })
+  }
   return (
     <SafeAreaView
       style={{
@@ -115,10 +132,11 @@ const UpdateStorePoint = ({ navigation }) => {
         }}
       >
         <View style={[{ width: "100%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
-          <AppCamera imageList={imageList} setImageList={setImageList} />
+          <AppCamera imageList={imageList} setImageList={setImageList} buttonSaveAction={updateImg} loading={loadingImg} />
         </View>
         <Formik
           initialValues={{
+            id: data?.id,
             open_time: data?.open_time || "",
             close_time: data?.close_time || "",
             status: data?.status || "",
@@ -131,7 +149,7 @@ const UpdateStorePoint = ({ navigation }) => {
 
             const body = {
               ...values,
-              storeDetail: items.map((e) => {
+              store_category: items.map((e) => {
                 return {
                   id: e.id,
                   name: e.name
@@ -160,11 +178,7 @@ const UpdateStorePoint = ({ navigation }) => {
               },
             }
             // console.log("body", body);
-            const data = new FormData();
-            for (let i = 0; i < imageList.length; i++) {
-              data.append(imageList[i].fileName, imageList[i].base64);
-            }
-            console.log("data", data);
+
             UpdateStore(body);
           }}
         >

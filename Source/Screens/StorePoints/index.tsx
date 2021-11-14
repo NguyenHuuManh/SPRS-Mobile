@@ -1,4 +1,4 @@
-import { faPlus, faSortAlphaDownAlt, faSortAlphaUp, faToggleOn, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCity, faPlus, faSortAlphaDownAlt, faSortAlphaUp, faToggleOn, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import CheckBox from '@react-native-community/checkbox';
 import React, { useEffect, useState } from "react";
@@ -9,9 +9,15 @@ import { useDispatch } from "react-redux";
 import { apiGetStore } from "../../ApiFunction/StorePoint";
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
+import AppSelectTinh from "../../Components/AppSelectTinh";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
+import { Field, Formik } from "formik";
+
 import styles from "./styles";
+import ContainerField from "../../Components/ContainerField";
+import FilterComponent from "../../Components/FilterComponent";
+import FilterForm from "./components/FilterForm";
 const AVATA_SIZE = 60;
 const Margin_BT = 20;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
@@ -19,16 +25,20 @@ const ITEM_SIZE = AVATA_SIZE + Margin_BT
 export default ({ navigation }) => {
     const dispatch = useDispatch()
     const [itemSelect, setItemSelect] = useState(null)
-    const [points, setPoints] = useState([])
+    const [points, setPoints] = useState([]);
+    const [isVisible, setIsVisible] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current
     useEffect(() => { getPoint() }, [])
     const getPoint = () => {
+        setIsVisible(true);
         apiGetStore().then((e) => {
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setPoints(e.data.obj);
                 }
             }
+        }).finally(() => {
+            setIsVisible(false);
         })
     }
     const renderLeftActions = (progress, dragX, index, onchage) => {
@@ -145,42 +155,17 @@ export default ({ navigation }) => {
 
     return (
         <View style={[styles.container]}>
+            {/* <Loading isVisible={isVisible} /> */}
             <View style={{ height: "20%" }}>
                 <HeaderContainer
                     isBackNavigate={"Home"}
-                    // centerEl={(
-                    //     <View style={{ width: "100%" }}>
-                    //         <TextInput style={{ backgroundColor: "#FFF", borderRadius: 10 }} />
-                    //     </View>
-                    // )}
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}
 
                 />
-                {/* <ButtonCustom title="Thêm mới" onPress={() => { navigation.push("AddReliefPoint") }} /> */}
             </View>
-            <View style={{ height: "15%", width: "100%" }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", height: "50%", alignItems: "center", backgroundColor: "red", paddingLeft: 5, paddingRight: 10 }}>
-                    <Text style={{ fontSize: 15, fontWeight: "bold" }}>Danh sách cửa hàng</Text>
-                    <ButtonCustom onPress={() => { navigation.push("AddStorePoint") }} ><FontAwesomeIcon icon={faPlus} /></ButtonCustom>
-                </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-around", height: "50%", alignItems: "center", backgroundColor: "pink" }}>
-                    <CheckBox
-                        value={true}
-                    />
-                    <CheckBox
-                        value={true}
-                    />
-                    <CheckBox
-                        value={true}
-                    />
-                    <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                        <FontAwesomeIcon icon={faSortAlphaUp} />
-                        <FontAwesomeIcon icon={faSortAlphaDownAlt} />
-                    </View>
-                </View>
-            </View>
+            <FilterForm />
             <View style={{ height: "55%", marginTop: 10 }}>
                 <Animated.FlatList
                     onScroll={Animated.event(
@@ -192,6 +177,8 @@ export default ({ navigation }) => {
                     keyExtractor={({ id }) => id}
                     renderItem={renderItem}
                     style={{ paddingBottom: 50 }}
+                    refreshing={isVisible}
+                    onRefresh={() => { getPoint() }}
                 />
             </View>
         </View>

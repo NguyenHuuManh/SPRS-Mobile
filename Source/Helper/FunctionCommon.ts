@@ -20,22 +20,19 @@ export const handleLocationPermission = async () => { // 👈
                 ? console.warn("Location permission granted.")
                 : console.warn("Location perrmission denied.")
         }
+        return true;
     }
 
     if (Platform.OS === "android") {
         permissionCheck = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
-
+        console.log("permissionCheck ", permissionCheck);
         if (permissionCheck === RESULTS.DENIED) {
-            const permissionRequest = await request(
-                PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
-            )
-            permissionRequest === RESULTS.GRANTED
-                ? console.warn("Location permission granted.")
-                : console.warn("Location perrmission denied.")
+            const permissionRequest = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+            return permissionRequest === RESULTS.GRANTED
         }
-        console.log("permissionCheck ", permissionCheck)
-
+        return true;
     }
+    return false;
 }
 
 interface ErrorCall {
@@ -164,3 +161,41 @@ export function checkKeyNull(obj: any) {
     return obj;
 }
 
+export function decimalAdjust(type, value, exp) {
+    // If the exp is undefined or zero...
+    if (typeof exp === 'undefined' || +exp === 0) {
+        return Math[type](value);
+    }
+    value = +value;
+    exp = +exp;
+    // If the value is not a number or the exp is not an integer...
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+        return NaN;
+    }
+    // Shift
+    value = value.toString().split('e');
+    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+}
+
+export function haversineDistance(latlngA, latlngB, isMiles) {
+    const squared = x => x * x;
+    const toRad = x => (x * Math.PI) / 180;
+    const R = 6371; // Earth’s mean radius in km
+
+    const dLat = toRad(latlngB[0] - latlngA[0]);
+    const dLon = toRad(latlngB[1] - latlngA[1]);
+
+    const dLatSin = squared(Math.sin(dLat / 2));
+    const dLonSin = squared(Math.sin(dLon / 2));
+
+    const a = dLatSin +
+        (Math.cos(toRad(latlngA[0])) * Math.cos(toRad(latlngB[0])) * dLonSin);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    let distance = R * c;
+
+    if (isMiles) distance /= 1.609344;
+    return distance;
+}

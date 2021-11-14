@@ -29,6 +29,8 @@ import UpdateReliefPoint from '../Screens/UpdateReliefPoint';
 import UpdateStorePoint from '../Screens/UpdateStorePoint';
 import SOS from '../Screens/SOS';
 import DetailPoint from '../Screens/DetailPoint';
+import SubcribleList from '../Screens/SubcribleList';
+import MapCluser from '../Screens/MapCluser';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -86,7 +88,7 @@ const TabScreens = () => (
 const DrawScreen = () => (
     <Drawer.Navigator initialRouteName="TabScreen2" screenOptions={{ headerShown: false, swipeEnabled: false, gestureEnabled: false }} drawerContent={(props) => <DrawerCustom {...props} />}>
         <Drawer.Screen name="TabScreen" component={TabScreens} />
-        <Drawer.Screen name="TabScreen2" component={Map} />
+        <Drawer.Screen name="TabScreen2" component={MapCluser} />
     </Drawer.Navigator>
 )
 const RootStackScreen = () => {
@@ -130,6 +132,7 @@ const RootStackScreen = () => {
                             <RootStack.Screen name="ReliefPoint" component={ReliefPoints} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="StorePoints" component={StorePoints} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="SOS" component={SOS} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="SubcribeList" component={SubcribleList} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="DetailPoint" component={DetailPoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="UpdateStorePoint" component={UpdateStorePoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="Personal" component={Personal} options={{ animationEnabled: true }} />

@@ -2,7 +2,7 @@
 // https://aboutreact.com/example-of-image-picker-in-react-native/
 
 // Import React
-import { faCamera, faFileImage, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faFileImage, faSave, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { size } from 'lodash';
 import React, { useState } from 'react';
@@ -17,7 +17,9 @@ import {
     Platform,
     PermissionsAndroid,
     FlatList,
+    ActivityIndicator,
 } from 'react-native';
+import Modal from 'react-native-modal';
 
 // Import Image Picker
 // import ImagePicker from 'react-native-image-picker';
@@ -28,14 +30,17 @@ import {
     launchImageLibrary
 } from 'react-native-image-picker';
 import { MainStyle } from '../../Style/main_style';
+import Loading from '../Loading';
 
 interface Props {
     imageList: any,
     setImageList: any,
+    buttonSaveAction?: any,
+    loading?: any;
 }
 
 const ImagePicker = (props: Props) => {
-    const { imageList, setImageList } = props;
+    const { imageList, setImageList, buttonSaveAction, loading } = props;
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -117,7 +122,6 @@ const ImagePicker = (props: Props) => {
             alert(" số lượng ảnh chọn vượt quá 8MB");
             return arr1;
         }
-        console.log(size, "size")
         if (arr.length > 4) {
             alert("giới hạn chọn 4 ảnh")
             return arr.slice(arr.length - 4, arr.length);
@@ -176,7 +180,7 @@ const ImagePicker = (props: Props) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
-                <View style={{ flexDirection: "column", justifyContent: "center", backgroundColor: "#DDDD", borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}>
+                <View style={{ flexDirection: "column", justifyContent: "center", backgroundColor: "#DDDD", borderTopLeftRadius: 10, borderBottomLeftRadius: 10, paddingTop: 10, paddingBottom: 10 }}>
                     <TouchableOpacity
                         style={styles.buttonStyle}
                         onPress={() => captureImage('photo')}>
@@ -187,16 +191,34 @@ const ImagePicker = (props: Props) => {
                         onPress={() => chooseFile('photo')}>
                         <FontAwesomeIcon icon={faFileImage} />
                     </TouchableOpacity>
+                    {buttonSaveAction && (
+                        <TouchableOpacity
+                            style={[styles.buttonStyle]}
+                            onPress={buttonSaveAction}>
+                            <FontAwesomeIcon icon={faSave} />
+                            <Text>Lưu</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
-                {imageList && <FlatList
-                    data={imageList}
-                    keyExtractor={(item) => item.fileName}
-                    renderItem={renderImage}
-                    style={{ height: "100%" }}
-                    contentContainerStyle={{ height: "100%", paddingLeft: 5 }}
-                    showsHorizontalScrollIndicator={false}
-                    horizontal
-                />}
+                {imageList && (
+                    <>
+                        {loading && (
+                            <View style={{ position: "absolute", zIndex: 1000, backgroundColor: "rgba(10, 10, 10,0.1)", width: "100%", height: "100%", justifyContent: "center", borderRadius: 10 }}>
+                                <ActivityIndicator size="large" color="violet" />
+                            </View>
+                        )}
+                        <FlatList
+                            data={imageList}
+                            keyExtractor={(item) => item.fileName}
+                            renderItem={renderImage}
+                            style={{ height: "100%" }}
+                            contentContainerStyle={{ height: "100%", paddingLeft: 5 }}
+                            showsHorizontalScrollIndicator={false}
+                            horizontal
+                            refreshing={loading}
+                        />
+                    </>
+                )}
             </View>
         </SafeAreaView>
     );
@@ -225,6 +247,8 @@ const styles = StyleSheet.create({
     buttonStyle: {
         alignItems: 'center',
         padding: 30,
+        paddingBottom: 20,
+        paddingTop: 20,
     },
     imageStyle: {
         width: "80%",

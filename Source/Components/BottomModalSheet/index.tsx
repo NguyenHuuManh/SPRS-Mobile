@@ -1,13 +1,13 @@
-import { faChevronDown, faSearchLocation, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
+import { faSearchLocation, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { debounce, values } from 'lodash';
+import { debounce } from 'lodash';
 import * as React from 'react';
-import { Button, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { height } from '../../Helper/responsive';
 import styles from './styles';
 
-export default function App() {
+export default () => {
     const [isClear, setIsClear] = React.useState(false)
     const [label, setLabel] = React.useState("")
     const sheetRef = React.useRef(null);
@@ -94,7 +94,6 @@ export default function App() {
 
         </View>
     );
-    // console.log(isSearch, "isSearch")
     const controllSearch = React.useCallback(debounce((isSearch) => { setIsSearch(isSearch) }, 100), [])
     return (
         <>

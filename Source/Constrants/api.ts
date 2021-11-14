@@ -38,7 +38,11 @@ export const STORE_CATEGORY = `${URL}/sprs/api/store-category/get`
 //api tao diem cuu tro
 export const CREATE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/create`
 export const GET_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/get`
+export const GET_RELIEF_POINT_DETAIL = `${URL}/sprs/api/reliefPoint-manage/reliefPoint`
 export const UPDATE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/update`
+export const UPDATE_STATUS_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/update-status`
+export const DELETE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/delete`
+
 //api store
 export const CREATE_STORE_POINT = `${URL}/sprs/api/store-manage/create`
 export const UPDATE_STORE_POINT = `${URL}/sprs/api/store-manage/update`
@@ -46,8 +50,11 @@ export const GET_STORE_POINT = `${URL}/sprs/api/store-manage/get`
 export const SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/subcribe`
 export const UNSUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/unsubcribe`
 export const GET_SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/get`
+export const UPLOAD_IMG_STORE = `${URL}/sprs/api/store-manage/uploadImg`
+//loadMap
+export const LOAD_MAP = `${URL}/sprs/api/manage-map/getPoints`
 
-//
+
 
 
 

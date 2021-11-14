@@ -30,7 +30,6 @@ const AddStorePoint = ({ navigation }) => {
     subDistrict: "",
   })
   const [items, setItems] = useState<any>([]);
-  console.log("items", items);
 
   const callCreatePoint = (body) => {
     apiCreateStore(body).then((res) => {

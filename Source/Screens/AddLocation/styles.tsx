@@ -9,7 +9,7 @@ export default StyleSheet.create({
         backgroundColor: "#FFF",
     },
     scrollContainer: {
-        height: height,
+        height: height + (height * 0.1),
         width: width,
         // alignItems: "center",
         justifyContent: "flex-start",

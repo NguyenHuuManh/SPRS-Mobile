@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 
 export default ({ state, descriptors, navigation }) => {
     const badgeShow = useSelector((state) => state.badgeReducer)
-    console.log("badgeShow", badgeShow)
     function IconRender({ name, color }) {
         switch (name) {
             case 'Trang chủ':

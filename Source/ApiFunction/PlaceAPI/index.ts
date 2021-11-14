@@ -1,4 +1,4 @@
-import { CITY, DETAIL_PLACE_ID, DETAIL_PLACE_LAT_LNG, DISTRICT, PLACE_AUTOCOMPLETE, SUBDISTRICT } from "../../Constrants/api";
+import { CITY, DETAIL_PLACE_ID, DETAIL_PLACE_LAT_LNG, DISTRICT, LOAD_MAP, PLACE_AUTOCOMPLETE, SUBDISTRICT } from "../../Constrants/api";
 import { API_KEY_GOONG } from "../../Constrants/url";
 import { convertToQuery } from "../../Helper/FunctionCommon";
 import httpServices from "../../Services/httpServices";
@@ -35,6 +35,10 @@ export const apiDistrict = async (id) => {
 
 export const apiSubDistrict = async (id) => {
     return await httpServices.get(`${SUBDISTRICT}${id}`);
+}
+
+export const apiLoadMap = async (params) => {
+    return await httpServices.get(`${LOAD_MAP}${convertToQuery(params)}`);
 }
 
 
