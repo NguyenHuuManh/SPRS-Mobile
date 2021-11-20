@@ -5,4 +5,5 @@ import * as profileActions from "./ProfileActions"
 import * as toastActions from "./ToastActions"
 import * as pendingActions from "./PendingActions"
 import * as badgeShowActions from "./BadgeShowActions"
-export { userActions, tabBarVisibleActons, profileActions, toastActions, pendingActions, badgeShowActions }
+import * as networkActions from "./NetworkActions"
+export { userActions, tabBarVisibleActons, profileActions, toastActions, pendingActions, badgeShowActions, networkActions }

@@ -7,6 +7,7 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { AppColor } from "../../Helper/propertyCSS";
 import { MainStyle } from "../../Style/main_style";
 import AppSelectStoreCategory from "../AppSelectStoreCategory";
+import { addBasket } from "./validate";
 
 interface Props {
     items?: any;
@@ -57,7 +58,11 @@ export default (props: Props) => {
             {!readonly && (
                 <View>
                     <Formik
-                        initialValues={{}}
+                        validateOnChange={false}
+                        validationSchema={addBasket}
+                        initialValues={{
+                            id: "",
+                        }}
                         onSubmit={(values) => {
                             if (isEmpty(itemTypeSelect)) return;
                             const itemObj = {
@@ -86,9 +91,8 @@ export default (props: Props) => {
                                     <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
                                         <TouchableOpacity
                                             onPress={submitForm}
-                                            style={{}}
                                         >
-                                            <FontAwesomeIcon icon={faShoppingBasket} color="red" size={30} />
+                                            <FontAwesomeIcon icon={faShoppingBasket} color="blue" size={20} />
                                         </TouchableOpacity >
                                     </View>
                                 </View>

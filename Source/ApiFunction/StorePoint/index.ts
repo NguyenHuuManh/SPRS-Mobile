@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_STORE_POINT, GET_STORE_POINT, GET_SUBCRIBLE_STORE, SUBCRIBLE_STORE, UNSUBCRIBLE_STORE, UPDATE_STORE_POINT, UPLOAD_IMG_STORE } from "../../Constrants/api";
+import { CREATE_STORE_POINT, DELETE_STORE_POINT, GET_STORE_POINT, GET_SUBCRIBLE_STORE, SUBCRIBLE_STORE, UNSUBCRIBLE_STORE, UPDATE_STORE_POINT, UPLOAD_IMG_STORE } from "../../Constrants/api";
 import { convertToQuery } from "../../Helper/FunctionCommon";
 import httpServices from "../../Services/httpServices";
 
@@ -9,6 +9,10 @@ export const apiCreateStore = async (body) => {
 
 export const apiGetStore = async () => {
     return await httpServices.get(`${GET_STORE_POINT}`);
+};
+
+export const apiDeleteStore = async (body) => {
+    return await httpServices.put(`${DELETE_STORE_POINT}`, body);
 };
 
 export const apiGetStoreDetail = async (id) => {
@@ -28,12 +32,10 @@ export const apiUploadImg = async (bodyFormData) => {
     })
         .then(function (response) {
             //handle success
-            console.log(response);
             return response
         })
         .catch(function (response) {
             //handle error
-            console.log(response);
             return response;
         });
 };

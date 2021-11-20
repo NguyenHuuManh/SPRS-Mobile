@@ -58,13 +58,14 @@ export default () => {
             })
         })
     }
+    // console.log("res", moment(profile?.data?.dob).format("DD-MM-YYYY"))
 
     return (
         <KeyboardAwareScrollView style={{ backgroundColor: "#FFF", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center" }} showsVerticalScrollIndicator={false}>
             <Formik
                 initialValues={{
                     username: profile?.data?.username || "",
-                    dob: moment(profile?.data?.dob).format("DD/MM/YYYY") || "",
+                    dob: profile?.data?.dob || "",
                     groupsId: profile?.data?.groups_user[0].id || "",
                     full_name: profile?.data?.full_name || "",
                     phone: profile?.data?.phone || "",

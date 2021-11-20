@@ -75,7 +75,7 @@ export default (props: Props) => {
             {(formikProps) => (
                 <View style={{ height: "15%", width: "100%" }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", height: "50%", alignItems: "center", paddingLeft: 5, paddingRight: 10 }}>
-                        <Text style={{ fontSize: 15, fontWeight: "bold" }}>Danh sách cửa hàng</Text>
+                        <Text style={{ fontSize: 15, fontWeight: "bold" }}>Danh sách điểm cứu trợ</Text>
                         <TouchableOpacity style={{ justifyContent: "center" }} onPress={() => {
                             formikProps.setFieldValue("sort", !formikProps.values.sort);
                             formikProps.submitForm();

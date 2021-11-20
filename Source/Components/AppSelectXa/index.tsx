@@ -19,10 +19,13 @@ export default (props: Props) => {
     const [disableClear, setDisableClear] = useState(true);
 
     const callGetGroupList = () => {
-        if ((!idHuyen || isEmpty(idHuyen + "") || isNull(idHuyen)) && !isNull(data)) {
-            // setFieldValue(name, "");
-            setDisableClear(false);
-            setData([]);
+        console.log("idHuyen", !idHuyen)
+        if ((!idHuyen || isEmpty(idHuyen + "") || isNull(idHuyen))) {
+            if (!isNull(data)) {
+                setDisableClear(false);
+                setData([]);
+                return;
+            }
             return;
         }
         apiSubDistrict(idHuyen)

@@ -3,14 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
 import { debounce, isEmpty } from "lodash";
 import React, { createRef, useCallback, useEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Text, TouchableOpacity, View } from "react-native";
-import { ClusterMap } from 'react-native-cluster-map';
+import { Alert, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { ClusterMap, } from 'react-native-cluster-map';
 import Geolocation from 'react-native-geolocation-service';
 import { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from 'react-native-maps-directions';
 import { useSelector } from "react-redux";
 import { apiLoadMap } from "../../ApiFunction/PlaceAPI";
 import SOS from "../../Assets/Images/locationSOS.svg";
+import Relief from "../../Assets/Images/locationRelief.svg";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { API_KEY } from "../../Constrants/url";
 import { handleLocationPermission, haversineDistance } from "../../Helper/FunctionCommon";
@@ -20,6 +21,8 @@ import BottomModalSheet from "./Components/BottomModalSheet";
 import ClusterMarker from "./Components/CluserMarker";
 import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
+import { useRoute } from "@react-navigation/core";
+import RenderMarker from "./Components/RenderMarker";
 
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
@@ -38,11 +41,11 @@ export default () => {
     const [dataDirection, setDataDirection] = useState({});
     const [strokerDirection, setStrokerDirection] = useState(0)
     const [showModal, setShowModal] = useState(false);
+    const { params } = useRoute<any>();
 
     const getCurrentLocation = () => {
         Geolocation.getCurrentPosition(
             (response) => {
-                // console.log("responseddđ", response)
                 setRegion({
                     ...region, latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
@@ -55,7 +58,6 @@ export default () => {
                 })
             },
             (error) => {
-                console.log("error", error);
                 if (error.code == 5) {
                     alert("Yêu cầu quyền truy cập vị trí của bạn để sử dụng chức năng này")
                     return;
@@ -72,13 +74,11 @@ export default () => {
     }
     useEffect(() => {
         getCurrentLocation();
-        handleLocationPermission().then((e) => {
-            // console.log("permission", e);
-        });
+        // handleLocationPermission().then((e) => {
+        //     // console.log("permission", e);
+        // });
         Geolocation.watchPosition(
             (response) => {
-                // Alert.alert("Location", response.coords.latitude + '');
-                // console.log("responseCurren", response)
                 setMylocation({
                     latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
@@ -104,7 +104,24 @@ export default () => {
             setSouthWest(e.southWest);
             setMapReady(true);
         });
+        if (params?.toLocation) {
+            mapRef.current.mapRef.animateToRegion({
+                ...params?.toLocation,
+                latitudeDelta: 0.006866,
+                longitudeDelta: 0.006866,
+            }, 1000);
+            setMarkerTo(params.toLocation);
+            if (!showModal) {
+                setStrokerDirection(0);
+            }
+            setShowModal(true);
+        }
+
     }
+
+    // useEffect(() => {
+
+    // }, [params])
     const [visible, setVisible] = useState(false);
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
@@ -115,7 +132,7 @@ export default () => {
             }
         })
     }
-    const debounceLoadMap = useCallback(debounce((nextValue) => callLoadMap(nextValue), 100), [])
+    const debounceLoadMap = useCallback(debounce((nextValue) => callLoadMap(nextValue), 1000), [])
     useEffect(() => {
         if (isEmpty(centerMark)) return;
         const distance = haversineDistance([southWest.latitude, southWest.longitude], [northEast.latitude, northEast.longitude], false)
@@ -147,10 +164,12 @@ export default () => {
     )
 
     return (
-        <KeyboardAvoidingView behavior="padding">
+        <SafeAreaView style={{ flex: 1 }}>
             <ModalSearch visible={visible} setVisible={setVisible} setText={setText} map={mapRef.current?.mapRef} setRegion={setRegion} region={region} setMarkerTo={setMarkerTo} />
-            <View style={{ height: height * 0.1 }}>
+            <View style={{ height: height * 0.07 }}>
                 <HeaderContainer
+                    // isBack={params?.toLocation}
+                    isBackNavigate={params?.screen}
                     centerEl={(
                         <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
                             <TouchableOpacity onPress={() => { setVisible(true) }} style={{
@@ -190,16 +209,17 @@ export default () => {
                                             },
                                             {
                                                 text: 'Hủy',
-                                                onPress: () => console.log('No Pressed'), style: 'cancel'
+                                                onPress: () => { }, style: 'cancel'
                                             },
                                         ],
                                         { cancelable: false },
                                     );
                                 } else {
-                                    navigation.reset({
-                                        index: 0,
-                                        routes: [{ name: 'TabScreen' }]
-                                    })
+                                    // navigation.reset({
+                                    //     index: 0,
+                                    //     routes: [{ name: 'TabScreen' }]
+                                    // })
+                                    navigation.navigate("DrawScreen")
                                 }
                             }}>
                                 <FontAwesomeIcon icon={faHome} color="#A0A6BE" size={24} />
@@ -211,12 +231,20 @@ export default () => {
             </View>
             <View style={{ height: height }}>
                 <Filter />
-                <BottomModalSheet dataDirection={dataDirection} setStrokerDirection={setStrokerDirection} />
+                <BottomModalSheet
+                    dataDirection={dataDirection}
+                    setStrokerDirection={setStrokerDirection}
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    mapRef={mapRef}
+                    myLocation={myLocation}
+                />
                 <View style={{ position: "absolute", top: 70, left: 20, zIndex: 100 }}>
                     <TouchableOpacity
                         onPress={() => {
                             mapRef.current.mapRef.animateToRegion({
-                                ...myLocation, latitudeDelta: 0.006866,
+                                ...myLocation,
+                                latitudeDelta: 0.006866,
                                 longitudeDelta: 0.006866,
                             }, 1000);
                         }}>
@@ -256,36 +284,20 @@ export default () => {
                                 longitude: Number(e?.point.y)
                             }
                             return (
-                                <Marker
-                                    key={e.id}
+                                <RenderMarker
+                                    item={e}
                                     coordinate={coordinate}
-                                    onPress={(e) => {
-                                        setMarkerTo(e.nativeEvent.coordinate);
-                                        setShowModal(true);
-                                    }}
-                                    description={"marker.description"}
-                                >
-                                    <SOS fill={'#F4A921'} width={30} height={30} />
-                                    {/* <Relief fill={'#F4A921'} width={30} height={30} /> */}
-                                    {/* <SOS fill={'#F4A921'} width={30} height={30} /> */}
-                                    <Callout
-                                        onPress={() => {
-                                            navigation.navigate("DetailPoint", { point: e });
-                                        }}
-                                    >
-                                        <View style={{ width: 100, height: 100 }}>
-                                            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                                                <Text>{e.name}</Text>
-                                            </View>
-                                        </View>
-                                    </Callout>
-                                </Marker>
+                                    showModal={showModal}
+                                    setMarkerTo={setMarkerTo}
+                                    setShowModal={setShowModal}
+                                    setStrokerDirection={setStrokerDirection}
+                                />
                             )
                         })}
                     </ClusterMap>
                 }
             </View>
-        </KeyboardAvoidingView >
+        </SafeAreaView >
     );
 
 }

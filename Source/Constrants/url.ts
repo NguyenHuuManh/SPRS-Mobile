@@ -1,4 +1,4 @@
-export const URL = "http://ec2-3-1-50-88.ap-southeast-1.compute.amazonaws.com"
+export const URL = "http://ec2-18-140-72-243.ap-southeast-1.compute.amazonaws.com"
 export const URL_GOOGLE = "https://maps.googleapis.com/maps/api"
 export const URL_GOONG = "https://rsapi.goong.io"
 // export const API_KEY = "AIzaSyA0pe7QePLkXCmox2klIGBpOm3otGTGk7o"

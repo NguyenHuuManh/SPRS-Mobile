@@ -18,9 +18,12 @@ export default (props: Props) => {
     const [data, setData] = useState(null)
     const [disableClear, setDisableClear] = useState(true);
     const callGetGroupList = () => {
-        if ((!idTinh || isEmpty(idTinh + "") || isNull(idTinh)) && !isNull(data)) {
-            setDisableClear(false);
-            setData([]);
+        if ((!idTinh || isEmpty(idTinh + "") || isNull(idTinh))) {
+            if (!isNull(data)) {
+                setDisableClear(false);
+                setData([]);
+                return;
+            }
             return;
         }
         apiDistrict(idTinh)

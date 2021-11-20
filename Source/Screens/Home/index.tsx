@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
+import Silde from "./Components/Silde";
 import styles from "./styles";
 const AVATA_SIZE = 100;
 const Margin_BT = 20;
@@ -13,7 +14,7 @@ export default ({ navigation }) => {
     // const navigation = useNavigation()
     return (
         <View style={[styles.container]}>
-            <View style={{ height: height * 0.1 }}>
+            {/* <View style={{ height: height * 0.1 }}>
                 <HeaderContainer
                     centerEl={(
                         <View style={{ width: "100%", alignItems: "center" }}>
@@ -25,8 +26,10 @@ export default ({ navigation }) => {
                     flexCenter={10}
 
                 />
+            </View> */}
+            <View style={{ height: "50%", width: "100%" }}>
+                <Silde></Silde>
             </View>
-
             <View style={{ height: "35%", width: "100%", paddingTop: 10, paddingBottom: 10 }}>
                 <View style={{ flex: 1, flexDirection: "row" }}>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -61,8 +64,7 @@ export default ({ navigation }) => {
                     </View>
                 </View>
             </View>
-            <View style={{ height: "40%", width: "100%", backgroundColor: "#FFFF" }}>
-            </View>
+
         </View>
     )
 }

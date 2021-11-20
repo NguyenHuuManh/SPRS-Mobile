@@ -70,7 +70,7 @@ export default (props: Props) => {
                         const item = getItemSelect({ id: values[e.key], key: e.key });
                         if (isEmpty(item)) return <></>
                         return (
-                            <View style={{ marginRight: 5, justifyContent: "center" }}>
+                            <View style={{ marginRight: 5, justifyContent: "center" }} key={e.id}>
                                 <ContainerField styleCustomContainer={{ marginTop: 0 }}>
                                     <View style={{ minWidth: 60, maxWidth: 100, minHeight: 40, justifyContent: "center", display: "flex", alignItems: "center" }}>
                                         <Text ellipsizeMode="tail" numberOfLines={1}>{item?.name || ""}</Text>

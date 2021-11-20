@@ -34,7 +34,6 @@ export default (props: Props) => {
     const onSelect = (item) => {
         setFieldValue(name, item.id);
     }
-    console.log("error", errors)
     if (field) {
         return (
             <>

@@ -23,6 +23,7 @@ import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
 import ContainerField from "../../Components/ContainerField";
 import { isNull, isUndefined } from "lodash";
 import { update } from "./validate";
+import AppTimePicker from "../../Components/AppTimePicker";
 
 const UpdateReliefPoint = ({ navigation }) => {
   const [items, setItems] = useState<any>([]);
@@ -38,6 +39,8 @@ const UpdateReliefPoint = ({ navigation }) => {
   })
   const callUpdateReliefPoint = (body) => {
     apiUpdateReliefPoint(body).then((res) => {
+      console.log("res", res);
+
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
@@ -47,10 +50,15 @@ const UpdateReliefPoint = ({ navigation }) => {
           })
           return;
         }
-      } else {
         Toast.show({
           type: "error",
           text1: res.data.message,
+          position: "top"
+        })
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Chức năng đang bảo trì",
           position: "top"
         })
       }
@@ -127,13 +135,15 @@ const UpdateReliefPoint = ({ navigation }) => {
               close_time: values.close_Date_time + " " + values.close_Hour_time,
               reliefInformations: items.map((e) => {
                 return {
+                  id: e.id,
                   quantity: e.quantity,
                   item: {
-                    id: e.id
+                    id: e.item.id
                   }
                 }
               }),
               address: {
+                id: data.address.id,
                 city: {
                   code: "",
                   id: "",
@@ -247,7 +257,7 @@ const UpdateReliefPoint = ({ navigation }) => {
               </ContainerField>
 
               {/* <View style={{ flex: 1 }}> */}
-              <ButtonCustom title={"Thêm mới"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, width: "90%" }} onPress={() => { submitForm() }} />
+              <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30 }} onPress={() => { submitForm() }} />
               {/* </View> */}
             </View>
           )}

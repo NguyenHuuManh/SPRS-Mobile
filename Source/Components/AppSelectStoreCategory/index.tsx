@@ -51,7 +51,7 @@ export default (props: Props) => {
                     labelValue={(item) => item?.name}
                     inputValue={(item) => item?.name}
                 />
-                {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
+                {errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
             </>
         )
     }

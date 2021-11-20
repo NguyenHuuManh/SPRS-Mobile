@@ -5,7 +5,7 @@ import { isEmpty } from "lodash";
 import React, { createRef, useEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Text, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Callout, CalloutSubview, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Callout, CalloutSubview, Marker, PROVIDER_GOOGLE, } from "react-native-maps";
 import MapViewDirections from 'react-native-maps-directions';
 import { useSelector } from "react-redux";
 import { apiGetReliefPoint } from "../../ApiFunction/ReliefPoint";
@@ -53,7 +53,6 @@ export default () => {
     const getCurrentLocation = () => {
         Geolocation.getCurrentPosition(
             (response) => {
-                console.log("responseddđ", response)
                 setRegion({
                     ...region, latitude: response.coords.latitude,
                     longitude: response.coords.longitude,

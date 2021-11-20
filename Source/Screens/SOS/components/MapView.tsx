@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 import React, { useRef, useState } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import SOS from "../../../Assets/Images/locationSOS.svg";
 interface Props {
     defaultLocation?: any;
 }
@@ -9,11 +10,6 @@ export default (props: Props) => {
     const [mapReady, setMapReady] = useState(false);
 
     const mapRef = useRef(null);
-
-    // useEffect(() => {
-    //     console.log("vao daay");
-    // }, [defaultLocation])
-
     if (!isEmpty(defaultLocation)) {
         return (
             <MapView
@@ -34,7 +30,9 @@ export default (props: Props) => {
                             }}
                             title={"marker.title"}
                             description={"marker.description"}
-                        />
+                        >
+                            <SOS fill={'#F4A921'} width={30} height={30} />
+                        </Marker>
                     </>
 
                 )}

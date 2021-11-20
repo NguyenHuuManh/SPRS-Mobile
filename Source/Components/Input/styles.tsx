@@ -16,7 +16,8 @@ export default StyleSheet.create({
         // fontSize: 18,
         borderRadius: 10,
         flex: 9,
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent: "center",
         // backgroundColor: "pink"
     },
 
@@ -28,6 +29,7 @@ export default StyleSheet.create({
         flex: 10,
         color: AppColor.CORLOR_TEXT,
         paddingBottom: 0,
+        // backgroundColor: "red"
     },
 
     iconRight: {

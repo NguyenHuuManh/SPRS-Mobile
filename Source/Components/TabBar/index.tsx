@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faBars, faHome, faIdBadge, faPlusCircle, faMapMarkedAlt, faBell } from '@fortawesome/free-solid-svg-icons'
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
-import { AppColor } from "../../Helper/propertyCSS";
+import { AppColor, BackgoundMain } from "../../Helper/propertyCSS";
 import { useSelector } from "react-redux";
 
 export default ({ state, descriptors, navigation }) => {
@@ -69,7 +69,7 @@ export default ({ state, descriptors, navigation }) => {
                 justifyContent: 'space-around',
                 // alignItems: 'center',
                 paddingBottom: 20,
-                backgroundColor: '#F6BB57',
+                backgroundColor: BackgoundMain,
                 height: 80,
             }]} >
                 {
@@ -107,7 +107,7 @@ export default ({ state, descriptors, navigation }) => {
                                     accessibilityRole="button"
                                     accessibilityLabel={options.tabBarAccessibilityLabel}
                                     testID={options.tabBarTestID}
-                                    onPress={() => { navigation.navigate("TabScreen2") }}
+                                    onPress={() => { navigation.navigate("MapCluser") }}
                                     onLongPress={onLongPress}
                                     key={index}
                                     style={{

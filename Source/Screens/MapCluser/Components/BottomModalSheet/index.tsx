@@ -13,9 +13,11 @@ interface Props {
     setStrokerDirection?: any;
     showModal?: any;
     setShowModal?: any;
+    mapRef?: any;
+    myLocation?: any;
 }
-export default (props: Props) => {
-    const { dataDirection, setStrokerDirection, strokerDirection, showModal, setShowModal } = props
+export default React.memo((props: Props) => {
+    const { dataDirection, setStrokerDirection, strokerDirection, showModal, setShowModal, mapRef, myLocation } = props
     const sheetRef = React.useRef(null);
     const contentRef = React.useCallback(node => {
         if (node !== null) {
@@ -27,10 +29,10 @@ export default (props: Props) => {
         if (showModal) {
             snapToMax();
         }
-    }, showModal)
+    }, [showModal])
 
     const snapToMax = () => {
-        sheetRef.current.snapTo(height * 0.9)
+        sheetRef.current.snapTo(height * 0.5)
     }
 
     const renderContent = () => (
@@ -40,21 +42,34 @@ export default (props: Props) => {
                 backgroundColor: '#F6BB57',
                 padding: 16,
                 paddingTop: 0,
-                height: height,
+                height: height * 0.5,
             }}
         >
-            <View style={{ justifyContent: "flex-start", alignItems: "center", paddingBottom: 10 }}>
+            <View style={{ justifyContent: "flex-start", alignItems: "center", paddingBottom: 10, flex: 1 }}>
                 <FontAwesomeIcon icon={faWindowMinimize} color="#A0A6BE" size={20} style={{ marginTop: -10 }} />
                 <FontAwesomeIcon icon={faWindowMinimize} color="#A0A6BE" size={20} style={{ marginTop: -10 }} />
             </View>
-            <View>
+            <View style={{ flex: 8 }}>
                 <Text>Khoảng cách: {dataDirection?.distance}</Text>
                 <Text>Thời gian:{dataDirection?.duration}</Text>
             </View>
-            <View style={{ flexDirection: "row" }}>
-                <ButtonCustom onPress={() => { setStrokerDirection(5) }}>
+            <View style={{ flexDirection: "row", flex: 6, }}>
+                <ButtonCustom onPress={() => {
+                    setStrokerDirection(5)
+                    mapRef.current.mapRef.animateToRegion({
+                        ...myLocation,
+                        latitudeDelta: 0.006866,
+                        longitudeDelta: 0.006866,
+                    }, 1000);
+                }} styleContain={{ height: 50, marginRight: 10, alignItems: "center" }}>
                     <Text>Chỉ đường</Text>
-                    <FontAwesomeIcon icon={faDirections} size={30} color="blue" />
+                    {/* <FontAwesomeIcon icon={faDirections} size={30} color="blue" /> */}
+                </ButtonCustom>
+                <ButtonCustom onPress={() => {
+                    setStrokerDirection(5);
+
+                }} styleContain={{ height: 50, alignItems: "center" }}>
+                    <Text>Xem chi tiết</Text>
                 </ButtonCustom>
             </View>
         </View>
@@ -63,11 +78,11 @@ export default (props: Props) => {
         <>
             <BottomSheet
                 ref={sheetRef}
-                snapPoints={[height * 0.15, height * 0.5]}
+                snapPoints={[height * 0.12, height * 0.5]}
                 borderRadius={10}
                 renderContent={renderContent}
                 onCloseEnd={() => { setShowModal(false) }}
             />
         </>
     );
-}
+})

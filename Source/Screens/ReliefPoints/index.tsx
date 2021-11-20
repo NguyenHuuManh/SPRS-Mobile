@@ -1,9 +1,9 @@
-import { faPlus, faSortAlphaDownAlt, faSortAlphaUp, faToggleOn, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faDotCircle, faMapMarked, faPlus, faSortAlphaDownAlt, faSortAlphaUp, faToggleOn, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import CheckBox from '@react-native-community/checkbox';
 import { isNull } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Animated, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Animated, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Toast from "react-native-toast-message";
@@ -34,12 +34,25 @@ export default ({ navigation }) => {
 
     useEffect(() => { getPoint() }, [pageSize]);
 
-    const hidePoint = (param: { id: any, status: boolean }) => {
-        apiUpdateStatusReliefPoint(param).then((response) => {
-            console.log("responseHide", response);
+    const UpdatePoints = (item, type) => {
+        const index = points.findIndex((e) => {
+            return e.id == item.id
+        });
+        if (index >= 0 && type == "Update") {
+            points[index] = item;
+            setPoints([...points]);
+        }
+        if (index >= 0 && type == "Delete") {
+            points.splice(index, 1);
+            setPoints([...points]);
+        }
+    }
+
+    const ChangeStatusPoint = (item) => {
+        apiUpdateStatusReliefPoint({ id: item.id, status: item.status }).then((response) => {
             if (response.status == 200) {
                 if (response.data.code == "200") {
-                    getPoint();
+                    UpdatePoints(item, "Update");
                     return
                 }
                 Toast.show({
@@ -58,12 +71,13 @@ export default ({ navigation }) => {
         })
     }
 
-    const deletePoint = (id) => {
-        apiDeleteReliefPoint({ id: id }).then((response) => {
+    const deletePoint = (item) => {
+        apiDeleteReliefPoint({ id: item.id }).then((response) => {
             if (response.status == 200) {
                 if (response.data.code == "200") {
-                    setIsRefesh(true);
-                    setPageSize({ pageIndex: 1, pageSize: pageSize.pageIndex * 5 });
+                    // setIsRefesh(true);
+                    // setPageSize({ pageIndex: 1, pageSize: pageSize.pageIndex * 5 });
+                    UpdatePoints(item, "Delete");
                     return
                 }
                 Toast.show({
@@ -90,6 +104,7 @@ export default ({ navigation }) => {
             pageIndex: pageSize.pageIndex
         }
         apiGetReliefPoint(bodyRequest).then((e) => {
+            // console.log("Resss", e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     // points.push(e.data.obj)
@@ -117,11 +132,9 @@ export default ({ navigation }) => {
         }).finally(() => { setLoading(false) })
     }
     const handleLoadMore = () => {
-        console.log("sdfsd")
         if (pageSize.pageIndex >= totalPage) return;
         setPageSize({ ...pageSize, pageIndex: pageSize.pageIndex + 1 });
     }
-
 
     const renderLeftActions = (progress, dragX, item, onchage) => {
         const trans = dragX.interpolate({
@@ -137,7 +150,7 @@ export default ({ navigation }) => {
                     <TouchableOpacity
                         style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
                         onPress={(e) => {
-                            deletePoint(item.id);
+                            deletePoint(item);
                         }}>
                         <Animated.Text
                             style={[
@@ -149,10 +162,9 @@ export default ({ navigation }) => {
                         </Animated.Text>
                     </TouchableOpacity>
                     <RectButton
-                        style={{ backgroundColor: "blue", width: "20%", justifyContent: "center", alignItems: "center", }}
+                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center", }}
                         onPress={(e) => {
-                            points.splice(index, 1);
-                            setPoints([...points])
+                            ChangeStatusPoint({ ...item, status: !item.status });
                         }}>
                         <Animated.Text
                             style={[
@@ -160,9 +172,26 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" />
+                            {/* <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" /> */}
+                            <Switch value={item.status} disabled></Switch>
                         </Animated.Text>
                     </RectButton>
+                    <TouchableOpacity
+                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
+                        onPress={(e) => {
+                            // console.log("item", item)
+                            navigation.navigate("MapCluser", { toLocation: { latitude: Number(item.address.GPS_lati), longitude: Number(item.address.GPS_long) }, screen: "ReliefPoint" })
+                        }}
+                    >
+                        <Animated.Text
+                            style={[
+                                {
+                                    transform: [{ translateX: trans }],
+                                },
+                            ]}>
+                            <FontAwesomeIcon icon={faMapMarked} size={20} color="#FFFF" />
+                        </Animated.Text>
+                    </TouchableOpacity>
                 </>
 
             </TouchableWithoutFeedback>
@@ -170,7 +199,6 @@ export default ({ navigation }) => {
     };
 
     const renderItem = ({ item, index }) => {
-
         const scale = scrollY.interpolate({
             inputRange: [-1, 0, ITEM_SIZE * index, ITEM_SIZE * (index + 2)],
             outputRange: [1, 1, 1, 0]
@@ -206,7 +234,7 @@ export default ({ navigation }) => {
                     borderColor: "#FFFF",
                 },
                 MainStyle.boxShadow, { transform: [{ scale }], opacity }]}
-                key={index}
+                key={item.id}
             >
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
@@ -219,12 +247,13 @@ export default ({ navigation }) => {
                 >
                     <Swipeable
                         renderRightActions={(x, y) => renderLeftActions(x, y, item, onchage)}
-                        containerStyle={{ width: "100%", height: AVATA_SIZE, padding: 10 }}
+                        containerStyle={{ width: "100%", height: AVATA_SIZE, paddingLeft: 10 }}
                         onSwipeableClose={() => {
                             onchage(false)
                         }}
                     >
-                        <View style={{ width: AVATA_SIZE, height: AVATA_SIZE }}>
+                        <View style={{ width: "50%", justifyContent: "space-around", height: AVATA_SIZE }}>
+                            <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: item.status ? "#32a864" : "red" }}></View>
                             <Text>{item.name}</Text>
                         </View>
                     </Swipeable>
@@ -255,7 +284,7 @@ export default ({ navigation }) => {
                     )}
                     showsVerticalScrollIndicator={false}
                     data={points}
-                    keyExtractor={({ id }) => id}
+                    keyExtractor={(item) => item.id + 'Relef'}
                     renderItem={renderItem}
                     style={{ paddingBottom: 50 }}
                     refreshing={loading}

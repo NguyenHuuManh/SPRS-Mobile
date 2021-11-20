@@ -250,7 +250,7 @@ const UpdateStorePoint = ({ navigation }) => {
                   <Text style={[MainStyle.texError,]}>chọn mặt hàng cung cấp</Text>
                 )}
               </ContainerField>
-              <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, width: "90%" }} onPress={() => { submitForm() }} />
+              <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, }} onPress={() => { submitForm() }} />
             </View>
           )}
         </Formik>

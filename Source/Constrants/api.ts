@@ -47,12 +47,19 @@ export const DELETE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/delete`
 export const CREATE_STORE_POINT = `${URL}/sprs/api/store-manage/create`
 export const UPDATE_STORE_POINT = `${URL}/sprs/api/store-manage/update`
 export const GET_STORE_POINT = `${URL}/sprs/api/store-manage/get`
+export const DELETE_STORE_POINT = `${URL}/sprs/api/store-manage/delete`
 export const SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/subcribe`
 export const UNSUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/unsubcribe`
 export const GET_SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/get`
 export const UPLOAD_IMG_STORE = `${URL}/sprs/api/store-manage/uploadImg`
+//SOS
+export const UPDATE_SOS = `${URL}/sprs/api/sos-manage/update`
+export const GET_SOS = `${URL}/sprs/api/sos-manage/get`
 //loadMap
 export const LOAD_MAP = `${URL}/sprs/api/manage-map/getPoints`
+//Notification
+export const CREATE_DEVICE = `${URL}/sprs/api/device/create`
+export const GET_ALL_NOTIFICATION = `${URL}/sprs/api/notification-manage/get-all`
 
 
 

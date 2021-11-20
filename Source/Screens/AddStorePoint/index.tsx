@@ -33,6 +33,7 @@ const AddStorePoint = ({ navigation }) => {
 
   const callCreatePoint = (body) => {
     apiCreateStore(body).then((res) => {
+      console.log(res, "ressss")
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
@@ -192,7 +193,7 @@ const AddStorePoint = ({ navigation }) => {
               <ButtonCustom
                 title={"Thêm mới"}
                 styleTitle={{ color: "#FFF" }}
-                styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF", width: "90%" }}
+                styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF" }}
                 onPress={() => { submitForm() }} />
             </View>
           )}

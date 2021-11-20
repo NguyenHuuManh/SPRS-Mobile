@@ -29,7 +29,7 @@ export default StyleSheet.create({
         flex: 10,
         color: AppColor.CORLOR_TEXT,
         flexWrap: "wrap",
-        overflow: "scroll"
+        overflow: "scroll",
     },
 
     iconRight: {
@@ -43,7 +43,6 @@ export default StyleSheet.create({
         flex: 2,
         justifyContent: "center",
         alignItems: "center",
-        // backgroundColor:"pink"
 
     },
     text: {

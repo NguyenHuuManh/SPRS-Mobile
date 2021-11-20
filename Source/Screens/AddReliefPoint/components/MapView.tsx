@@ -1,6 +1,8 @@
 import { isEmpty } from "lodash";
 import React, { useRef, useState } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import Relief from "../../../Assets/Images/locationRelief.svg";
+
 interface Props {
     defaultLocation?: any;
 }
@@ -32,11 +34,10 @@ export default (props: Props) => {
                                 latitude: defaultLocation.latitude,
                                 longitude: defaultLocation.longitude
                             }}
-                            title={"marker.title"}
-                            description={"marker.description"}
-                        />
+                        >
+                            <Relief fill={'#F4A921'} width={30} height={30} />
+                        </Marker>
                     </>
-
                 )}
             </MapView>
         )

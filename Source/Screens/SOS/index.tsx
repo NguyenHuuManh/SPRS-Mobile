@@ -1,21 +1,18 @@
-import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 import { Field, Formik } from "formik";
-import { isEmpty, isNull } from "lodash";
 import React, { createRef, useEffect, useState } from "react";
 import {
-  SafeAreaView, Text, View
+  SafeAreaView, Switch, Text, View
 } from "react-native";
+import Geolocation from 'react-native-geolocation-service';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
-import { apiCreateReliefPoint } from "../../ApiFunction/ReliefPoint";
+import { apiGetSOS, apiUpdateSOS } from "../../ApiFunction/SOS";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
-import MapPicker from "../../Components/MapPicker";
-import MultipleAddItem from "../../Components/MultipleAddItem";
-import TimePicker from "../../Components/TimePicker";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
+import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import MapView from "./components/MapView";
@@ -27,24 +24,33 @@ const SOS = ({ navigation }) => {
     district: "",
     subDistrict: "",
   })
+  const [sosInfor, setSosInfor] = useState<any>({});
   const [items, setItems] = useState<any>([]);
   const formikRef = createRef<any>();
 
-  useEffect(() => {
-    if (!formikRef?.current || isNull(formikRef.current)) return;
-    if (isEmpty((adressPoint.city + "" + adressPoint.district + "" + adressPoint.subDistrict))) {
-      formikRef.current.setFieldValue("address", "");
-      return;
-    }
-    formikRef.current.setFieldValue("address", adressPoint.city + "-" + adressPoint.district + "-" + adressPoint.subDistrict);
-  }, [adressPoint])
+  const getCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+      (response) => {
+        setAdressPoint({
+          ...adressPoint,
+          latitude: response.coords.latitude,
+          longitude: response.coords.longitude,
+        })
+      },
+      (error) => { console.log("errorCurrentLocation", error) },
+      {
+        distanceFilter: 50,
+      }
+    )
+  }
+
   const callCreatePoint = (body) => {
-    apiCreateReliefPoint(body).then((res) => {
+    apiUpdateSOS(body).then((res) => {
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
             type: "success",
-            text1: "Tạo điểm cửa hàng thành công",
+            text1: "Cập nhật SOS thành công",
             position: "top"
           })
         }
@@ -57,6 +63,26 @@ const SOS = ({ navigation }) => {
       }
     })
   }
+  const callGetSOS = () => {
+    apiGetSOS().then((res) => {
+      if (res.status == 200) {
+        if (res.data.code == "200") {
+          setSosInfor(res.data.obj);
+        }
+      } else {
+        Toast.show({
+          type: "error",
+          text1: res.data.message,
+          position: "top"
+        })
+      }
+    })
+  }
+
+  useEffect(() => {
+    getCurrentLocation();
+    callGetSOS();
+  }, [])
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ height: "7%" }}>
@@ -73,7 +99,7 @@ const SOS = ({ navigation }) => {
       </View>
 
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={[{ width: "100%", height: 180, backgroundColor: "FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
+        <View style={[{ width: "100%", height: height * 0.4, backgroundColor: "FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
           <MapView
             defaultLocation={{
               latitude: Number(adressPoint.GPS_Lati),
@@ -83,66 +109,39 @@ const SOS = ({ navigation }) => {
             }}
           />
         </View>
+
         <Formik
           innerRef={formikRef}
           initialValues={{
-            open_time: "",
-            close_time: "",
-            status: "",
-            name: "SPRS",
-            description: "",
-            address: "",
+            id: sosInfor?.id || "",
+            status: sosInfor?.status || "",
+            description: sosInfor?.description || "",
+            level: sosInfor?.level + "" || "",
           }}
+          enableReinitialize
           onSubmit={(values) => {
             const body = {
               ...values,
-              reliefInformations: items.map((e) => {
-                return {
-                  quantity: e.quantity,
-                  item: {
-                    id: e.id
-                  }
-                }
-              }),
-              address: {
-                city: {
-                  code: "",
-                  id: "",
-                  name: adressPoint.city
-                },
-                district: {
-                  code: "",
-                  id: "",
-                  name: adressPoint?.district,
-                },
-                subDistrict: {
-                  code: "",
-                  id: "",
-                  name: adressPoint?.subDistrict,
-                },
-                addressLine: "",
-                addressLine2: "",
-                GPS_lati: adressPoint?.GPS_Lati,
-                GPS_long: adressPoint?.GPS_long
-              },
+              status: values.status ? false : true,
+              level: Number(values.level),
+              GPS_lati: adressPoint?.GPS_Lati,
+              GPS_long: adressPoint?.GPS_long
             }
             console.log("body", body);
             callCreatePoint(body);
           }}
         >
-          {({ submitForm, errors }) => (
+          {({ submitForm, errors, values, setFieldValue }) => (
             <View>
-              <ContainerField title="Tên điểm">
+              <ContainerField title="Mức độ khẩn cấp">
                 <Field
                   component={Input}
-                  name="name"
-                  // title="Tên điểm cứu trợ:"
+                  name="level"
                   horizontal
-                  placeholder="Tên điểm cứu trợ"
+                  placeholder="Mức độ"
                   styleTitle={{ width: 110 }}
                 />
               </ContainerField>
-
               <ContainerField title="Mô tả">
                 <Field
                   component={Input}
@@ -152,26 +151,16 @@ const SOS = ({ navigation }) => {
                   styleTitle={{ width: 110 }}
                 />
               </ContainerField>
-
-              <ContainerField title="Chọn địa điểm">
-                <MapPicker
-                  // title="Địa điểm"
-                  styleTitle={{ width: 110 }}
-                  horizontal
-                  iconRight={faMapMarkedAlt}
-                  iconSize={20}
-                  setAdress={setAdressPoint}
-                  adress={adressPoint}
-                />
-                <Text style={[MainStyle.texError,]}>{errors["address"]}</Text>
-              </ContainerField>
-              <ContainerField title="Sản phẩm">
-                <MultipleAddItem items={items} setItems={setItems} />
+              <ContainerField title="Trạng thái SOS">
+                <View style={{ flexDirection: "row" }}>
+                  <Switch onChange={() => { setFieldValue('status', !values.status) }} style={{ width: 50, height: 50 }} value={values.status}></Switch>
+                  <Text style={{ textAlign: "center", textAlignVertical: "center" }}>{values?.status ? "Bật" : "Tắt"}</Text>
+                </View>
               </ContainerField>
               <ButtonCustom
-                title={"Bật điểm"}
+                title={"Cập nhật"}
                 styleTitle={{ color: "#FFF" }}
-                styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF", width: "90%" }}
+                styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF" }}
                 onPress={() => { submitForm() }} />
             </View>
           )}

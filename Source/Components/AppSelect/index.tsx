@@ -62,7 +62,7 @@ export default (props: Props) => {
                 onSelect(data[index]);
                 return;
             }
-            // ClearOption();
+            ClearOption();
         }
         if (disableClear) return
         ClearOption();
@@ -76,6 +76,8 @@ export default (props: Props) => {
             onSelect(data[index]);
             return;
         }
+        // if (disableClear) return
+        // ClearOption();
     }, [value])
 
     const onSelect = (item) => {

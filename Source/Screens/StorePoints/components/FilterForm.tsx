@@ -9,7 +9,16 @@ import { useNavigation } from "@react-navigation/core";
 import { apiCity } from "../../../ApiFunction/PlaceAPI";
 import { checkCallAPI } from "../../../Helper/FunctionCommon";
 import { apiGetStoreCategory } from "../../../ApiFunction/List";
-export default () => {
+interface Props {
+    body: any,
+    setBody: any,
+    pageSize: any,
+    setPageSize: any,
+    setIsRefesh: any,
+
+}
+export default (props: Props) => {
+    const { body, setBody, pageSize, setPageSize, setIsRefesh } = props
     const navigation = useNavigation<any>();
 
     const [dataKV, setDataKV] = useState([]);
@@ -71,7 +80,7 @@ export default () => {
                         }}>
                             <FontAwesomeIcon icon={formikProps.values.sort ? faSortAlphaDownAlt : faSortAlphaUp} />
                         </TouchableOpacity>
-                        <ButtonCustom onPress={() => { navigation.push("AddReliefPoint") }} ><FontAwesomeIcon icon={faPlus} /></ButtonCustom>
+                        <ButtonCustom onPress={() => { navigation.push("AddStorePoint") }} ><FontAwesomeIcon icon={faPlus} /></ButtonCustom>
                     </View>
                     <View style={{ flexDirection: "row", justifyContent: "space-around", height: "50%", alignItems: "center" }}>
                         <FilterComponent

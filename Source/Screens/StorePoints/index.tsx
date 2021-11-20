@@ -1,12 +1,12 @@
-import { faCity, faPlus, faSortAlphaDownAlt, faSortAlphaUp, faToggleOn, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCity, faMapMarked, faPlus, faSortAlphaDownAlt, faSortAlphaUp, faToggleOn, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import CheckBox from '@react-native-community/checkbox';
 import React, { useEffect, useState } from "react";
-import { Animated, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Animated, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useDispatch } from "react-redux";
-import { apiGetStore } from "../../ApiFunction/StorePoint";
+import { apiDeleteStore, apiGetStore } from "../../ApiFunction/StorePoint";
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
 import AppSelectTinh from "../../Components/AppSelectTinh";
@@ -18,19 +18,27 @@ import styles from "./styles";
 import ContainerField from "../../Components/ContainerField";
 import FilterComponent from "../../Components/FilterComponent";
 import FilterForm from "./components/FilterForm";
+import { isEmpty, isNull } from "lodash";
 const AVATA_SIZE = 60;
 const Margin_BT = 20;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
 
 export default ({ navigation }) => {
-    const dispatch = useDispatch()
-    const [itemSelect, setItemSelect] = useState(null)
     const [points, setPoints] = useState([]);
-    const [isVisible, setIsVisible] = useState(false);
+    const [isRefesh, setIsRefesh] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current
-    useEffect(() => { getPoint() }, [])
+    const [pageSize, setPageSize] = useState({ pageSize: 5, pageIndex: 1 });
+    const [totalPage, setTotalPage] = useState(3);
+    const [body, setBody] = useState({
+        sort: true,
+        type: null,
+        status: null,
+    });
+    useEffect(() => { getPoint() }, [pageSize]);
     const getPoint = () => {
-        setIsVisible(true);
+        if (!isRefesh) {
+            setIsRefesh(true);
+        }
         apiGetStore().then((e) => {
             if (e.status == 200) {
                 if (e.data.code === "200") {
@@ -38,10 +46,33 @@ export default ({ navigation }) => {
                 }
             }
         }).finally(() => {
-            setIsVisible(false);
+            setIsRefesh(false);
         })
     }
-    const renderLeftActions = (progress, dragX, index, onchage) => {
+
+    const deleteStore = (id) => {
+        console.log("id", id);
+        if (!id || isEmpty(id + '') || isNull(id)) return;
+        if (!isRefesh) {
+            setIsRefesh(true);
+        }
+        apiDeleteStore({ id: id }).then((res) => {
+            console.log("ResDelete", res)
+            if (res.status == 200) {
+                if (res.data.code == '200') {
+                    setIsRefesh(true);
+                    setPageSize({ pageIndex: 1, pageSize: pageSize.pageIndex * 5 });
+                }
+            }
+        })
+    }
+
+    const handleLoadMore = () => {
+        if (pageSize.pageIndex >= totalPage) return;
+        setPageSize({ ...pageSize, pageIndex: pageSize.pageIndex + 1 });
+    }
+
+    const renderLeftActions = (progress, dragX, item, onchage) => {
         const trans = dragX.interpolate({
             inputRange: [0, 50, 100, 101],
             outputRange: [-20, 0, 0, 1],
@@ -55,8 +86,7 @@ export default ({ navigation }) => {
                     <TouchableOpacity
                         style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
                         onPress={(e) => {
-                            points.splice(index, 1);
-                            setPoints([...points])
+                            deleteStore(item.id);
                         }}>
                         <Animated.Text
                             style={[
@@ -68,10 +98,9 @@ export default ({ navigation }) => {
                         </Animated.Text>
                     </TouchableOpacity>
                     <RectButton
-                        style={{ backgroundColor: "blue", width: "20%", justifyContent: "center", alignItems: "center", }}
+                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center", }}
                         onPress={(e) => {
-                            points.splice(index, 1);
-                            setPoints([...points])
+                            // deleteStore(item.id);
                         }}>
                         <Animated.Text
                             style={[
@@ -79,9 +108,22 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" />
+                            <Switch thumbColor="blue" value={item.status} disabled></Switch>
                         </Animated.Text>
                     </RectButton>
+                    <TouchableOpacity
+                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
+                        onPress={(e) => {
+                        }}>
+                        <Animated.Text
+                            style={[
+                                {
+                                    transform: [{ translateX: trans }],
+                                },
+                            ]}>
+                            <FontAwesomeIcon icon={faMapMarked} size={20} color="#FFFF" />
+                        </Animated.Text>
+                    </TouchableOpacity>
                 </>
 
             </TouchableWithoutFeedback>
@@ -89,7 +131,6 @@ export default ({ navigation }) => {
     };
 
     const renderItem = ({ item, index }) => {
-
         const scale = scrollY.interpolate({
             inputRange: [-1, 0, ITEM_SIZE * index, ITEM_SIZE * (index + 2)],
             outputRange: [1, 1, 1, 0]
@@ -110,9 +151,7 @@ export default ({ navigation }) => {
                 isFirst: false
             };
         }
-
         return (
-
             <Animated.View
                 style={[{
                     width: width * 0.9,
@@ -125,7 +164,7 @@ export default ({ navigation }) => {
                     borderColor: "#FFFF",
                 },
                 MainStyle.boxShadow, { transform: [{ scale }], opacity }]}
-                key={index}
+                key={item.id}
             >
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
@@ -137,13 +176,14 @@ export default ({ navigation }) => {
                     delayPressIn={150}
                 >
                     <Swipeable
-                        renderRightActions={(x, y) => renderLeftActions(x, y, index, onchage)}
-                        containerStyle={{ width: "100%", height: AVATA_SIZE, padding: 10 }}
+                        renderRightActions={(x, y) => renderLeftActions(x, y, item, onchage)}
+                        containerStyle={{ width: "100%", height: AVATA_SIZE, paddingLeft: 10 }}
                         onSwipeableClose={() => {
                             onchage(false)
                         }}
                     >
-                        <View style={{ width: AVATA_SIZE, height: AVATA_SIZE }}>
+                        <View style={{ width: "50%", justifyContent: "space-around", height: AVATA_SIZE }}>
+                            <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: item.status ? "#32a864" : "red" }}></View>
                             <Text>{item.name}</Text>
                         </View>
                     </Swipeable>
@@ -165,7 +205,7 @@ export default ({ navigation }) => {
 
                 />
             </View>
-            <FilterForm />
+            <FilterForm body={body} setBody={setBody} setPageSize={setPageSize} pageSize={pageSize} setIsRefesh={setIsRefesh} />
             <View style={{ height: "55%", marginTop: 10 }}>
                 <Animated.FlatList
                     onScroll={Animated.event(
@@ -177,8 +217,13 @@ export default ({ navigation }) => {
                     keyExtractor={({ id }) => id}
                     renderItem={renderItem}
                     style={{ paddingBottom: 50 }}
-                    refreshing={isVisible}
-                    onRefresh={() => { getPoint() }}
+                    refreshing={isRefesh}
+                    onRefresh={() => {
+                        setIsRefesh(true);
+                        setPageSize({ pageIndex: 1, pageSize: 5 });
+                    }}
+                    onEndReached={handleLoadMore}
+                    onEndReachedThreshold={0}
                 />
             </View>
         </View>

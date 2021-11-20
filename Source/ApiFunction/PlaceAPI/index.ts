@@ -2,6 +2,7 @@ import { CITY, DETAIL_PLACE_ID, DETAIL_PLACE_LAT_LNG, DISTRICT, LOAD_MAP, PLACE_
 import { API_KEY_GOONG } from "../../Constrants/url";
 import { convertToQuery } from "../../Helper/FunctionCommon";
 import httpServices from "../../Services/httpServices";
+import Geolocation from 'react-native-geolocation-service';
 
 export const apiPlaceDetailByLongLat = async (long: string | number, lat: string | number) => {
     return await httpServices.get(
@@ -39,6 +40,26 @@ export const apiSubDistrict = async (id) => {
 
 export const apiLoadMap = async (params) => {
     return await httpServices.get(`${LOAD_MAP}${convertToQuery(params)}`);
+}
+
+export const apiCurentLocation = async () => {
+    return await Geolocation.getCurrentPosition(
+        (response) => {
+            return response.coords
+        },
+        (error) => {
+            if (error.code == 5) {
+                alert("Yêu cầu quyền truy cập vị trí của bạn để sử dụng chức năng này")
+                return;
+            }
+            return {}
+        },
+        {
+            distanceFilter: 10,
+            enableHighAccuracy: true,
+            accuracy: { android: "high" },
+        }
+    )
 }
 
 

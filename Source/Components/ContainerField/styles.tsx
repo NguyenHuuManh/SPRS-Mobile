@@ -15,8 +15,6 @@ export default StyleSheet.create({
     titleContainer: {
         position: "absolute",
         height: 20,
-        // backgroundColor: "#FFF",
-        // display: "flex",
         flexWrap: "wrap",
         top: -10,
         left: 20,

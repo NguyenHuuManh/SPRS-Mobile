@@ -226,7 +226,7 @@ export default () => {
                         </ContainerField>
 
                         <ButtonCustom
-                            styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
+                            styleContain={{ backgroundColor: "#F6BB57", marginTop: "10%" }}
                             styleTitle={{ color: "#FFFF", fontSize: 25 }}
                             title="Đăng ký"
                             onPress={submitForm}

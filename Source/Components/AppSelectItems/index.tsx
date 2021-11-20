@@ -13,7 +13,7 @@ interface Props {
 export default (props: Props) => {
     const { field, form, onSelectOption, ...remainProps } = props
     const { name, value } = field
-    const { errors, setFieldValue, touched, values } = form
+    const { errors, setFieldValue, touched } = form
     const [data, setData] = useState([])
 
     const callGetItems = () => {
@@ -51,7 +51,7 @@ export default (props: Props) => {
                     labelValue={(item) => item?.name}
                     inputValue={(item) => item?.name}
                 />
-                {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
+                {errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
             </>
         )
     }

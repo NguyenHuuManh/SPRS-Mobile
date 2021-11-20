@@ -29,6 +29,7 @@ interface Props {
     adress?: any;
     defaultAdress?: any;
     underLine?: boolean;
+    markerRender?: any;
 }
 
 export default (props: Props) => {
@@ -41,6 +42,7 @@ export default (props: Props) => {
         leftIconOnpress,
         defaultAdress,
         underLine,
+        markerRender,
         ...remainProps
     } = props
     const [region, setRegion] = useState<any>({});
@@ -97,7 +99,6 @@ export default (props: Props) => {
     }
     useEffect(() => {
         if (defaultAdress) {
-            console.log("AdressDeffault", defaultAdress);
             setRegion({
                 ...region,
                 latitude: Number(defaultAdress.GPS_Lati),
@@ -190,11 +191,14 @@ export default (props: Props) => {
                             >
                                 {mapReady && !isEmpty(marker) && (
                                     <>
-                                        <Marker
-                                            coordinate={marker}
-                                            title={"marker.title"}
-                                            description={"marker.description"}
-                                        />
+                                        {markerRender && markerRender(marker)}
+                                        {!markerRender && (
+                                            <Marker
+                                                coordinate={marker}
+                                                title={"marker.title"}
+                                                description={"marker.description"}
+                                            />
+                                        )}
                                     </>
 
                                 )}

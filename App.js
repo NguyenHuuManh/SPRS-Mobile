@@ -8,13 +8,23 @@
 
 import type { Node } from 'react';
 import React from 'react';
-import 'react-native-gesture-handler';
 import Source from './Source';
+import messaging from '@react-native-firebase/messaging';
+import { useNavigation } from '@react-navigation/core';
+import { getFcmToken, notificationListener, networkListener } from './Source/Services/notificationService';
+
 
 
 const App: () => Node = () => {
+  // const navigation = useNavigation();
+  React.useEffect(() => {
+    notificationListener();
+
+    networkListener();
+  }, [])
+
   return (
-        <Source />
+    <Source />
   )
 };
 

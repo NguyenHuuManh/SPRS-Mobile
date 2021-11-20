@@ -92,11 +92,13 @@ class Services {
                 }
             }
             if (isUndefined(error?.response)) {
-                Toast.show({
-                    type: "error",
-                    text1: "Không có kết nốt internet",
-                    position: "top"
-                })
+                if (store.getState().networkCheckingReducer.isConnect) {
+                    Toast.show({
+                        type: "error",
+                        text1: "Hệ thống đang bảo trì",
+                        position: "top"
+                    })
+                }
                 return
             }
             return error.response;
@@ -108,10 +110,8 @@ class Services {
             const response = await this.axios.get(url, config);
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
-            console.log("errorGet", error)
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
-        // return this.axios.get(...arg);
     }
 
     async post(url: string, data?: any, config?: AxiosRequestConfig) {

@@ -7,6 +7,7 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { MainStyle } from "../../Style/main_style";
 import AppSelectItems from "../AppSelectItems";
 import Input from "../Input";
+import { addBasket } from "./validate"
 
 interface Props {
     items: any;
@@ -15,18 +16,16 @@ interface Props {
 
 export default (props: Props) => {
     const { items, setItems } = props
-    // const [items, setItems] = useState<any>([]);
     const [itemTypeSelect, setItemTypeSelect] = useState<any>({});
     const renderItem = ({ item }) => {
         return (
-            <View style={{ flex: 1, padding: 10, width: 150 }} key={item.id}>
+            <View style={{ flex: 1, padding: 10, width: 150 }} key={item.item.id}>
                 <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", height: 50, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center" }]}>
-                    <Text>{item.quantity + " " + item.unit}</Text>
-                    <Text> | {item.name}</Text>
+                    <Text>{item.quantity + " " + item.item.unit}</Text>
+                    <Text> | {item.item.name}</Text>
                     <TouchableOpacity
                         onPress={() => {
-                            const arr = items.filter(e => e.id !== item.id);
-                            console.log("Arr", arr)
+                            const arr = items.filter(e => e.item.id !== item.item.id);
                             setItems(arr);
                         }}
                         style={{ position: "absolute", top: 5, right: 5, }}>
@@ -40,35 +39,39 @@ export default (props: Props) => {
         <View>
             <FlatList
                 renderItem={renderItem}
-                // numColumns={3}
                 data={items}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(itemObj) => itemObj.item.id}
             />
             <View>
                 <Formik
                     initialValues={{
                         quantity: "",
+                        id: "",
                     }}
+                    validationSchema={addBasket}
+                    validateOnChange={false}
                     onSubmit={(values) => {
 
                         const itemObj = {
-                            id: itemTypeSelect.id,
+                            id: null,
+                            item: {
+                                id: itemTypeSelect.id,
+                                unit: itemTypeSelect.unit,
+                                name: itemTypeSelect.name,
+                            },
                             quantity: values.quantity,
-                            name: itemTypeSelect.name,
-                            unit: itemTypeSelect.unit
 
                         }
                         const id = findIndex(items, (e: any) => {
-                            return Number(e.id) == Number(itemObj.id)
+                            return Number(e.item.id) == Number(itemObj.item.id)
                         })
                         if (id >= 0) {
                             items[id] = {
                                 ...items[id],
                                 quantity: Number(itemObj.quantity) + Number(items[id].quantity)
                             }
-                            console.log("item[i]", items[id]);
                             setItems([...items]);
                             return;
                         }
@@ -92,8 +95,6 @@ export default (props: Props) => {
                                     <Field
                                         component={AppSelectItems}
                                         name="id"
-                                        keyboardType="phone-pad"
-                                        dataDetectorTypes='phoneNumber'
                                         onSelectOption={setItemTypeSelect}
                                         placeholder="Mặt hàng"
                                     />
@@ -103,7 +104,7 @@ export default (props: Props) => {
                                         onPress={submitForm}
                                         style={{}}
                                     >
-                                        <FontAwesomeIcon icon={faShoppingBasket} color="red" size={30} />
+                                        <FontAwesomeIcon icon={faShoppingBasket} color="blue" size={20} />
                                     </TouchableOpacity >
                                 </View>
                             </View>

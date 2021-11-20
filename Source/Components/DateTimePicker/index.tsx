@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { View, Button, Platform, Text, ViewStyle, TouchableOpacity, TextInput } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import styles from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import moment from 'moment'
-import { MainStyle } from '../../Style/main_style';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { isEmpty, isNull } from 'lodash';
+import moment from 'moment';
+import React, { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { AppColor } from '../../Helper/propertyCSS';
+import { MainStyle } from '../../Style/main_style';
+import styles from './styles';
 interface Props {
-    // name: any;
     form?: any;
     field?: any;
     onChangeCustom?: any;
     placeholder?: any;
-    // memo?: boolean;
     customInputStyle?: ViewStyle;
     title?: string;
     iconLeft?: any;
@@ -30,7 +28,6 @@ export default (props: Props) => {
     const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, disabled, dateFormat, ...remainProps } = props
     const [show, setShow] = useState(false);
     const { name, value } = field
-    // const [date, setDate] = useState(new Date());
     const { errors, touched, setFieldValue } = form;
     const onChange = (event, selectedDate) => {
         if (event.type + '' === 'neutralButtonPressed') {
@@ -49,10 +46,16 @@ export default (props: Props) => {
 
 
     const revertDate = (value) => {
-        const dateStr = (isEmpty(value) || isNull(value)) ? moment().format("DD-MM-YYYY") : value;
-        const arr = dateStr.split("-");
-        const newDate = arr[1] + "-" + arr[0] + "-" + arr[2]
-        return newDate;
+        let dateStr = "";
+
+        // const dateStr = (isEmpty(value) || isNull(value)) ? moment().format("YYYY-MM-DD") : moment(value).format("YYYY-MM-DD");
+        if (isEmpty(value) || isNull(value)) {
+            dateStr = moment().format("YYYY-MM-DD");
+        } else {
+            const arr = value.split("-");
+            dateStr = arr[2] + arr[1] + arr[0];
+        }
+        return moment(dateStr).valueOf();
     }
     return (
         <View>
@@ -81,18 +84,19 @@ export default (props: Props) => {
                 </View>
                 {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
             </View>
-            {show && (
-                <DateTimePicker
-                    testID="dateTimePicker"
-                    value={new Date(Date.parse(revertDate(value)))}
-                    mode="date"
-                    display="spinner"
-                    onChange={onChange}
-                    disabled={disabled}
-                    dateFormat='day month year'
-                    neutralButtonLabel="clear"
-                />
-            )}
+            {
+                show && (
+                    <DateTimePicker
+                        value={new Date(revertDate(value))}
+                        mode="date"
+                        display="spinner"
+                        onChange={onChange}
+                        disabled={disabled}
+                        dateFormat='day month year'
+                        neutralButtonLabel="clear"
+                    />
+                )
+            }
         </View>
     );
 };

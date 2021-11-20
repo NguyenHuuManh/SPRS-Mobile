@@ -27,8 +27,8 @@ export default () => {
     return (
         <Formik
             initialValues={{
-                username: "manh",
-                password: "u3WvyfOA"
+                username: "manhhe",
+                password: "123@123aA"
             }}
             validationSchema={signinForm}
             onSubmit={(values) => {
@@ -62,7 +62,7 @@ export default () => {
                                 underLine
                             />
                             <ButtonCustom
-                                styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
+                                styleContain={{ backgroundColor: "#F6BB57", marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
                                 title="Đăng nhập"
                                 onPress={submitForm}

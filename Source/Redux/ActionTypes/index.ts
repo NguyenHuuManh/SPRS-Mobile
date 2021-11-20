@@ -14,4 +14,7 @@ export default {
     TOAST_SHOW: 'TOATS_SHOW',
 
     BADGE_SHOW: "BADGE_SHOW",
+
+    NETWOTK_CHECKING: 'NETWOTK_CHECKING',
+
 };
