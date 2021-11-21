@@ -1,9 +1,8 @@
-import { faMapMarkedAlt, faMapMarker, faSearchLocation } from "@fortawesome/free-solid-svg-icons";
+import { faMapMarkedAlt, faSearchLocation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty } from "lodash";
 import React, { createRef, useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { apiGetReliefPoint } from "../../../../ApiFunction/ReliefPoint";
 import ButtonCustom from "../../../../Components/ButtonCustom";
 import HeaderContainer from "../../../../Components/HeaderContainer";
 import { height } from "../../../../Helper/responsive";
@@ -95,7 +94,9 @@ export default (props: Props) => {
                         </View>
                     )}
                     rightEL={(
-                        <ButtonCustom title="Đóng" onPress={() => { setVisible(false) }}></ButtonCustom>
+                        <View style={{ width: "90%", alignItems: "center", justifyContent: "center" }}>
+                            <ButtonCustom title="Đóng" styleContain={{ marginTop: 0 }} onPress={() => { setVisible(false) }}></ButtonCustom>
+                        </View>
                     )}
                     flexLeft={0}
                     flexCenter={8}

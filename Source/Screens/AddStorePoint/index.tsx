@@ -40,7 +40,8 @@ const AddStorePoint = ({ navigation }) => {
             type: "success",
             text1: "Tạo điểm cửa hàng thành công",
             position: "top"
-          })
+          });
+          navigation.push('StorePoints');
         }
       } else {
         Toast.show({
@@ -57,7 +58,7 @@ const AddStorePoint = ({ navigation }) => {
         <HeaderContainer
           flexRight={0}
           flexCenter={10}
-          isBackReLoad="StorePoints"
+          isBack
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFFF" }}>Thêm mới cửa hàng</Text>
@@ -86,6 +87,7 @@ const AddStorePoint = ({ navigation }) => {
             description: "",
           }}
           validationSchema={createStore}
+          // validateOnChange={false}
           onSubmit={(values) => {
             const body = {
               ...values,

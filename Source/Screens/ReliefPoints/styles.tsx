@@ -7,7 +7,8 @@ export default StyleSheet.create({
         height: height,
         // marginTop: 10,
         alignItems: "center",
-        justifyContent: "flex-start"
+        justifyContent: "flex-start",
+        // backgroundColor: "#FFFF"
     },
 
     item: {
@@ -34,5 +35,6 @@ export default StyleSheet.create({
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
-    }
+    },
+
 });

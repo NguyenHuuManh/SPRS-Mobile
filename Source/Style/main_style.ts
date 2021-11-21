@@ -14,7 +14,16 @@ export const MainStyle = StyleSheet.create({
         shadowRadius: 4.65,
         elevation: 7,
     },
-
+    boxShadowItem: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+    },
     icon: {
         width: 25,
         height: 25,

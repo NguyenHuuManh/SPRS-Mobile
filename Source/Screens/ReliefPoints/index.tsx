@@ -233,7 +233,9 @@ export default ({ navigation }) => {
                     borderWidth: 1,
                     borderColor: "#FFFF",
                 },
-                MainStyle.boxShadow, { transform: [{ scale }], opacity }]}
+                MainStyle.boxShadowItem,
+                { transform: [{ scale }], opacity }
+                ]}
                 key={item.id}
             >
                 <TouchableOpacity onPress={() => {

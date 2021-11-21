@@ -1,24 +1,17 @@
-import { faCity, faMapMarked, faPlus, faSortAlphaDownAlt, faSortAlphaUp, faToggleOn, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faMapMarked, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import CheckBox from '@react-native-community/checkbox';
+import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Animated, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { useDispatch } from "react-redux";
 import { apiDeleteStore, apiGetStore } from "../../ApiFunction/StorePoint";
-import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
-import AppSelectTinh from "../../Components/AppSelectTinh";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
-import { Field, Formik } from "formik";
-
-import styles from "./styles";
-import ContainerField from "../../Components/ContainerField";
-import FilterComponent from "../../Components/FilterComponent";
 import FilterForm from "./components/FilterForm";
-import { isEmpty, isNull } from "lodash";
+import styles from "./styles";
+
 const AVATA_SIZE = 60;
 const Margin_BT = 20;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
@@ -34,6 +27,21 @@ export default ({ navigation }) => {
         type: null,
         status: null,
     });
+
+    const UpdatePoints = (item, type) => {
+        const index = points.findIndex((e) => {
+            return e.id == item.id
+        });
+        if (index >= 0 && type == "Update") {
+            points[index] = item;
+            setPoints([...points]);
+        }
+        if (index >= 0 && type == "Delete") {
+            points.splice(index, 1);
+            setPoints([...points]);
+        }
+    }
+
     useEffect(() => { getPoint() }, [pageSize]);
     const getPoint = () => {
         if (!isRefesh) {
@@ -50,18 +58,15 @@ export default ({ navigation }) => {
         })
     }
 
-    const deleteStore = (id) => {
-        console.log("id", id);
-        if (!id || isEmpty(id + '') || isNull(id)) return;
+    const deleteStore = (item) => {
+        if (!item.id || isEmpty(item.id + '') || isNull(item.id)) return;
         if (!isRefesh) {
             setIsRefesh(true);
         }
-        apiDeleteStore({ id: id }).then((res) => {
-            console.log("ResDelete", res)
+        apiDeleteStore({ id: item.id }).then((res) => {
             if (res.status == 200) {
                 if (res.data.code == '200') {
-                    setIsRefesh(true);
-                    setPageSize({ pageIndex: 1, pageSize: pageSize.pageIndex * 5 });
+                    UpdatePoints(item, "Delete")
                 }
             }
         })
@@ -86,7 +91,7 @@ export default ({ navigation }) => {
                     <TouchableOpacity
                         style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
                         onPress={(e) => {
-                            deleteStore(item.id);
+                            deleteStore(item);
                         }}>
                         <Animated.Text
                             style={[
@@ -163,7 +168,7 @@ export default ({ navigation }) => {
                     borderWidth: 1,
                     borderColor: "#FFFF",
                 },
-                MainStyle.boxShadow, { transform: [{ scale }], opacity }]}
+                MainStyle.boxShadowItem, { transform: [{ scale }], opacity }]}
                 key={item.id}
             >
                 <TouchableOpacity onPress={() => {
@@ -189,7 +194,6 @@ export default ({ navigation }) => {
                     </Swipeable>
                 </TouchableOpacity>
             </Animated.View >
-
         )
     }
 

@@ -222,7 +222,7 @@ export default () => {
                                 />
                             </ContainerField>
                             {!disable && (
-                                <ButtonCustom title="Lưu" styleContain={{ backgroundColor: "#F6BB57", marginTop: 20, width: "90%" }} onPress={submitForm} />
+                                <ButtonCustom title="Lưu" styleContain={{ backgroundColor: "#F6BB57", marginTop: 20 }} onPress={submitForm} />
                             )}
                         </View>
                     </View>

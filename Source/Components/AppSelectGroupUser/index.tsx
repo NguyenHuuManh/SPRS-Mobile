@@ -17,6 +17,8 @@ export default (props: Props) => {
     const callGetGroupList = () => {
         apiGetGroups()
             .then((res) => {
+                console.log("resGroup", res)
+
                 checkCallAPI(
                     res,
                     (response) => {
@@ -34,6 +36,8 @@ export default (props: Props) => {
     const onSelect = (item) => {
         setFieldValue(name, item.id);
     }
+
+    // console.log("User", value)
     if (field) {
         return (
             <>
