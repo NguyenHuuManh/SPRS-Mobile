@@ -12,10 +12,6 @@ export default (props: Props) => {
 
     const mapRef = useRef(null);
 
-    // useEffect(() => {
-    //     console.log("vao daay");
-    // }, [defaultLocation])
-
     if (!isEmpty(defaultLocation)) {
         return (
             <MapView

@@ -22,7 +22,6 @@ export const register = Yup.object().shape({
     rePassWord: Yup.mixed().required("Xác minh mật khẩu").test("test", "Mật khẩu không khớp", function () {
         const { parent } = this;
         const { rePassWord, password, city } = parent;
-        console.log("parent", parent);
         return rePassWord == password
 
     }),

@@ -5,7 +5,7 @@ import Relief from "../../../../Assets/Images/locationRelief.svg";
 import { useNavigation } from "@react-navigation/core";
 import { Text, View } from "react-native";
 interface Props {
-    coordinate: any;
+    coordinate?: any;
     setMarkerTo: any;
     setStrokerDirection: any;
     showModal: any;
@@ -15,6 +15,7 @@ interface Props {
 export default memo((props: Props) => {
     const { coordinate, setMarkerTo, setStrokerDirection, showModal, setShowModal, item } = props
     const navigation = useNavigation();
+
     return (
         <Marker
             key={item.id}

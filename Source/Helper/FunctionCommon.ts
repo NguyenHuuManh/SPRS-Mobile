@@ -87,17 +87,14 @@ export const filterDetailPalce = (res) => {
     let district: "";
     let subDistrict: "";
     let check = true;
-    console.log("res", res)
 
     for (const element of res) {
         let types = element?.types || [];
         if (types.every((elm => ["political", "sublocality", "sublocality_level_1"].includes(elm)))) {
             subDistrict = element.address_components[0].long_name;
-            console.log("---sublocality----");
             check = false;
         }
 
-        console.log("type", types)
         if (types.every((elm => ["political", "administrative_area_level_3"].includes(elm)))) {
             if (check) {
                 subDistrict = element.address_components[0].long_name;

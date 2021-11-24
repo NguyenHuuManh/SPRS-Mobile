@@ -145,7 +145,7 @@ export default ({ state, descriptors, navigation }) => {
                                 {
                                     (badgeShow.data.tab == route.name && badgeShow.data.number > 0) && (
                                         <View style={{ width: 20, height: 20, backgroundColor: "#A0A6BE", borderRadius: 10, position: "absolute", top: 10, right: 25, justifyContent: "center" }} >
-                                            <Text style={{ color: "#FFF", alignSelf: "center", fontSize: 10, justifyContent: "center" }}>1</Text>
+                                            <Text style={{ color: "#FFF", alignSelf: "center", fontSize: 10, justifyContent: "center" }}>{badgeShow.data.number}</Text>
                                         </View>
                                     )
                                 }

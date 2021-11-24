@@ -119,13 +119,11 @@ export default () => {
 
     }
 
-    // useEffect(() => {
-
-    // }, [params])
     const [visible, setVisible] = useState(false);
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
             if (e.status == 200) {
+                console.log("resMap", e);
                 if (e.data.code == 200) {
                     setListMarker(e.data.obj);
                 }
@@ -168,7 +166,6 @@ export default () => {
             <ModalSearch visible={visible} setVisible={setVisible} setText={setText} map={mapRef.current?.mapRef} setRegion={setRegion} region={region} setMarkerTo={setMarkerTo} />
             <View style={{ height: height * 0.07 }}>
                 <HeaderContainer
-                    // isBack={params?.toLocation}
                     isBackNavigate={params?.screen}
                     centerEl={(
                         <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
@@ -253,8 +250,9 @@ export default () => {
                 </View>
                 {
                     !isEmpty(region) && <ClusterMap
-                        cacheEnabled={true}
+                        // cacheEnabled={true}
                         region={region}
+                        initialRegion={region}
                         provider={PROVIDER_GOOGLE}
                         style={{ flex: 10 }}
                         showsUserLocation={true}
@@ -279,19 +277,12 @@ export default () => {
                         priorityMarker={renderDirection}
                     >
                         {mapReady && listMarker.map((e) => {
-                            const coordinate = {
+                            const coordinates = {
                                 latitude: Number(e?.point.x),
                                 longitude: Number(e?.point.y)
                             }
                             return (
-                                <RenderMarker
-                                    item={e}
-                                    coordinate={coordinate}
-                                    showModal={showModal}
-                                    setMarkerTo={setMarkerTo}
-                                    setShowModal={setShowModal}
-                                    setStrokerDirection={setStrokerDirection}
-                                />
+                                <RenderMarker coordinate={coordinates} item={e} setMarkerTo={setMarkerTo} setShowModal={setShowModal} showModal={showModal} setStrokerDirection={setStrokerDirection} />
                             )
                         })}
                     </ClusterMap>

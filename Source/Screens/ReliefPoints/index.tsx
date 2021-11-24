@@ -180,7 +180,19 @@ export default ({ navigation }) => {
                         style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
                             // console.log("item", item)
-                            navigation.navigate("MapCluser", { toLocation: { latitude: Number(item.address.GPS_lati), longitude: Number(item.address.GPS_long) }, screen: "ReliefPoint" })
+                            navigation.navigate("MapCluser",
+                                {
+                                    toLocation:
+                                    {
+                                        id: item.id,
+                                        location: {
+                                            latitude: Number(item.address.GPS_lati),
+                                            longitude: Number(item.address.GPS_long)
+                                        },
+                                        type: "rp"
+                                    },
+                                    screen: "ReliefPoint"
+                                })
                         }}
                     >
                         <Animated.Text
@@ -269,13 +281,12 @@ export default ({ navigation }) => {
         <View style={[styles.container]}>
             <View style={{ height: "20%" }}>
                 <HeaderContainer
-                    isBackNavigate={"Home"}
+                    isBackNavigate={"DrawScreen"}
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}
 
                 />
-                {/* <ButtonCustom title="Thêm mới" onPress={() => { navigation.push("AddReliefPoint") }} /> */}
             </View>
             <FilterForm body={body} setBody={setBody} setPageSize={setPageSize} pageSize={pageSize} setIsRefesh={setIsRefesh} />
             <View style={{ height: "55%", marginTop: 10 }}>

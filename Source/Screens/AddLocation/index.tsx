@@ -26,7 +26,6 @@ const body = {
 const App = ({ navigation }) => {
   const [adressPoint, setAdressPoint] = useState<any>({})
   const [items, setItems] = useState<any>([]);
-  console.log("items", items);
 
   const callCreatePoint = (body) => {
     apiCreateReliefPoint(body).then((res) => {
@@ -104,7 +103,6 @@ const App = ({ navigation }) => {
                 GPS_long: adressPoint?.GPS_long
               },
             }
-            console.log("body", body);
             callCreatePoint(body);
           }}
         >

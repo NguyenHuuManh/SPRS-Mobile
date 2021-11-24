@@ -9,7 +9,6 @@ export const apiSaveTokenDevice = async (body) => {
 };
 
 export const apiSenAll = async (body) => {
-    console.log("bodySend", body)
     return await httpServices.post(
         `${sendMessageAll}`, body
     );

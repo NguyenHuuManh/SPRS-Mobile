@@ -19,7 +19,6 @@ export default (props: Props) => {
     const [disableClear, setDisableClear] = useState(true);
 
     const callGetGroupList = () => {
-        console.log("idHuyen", !idHuyen)
         if ((!idHuyen || isEmpty(idHuyen + "") || isNull(idHuyen))) {
             if (!isNull(data)) {
                 setDisableClear(false);

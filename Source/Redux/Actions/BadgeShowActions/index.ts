@@ -1,8 +1,22 @@
 import ActionTypes from "../../ActionTypes"
 
-export const badgeShow = (payload) => {
+export const badgeResults = (payload) => {
     return {
-        type: ActionTypes.BADGE_SHOW,
+        type: ActionTypes.BADGE_RESULTS,
         payload: payload
     }
 }
+
+export const badgeFailed = (payload) => {
+    return {
+        type: ActionTypes.LOGIN_FAILED,
+        payload: payload
+    }
+}
+
+export const badgeRequest = () => {
+    return {
+        type: ActionTypes.BADGE_REQUEST,
+    }
+}
+

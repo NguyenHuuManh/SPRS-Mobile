@@ -2,46 +2,49 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/core';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { useLinkTo } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { isEmpty } from 'lodash';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
-import { profileActions } from '../Redux/Actions';
+import { badgeShowActions, profileActions } from '../Redux/Actions';
 import ActionTypes from '../Redux/ActionTypes';
 import { RootState } from '../Redux/Reducers';
 import { Home, Signin } from '../Screens';
 import AddReliefPoint from '../Screens/AddReliefPoint';
 import AddStorePoint from '../Screens/AddStorePoint';
 import ChangePasswordAuth from '../Screens/ChangePasswordAuth';
+import DetailPoint from '../Screens/DetailPoint';
 import ForgotPass from '../Screens/ForgotPass';
 import ChangePassword from '../Screens/ForgotPass/ChangePassword';
 import ComfirmOTP from '../Screens/ForgotPass/ComfirmOTP';
-import StorePoints from '../Screens/StorePoints';
-import Map from '../Screens/Map';
+import MapCluser from '../Screens/MapCluser';
+import MapCluserSupper from '../Screens/MapCluserSupper';
 import Notification from '../Screens/Notification';
 import Profile from '../Screens/Profile';
 import Personal from '../Screens/Profile/Personal';
 import ReliefPoints from '../Screens/ReliefPoints';
 import Signup from '../Screens/Signup';
+import SOS from '../Screens/SOS';
+import StorePoints from '../Screens/StorePoints';
+import SubcribleList from '../Screens/SubcribleList';
 import UpdateReliefPoint from '../Screens/UpdateReliefPoint';
 import UpdateStorePoint from '../Screens/UpdateStorePoint';
-import SOS from '../Screens/SOS';
-import DetailPoint from '../Screens/DetailPoint';
-import SubcribleList from '../Screens/SubcribleList';
-import MapCluser from '../Screens/MapCluser';
 import NotificationDetail from '../Screens/NotificationDetail';
+import { notificationListener } from '../Services/notificationService';
+import { store } from '../Store';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const AuStack = createStackNavigator();
 const MainStack = createStackNavigator();
-const HomeStack = createStackNavigator();
 const RootStack = createStackNavigator();
 const GuestStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
+// .initialRouteReducer;
 
 const GuestStackScreen = () => (
     <GuestStack.Navigator initialRouteName="Map" screenOptions={{ headerShown: false }}>
@@ -78,7 +81,7 @@ const NotificationStackScreen = () => (
 )
 
 const TabScreens = () => (
-    <Tabs.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => { return <TabBar {...props} /> }}>
+    <Tabs.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => { return <TabBar {...props} /> }} initialRouteName="Trang chủ">
         <Tabs.Screen name="Trang chủ" component={MainStackScreen} />
         <Tabs.Screen name="Bản đồ" component={MapCluser} />
         <Tabs.Screen name="Thông báo" component={NotificationStackScreen} />
@@ -87,9 +90,8 @@ const TabScreens = () => (
 )
 
 const DrawScreen = () => (
-    <Drawer.Navigator initialRouteName="TabScreen" screenOptions={{ headerShown: false, swipeEnabled: false, gestureEnabled: false }} drawerContent={(props) => <DrawerCustom {...props} />}>
+    <Drawer.Navigator initialRouteName={"TabScreen"} screenOptions={{ headerShown: false, swipeEnabled: false, gestureEnabled: false }} drawerContent={(props) => <DrawerCustom {...props} />}>
         <Drawer.Screen name="TabScreen" component={TabScreens} />
-        {/* <Drawer.Screen name="TabScreen2" component={MapCluser} /> */}
     </Drawer.Navigator>
 )
 const RootStackScreen = () => {
@@ -97,11 +99,16 @@ const RootStackScreen = () => {
     const isUserToken = !isEmpty(userReducer?.data?.token || {})
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const link = useLinkTo();
 
+    React.useEffect(() => {
+        notificationListener();
+    }, [])
 
     useEffect(() => {
         if (!isEmpty(userReducer?.data?.token || {})) {
-            dispatch(profileActions.profileRequest())
+            dispatch(profileActions.profileRequest());
+            dispatch(badgeShowActions.badgeRequest())
         }
         if (isEmpty(userReducer?.data?.token || {}) && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
             navigation.reset({
@@ -126,14 +133,14 @@ const RootStackScreen = () => {
                     !isEmpty(userReducer?.data?.token || {}) && (
                         <>
                             <RootStack.Screen name="DrawScreen" component={DrawScreen} options={{ animationEnabled: true }} />
-                            <RootStack.Screen name="MapCluser" component={MapCluser} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="MapCluser" component={MapCluserSupper} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="AddReliefPoint" component={AddReliefPoint} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="NotificationDetail" component={NotificationDetail} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="AddStorePoint" component={AddStorePoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="UpdateReliefPoint" component={UpdateReliefPoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="ReliefPoint" component={ReliefPoints} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="StorePoints" component={StorePoints} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="SOS" component={SOS} options={{ animationEnabled: true }} />
-                            <RootStack.Screen name="NotificationDetail" component={NotificationDetail} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="SubcribeList" component={SubcribleList} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="DetailPoint" component={DetailPoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="UpdateStorePoint" component={UpdateStorePoint} options={{ animationEnabled: true }} />

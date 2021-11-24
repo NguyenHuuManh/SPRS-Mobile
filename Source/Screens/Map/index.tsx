@@ -1,8 +1,8 @@
 import { faDirections, faHome, faLocationArrow, faSearchLocation, faStreetView } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
-import { isEmpty } from "lodash";
-import React, { createRef, useEffect, useState } from "react";
+import { debounce, isEmpty } from "lodash";
+import React, { createRef, useCallback, useEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Text, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Callout, CalloutSubview, Marker, PROVIDER_GOOGLE, } from "react-native-maps";
@@ -12,19 +12,20 @@ import { apiGetReliefPoint } from "../../ApiFunction/ReliefPoint";
 import SOS from "../../Assets/Images/locationSOS.svg";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { API_KEY } from "../../Constrants/url";
-import { handleLocationPermission } from "../../Helper/FunctionCommon";
+import { handleLocationPermission, haversineDistance } from "../../Helper/FunctionCommon";
 import { height } from "../../Helper/responsive";
 import { RootState } from "../../Redux/Reducers";
 import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
 import BottomModalSheet from "./Components/BottomModalSheet"
+import { apiLoadMap } from "../../ApiFunction/PlaceAPI";
 
 
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
     const [region, setRegion] = useState<any>({});
     const [markerTo, setMarkerTo] = useState<any>({});
-
+    const [centerMark, setCenterMark] = useState<any>({});
     const [myLocation, setMylocation] = useState<any>({});
     const [mapReady, setMapReady] = useState(false);
     const [northEast, setNorthEast] = useState<any>({})
@@ -33,22 +34,21 @@ export default () => {
     const mapRef = createRef<any>();
     const [listMarker, setListMarker] = useState<any>([]);
     const [text, setText] = useState("Tìm Kiếm");
-    const getPoint = () => {
-        apiGetReliefPoint().then((e) => {
+    const callLoadMap = (obj) => {
+        apiLoadMap(obj).then((e) => {
             if (e.status == 200) {
-                if (e.data.code === "200") {
+                if (e.data.code == 200) {
                     setListMarker(e.data.obj);
                 }
             }
         })
-        // apiGetStore().then((e) => {
-        //     if (e.status == 200) {
-        //         if (e.data.code === "200") {
-        //             setListMarker(e.data.obj);
-        //         }
-        //     }
-        // })
     }
+    const debounceLoadMap = useCallback(debounce((nextValue) => callLoadMap(nextValue), 1000), [])
+    useEffect(() => {
+        if (isEmpty(centerMark)) return;
+        const distance = haversineDistance([southWest.latitude, southWest.longitude], [northEast.latitude, northEast.longitude], false)
+        debounceLoadMap({ lat: centerMark.latitude, long: centerMark.longitude, radius: distance });
+    }, [centerMark])
 
     const getCurrentLocation = () => {
         Geolocation.getCurrentPosition(
@@ -105,8 +105,6 @@ export default () => {
                 }
             }
         )
-
-        getPoint();
     }, [])
     // console.log("myLocation", myLocation);
 
@@ -246,6 +244,10 @@ export default () => {
                                     setSouthWest(e.southWest);
                                 });
                             }
+                            setCenterMark({
+                                latitude: Number(e?.latitude),
+                                longitude: Number(e?.longitude)
+                            });
                             // console.log(
                             //     Math.log2(360 * (width / 256 / region.longitudeDelta)) + 1, "level"
                             // );

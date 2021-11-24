@@ -66,7 +66,7 @@ export default () => {
                 initialValues={{
                     username: profile?.data?.username || "",
                     dob: profile?.data?.dob || "",
-                    groupsId: profile?.data?.groups_user[0].id || "",
+                    groupsId: profile?.data?.groups_user?.[0]?.id || "",
                     full_name: profile?.data?.full_name || "",
                     phone: profile?.data?.phone || "",
                     city: profile?.data?.address?.city?.id,

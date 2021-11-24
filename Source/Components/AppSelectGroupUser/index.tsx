@@ -15,19 +15,12 @@ export default (props: Props) => {
     const [data, setData] = useState(null)
 
     const callGetGroupList = () => {
-        apiGetGroups()
-            .then((res) => {
-                console.log("resGroup", res)
+        apiGetGroups().then((e) => {
+            if (e.status == 200 && e.data.code == '200') {
+                setData(e.data.lstObj);
+            }
+        })
 
-                checkCallAPI(
-                    res,
-                    (response) => {
-                        setData(response.lstObj);
-                    },
-                    (e) => { }
-                );
-            })
-            .catch((error) => { })
     }
     useEffect(() => {
         callGetGroupList();
@@ -37,7 +30,6 @@ export default (props: Props) => {
         setFieldValue(name, item.id);
     }
 
-    // console.log("User", value)
     if (field) {
         return (
             <>

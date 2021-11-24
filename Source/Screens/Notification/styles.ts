@@ -3,10 +3,7 @@ import { height, width } from '../../Helper/responsive';
 
 export default StyleSheet.create({
     container: {
-        flex: 1,
-        // justifyContent: 'flex-start',
-        // alignItems: 'center',
-        // paddingTop: "10%"
+        flex: 1
     },
 
     item: {

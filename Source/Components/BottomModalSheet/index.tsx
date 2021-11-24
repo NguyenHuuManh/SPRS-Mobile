@@ -20,7 +20,6 @@ export default () => {
     const [keyword, setKeyword] = React.useState('');
 
     const fetchDropdownOptions = (nextValue) => {
-        console.log(nextValue, "value")
     }
 
     const debounceDropDown = React.useCallback(debounce((nextValue) => fetchDropdownOptions(nextValue), 1000), [])

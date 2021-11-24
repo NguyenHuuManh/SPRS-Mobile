@@ -9,7 +9,7 @@ export const signin = `${URL}/authenticate`;
 export const profile = `${URL}/sprs/api/user`;
 export const UPDATE_PROFILE = `${URL}/sprs/api/user/update/infor`
 //
-export const groupList = `${URL}/sprs/api/group`
+export const groupList = `${URL}/sprs/api/groups`
 export const ITEMS = `${URL}/sprs/api/item`
 //
 
@@ -60,9 +60,6 @@ export const LOAD_MAP = `${URL}/sprs/api/manage-map/getPoints`
 //Notification
 export const CREATE_DEVICE = `${URL}/sprs/api/device/create`
 export const GET_ALL_NOTIFICATION = `${URL}/sprs/api/notification-manage/get-all`
-
-
-
-
-
-
+export const GET_UNCHECK_NOTIFICATION = `${URL}/sprs/api/notification-manage/notification/uncheck`
+export const DELETE_DEVICE = `${URL}/sprs/api/device/delete`
+export const UPDATE_NOTIFICATION_STATUS = `${URL}/sprs/api/notification-manage/update`

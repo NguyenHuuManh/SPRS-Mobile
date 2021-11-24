@@ -14,7 +14,6 @@ export default (props: Props) => {
     const { toastProps } = props
     const { message, visible, position, type } = toastProps
     useEffect(() => {
-        console.log("visible", visible);
         if (visible) {
             Toast.show({
                 type: type,

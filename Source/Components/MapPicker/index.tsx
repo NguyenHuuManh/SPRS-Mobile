@@ -56,7 +56,6 @@ export default (props: Props) => {
             apiPlaceDetailByLongLat(long, lat).then((response) => {
                 if (response.status == 200) {
                     const place = response?.data?.results[0]?.address_components;
-                    // console.log("place", place);
                     setAdress({
                         city: place[place?.length - 1]?.long_name,
                         province: place[place?.length - 2]?.long_name,

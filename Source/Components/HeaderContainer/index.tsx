@@ -16,10 +16,13 @@ interface Props {
     flexLeft?: number;
     flexRight?: number;
     flexCenter?: number;
+    leftView?: any;
+    leftOnpress?: any;
+    iconLeft?: any;
 }
 
 export default (props: Props) => {
-    const { isBack, isBackReLoad, isBackNavigate, children, centerEl, rightEL, flexLeft, flexCenter, flexRight } = props
+    const { isBack, isBackReLoad, isBackNavigate, children, centerEl, rightEL, flexLeft, flexCenter, flexRight, leftView, leftOnpress, iconLeft } = props
     const navigation = useNavigation();
     const renderIsBack = () => {
         if (isBackReLoad) {
@@ -40,6 +43,13 @@ export default (props: Props) => {
             return (
                 <TouchableOpacity onPress={() => { navigation.goBack() }}>
                     <FontAwesomeIcon icon={faChevronLeft} size={24} color="#FFF" />
+                </TouchableOpacity>
+            )
+        }
+        if (leftView) {
+            return (
+                <TouchableOpacity onPress={leftOnpress}>
+                    <FontAwesomeIcon icon={iconLeft} size={24} color="#FFF" />
                 </TouchableOpacity>
             )
         }

@@ -128,7 +128,7 @@ export default (props: Props) => {
             <Modal
                 visible={isShow}
                 transparent={true}
-                onShow={() => { console.log("inputRef", inputRef.current.focus()) }}
+                onShow={() => { inputRef.current.focus() }}
             >
                 <View style={[style.container]}>
                     <View style={[MainStyle.boxShadow, MainStyle.flexRow, style.inputContainer, { zIndex: 1000 }]}>

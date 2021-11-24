@@ -6,7 +6,6 @@ export function* getProfile() {
 
     try {
         const response = yield call(apiGetProfile);
-        // console.log("responseProfile", response)
         if (STATUS.success.includes(response?.status)) {
             if (response?.data?.code + "" == "200") {
                 yield put(profileActions.profileSuccess(response?.data.obj));
