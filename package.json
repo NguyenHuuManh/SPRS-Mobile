@@ -39,6 +39,7 @@
     "react-native": "0.64.2",
     "react-native-awesome-loading": "^1.0.15",
     "react-native-cluster-map": "^1.0.9",
+    "react-native-countdown-component": "^2.7.1",
     "react-native-datepicker": "^1.7.2",
     "react-native-device-info": "^8.4.8",
     "react-native-fast-image": "^8.3.7",

@@ -52,6 +52,7 @@ export default (props: Props) => {
         return (
             <>
                 <AppSelect
+                    header="Chọn quận/huyện"
                     {...field}
                     {...remainProps}
                     value={value}
@@ -68,6 +69,7 @@ export default (props: Props) => {
     }
     return (
         <AppSelect
+            header="Chọn quận/huyện"
             {...remainProps}
             value={value}
             data={data}

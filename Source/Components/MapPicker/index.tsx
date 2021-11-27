@@ -96,6 +96,8 @@ export default (props: Props) => {
         )
 
     }
+    // console.log("defaultAdress", adress);
+    // console.log("defaultAdress", defaultAdress);
     useEffect(() => {
         if (defaultAdress) {
             setRegion({

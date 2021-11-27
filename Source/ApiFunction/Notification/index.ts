@@ -1,4 +1,4 @@
-import { CREATE_DEVICE, DELETE_DEVICE, GET_ALL_NOTIFICATION, GET_UNCHECK_NOTIFICATION, UPDATE_NOTIFICATION_STATUS } from "../../Constrants/api";
+import { CREATE_DEVICE, DELETE_DEVICE, GET_ALL_NOTIFICATION, GET_NOTIFICATION_ID, GET_UNCHECK_NOTIFICATION, UPDATE_ADDRESS_DEVICE, UPDATE_NOTIFICATION_STATUS } from "../../Constrants/api";
 import { convertToQuery } from "../../Helper/FunctionCommon";
 import httpServices from "../../Services/httpServices";
 
@@ -14,6 +14,12 @@ export const apiGetAllNotification = async (params) => {
     );
 };
 
+export const apiGetNotificationId = async (id) => {
+    return await httpServices.get(
+        `${GET_NOTIFICATION_ID}/${id}`
+    );
+};
+
 export const apiGetUncheckNotification = async () => {
     return await httpServices.get(
         `${GET_UNCHECK_NOTIFICATION}`
@@ -24,6 +30,10 @@ export const apiDeleteDevice = async () => {
     return await httpServices.delete(
         `${DELETE_DEVICE}`
     );
+};
+
+export const apiUpdateAddressDivice = async (body) => {
+    return await httpServices.put(`${UPDATE_ADDRESS_DEVICE}`, body);
 };
 
 export const apiUpdateStatusNotification = async (params) => {

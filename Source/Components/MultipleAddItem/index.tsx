@@ -11,11 +11,12 @@ import { addBasket } from "./validate"
 
 interface Props {
     items: any;
-    setItems: any;
+    setItems?: any;
+    readOnly?: boolean;
 }
 
 export default (props: Props) => {
-    const { items, setItems } = props
+    const { items, setItems, readOnly } = props
     const [itemTypeSelect, setItemTypeSelect] = useState<any>({});
     const renderItem = ({ item }) => {
         return (
@@ -81,33 +82,36 @@ export default (props: Props) => {
                 >
                     {({ submitForm }) => (
                         <>
-                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                <View style={{ marginRight: 10, flex: 2 }}>
-                                    <Field
-                                        component={Input}
-                                        name="quantity"
-                                        keyboardType="phone-pad"
-                                        dataDetectorTypes='phoneNumber'
-                                        placeholder="Số lượng"
-                                    />
+                            {!readOnly && (
+                                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                    <View style={{ marginRight: 10, flex: 2 }}>
+                                        <Field
+                                            component={Input}
+                                            name="quantity"
+                                            keyboardType="phone-pad"
+                                            dataDetectorTypes='phoneNumber'
+                                            placeholder="Số lượng"
+                                        />
+                                    </View>
+                                    <View style={{ flex: 2 }}>
+                                        <Field
+                                            component={AppSelectItems}
+                                            name="id"
+                                            onSelectOption={setItemTypeSelect}
+                                            placeholder="Mặt hàng"
+                                        />
+                                    </View>
+
+                                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                                        <TouchableOpacity
+                                            onPress={submitForm}
+                                            style={{}}
+                                        >
+                                            <FontAwesomeIcon icon={faShoppingBasket} color="blue" size={20} />
+                                        </TouchableOpacity >
+                                    </View>
                                 </View>
-                                <View style={{ flex: 2 }}>
-                                    <Field
-                                        component={AppSelectItems}
-                                        name="id"
-                                        onSelectOption={setItemTypeSelect}
-                                        placeholder="Mặt hàng"
-                                    />
-                                </View>
-                                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                    <TouchableOpacity
-                                        onPress={submitForm}
-                                        style={{}}
-                                    >
-                                        <FontAwesomeIcon icon={faShoppingBasket} color="blue" size={20} />
-                                    </TouchableOpacity >
-                                </View>
-                            </View>
+                            )}
                         </>
                     )}
                 </Formik>

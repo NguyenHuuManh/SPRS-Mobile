@@ -6,6 +6,7 @@ import {
 import Geolocation from 'react-native-geolocation-service';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
+import { apiPlaceDetailByLongLat } from "../../ApiFunction/PlaceAPI";
 import { apiGetSOS, apiUpdateSOS } from "../../ApiFunction/SOS";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
@@ -28,14 +29,31 @@ const SOS = ({ navigation }) => {
   const [items, setItems] = useState<any>([]);
   const formikRef = createRef<any>();
 
+
+  const getDetailPlace = (long: string | number, lat: string | number) => {
+    try {
+      apiPlaceDetailByLongLat(long, lat).then((response) => {
+        if (response.status == 200) {
+          const place = response?.data?.results[0]?.address_components;
+          setAdressPoint({
+            city: place[place?.length - 1]?.long_name,
+            province: place[place?.length - 2]?.long_name,
+            district: place[place?.length - 2]?.long_name,
+            subDistrict: place[place?.length - 3]?.long_name,
+            GPS_Lati: lat + "",
+            GPS_long: long + "",
+          })
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
       (response) => {
-        setAdressPoint({
-          ...adressPoint,
-          latitude: response.coords.latitude,
-          longitude: response.coords.longitude,
-        })
+        getDetailPlace(response.coords.longitude, response.coords.latitude)
       },
       (error) => { console.log("errorCurrentLocation", error) },
       {
@@ -43,9 +61,10 @@ const SOS = ({ navigation }) => {
       }
     )
   }
-
+  console.log("address", adressPoint)
   const callCreatePoint = (body) => {
     apiUpdateSOS(body).then((res) => {
+      console.log("update", res)
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
@@ -65,6 +84,7 @@ const SOS = ({ navigation }) => {
   }
   const callGetSOS = () => {
     apiGetSOS().then((res) => {
+      console.log("res", res)
       if (res.status == 200) {
         if (res.data.code == "200") {
           setSosInfor(res.data.obj);
@@ -87,7 +107,7 @@ const SOS = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={{ height: "7%" }}>
         <HeaderContainer
-          flexRight={0}
+          flexRight={1}
           flexCenter={10}
           isBackNavigate={"Home"}
           centerEl={(
@@ -95,6 +115,7 @@ const SOS = ({ navigation }) => {
               <Text style={{ fontSize: 20, color: "#FFFF" }}>SOS</Text>
             </View>
           )}
+          flexLeft={1}
         />
       </View>
 
@@ -124,8 +145,23 @@ const SOS = ({ navigation }) => {
               ...values,
               status: values.status ? false : true,
               level: Number(values.level),
-              GPS_lati: adressPoint?.GPS_Lati,
-              GPS_long: adressPoint?.GPS_long
+              address: {
+                id: sosInfor.address?.id | 0,
+                GPS_Lati: adressPoint.GPS_Lati,
+                GPS_long: adressPoint.GPS_long,
+                city: {
+                  name: adressPoint.city,
+                  code: "",
+                },
+                district: {
+                  name: adressPoint.district,
+                  code: "",
+                },
+                subDistrict: {
+                  name: adressPoint.subDistrict,
+                  code: "",
+                },
+              }
             }
             console.log("body", body);
             callCreatePoint(body);

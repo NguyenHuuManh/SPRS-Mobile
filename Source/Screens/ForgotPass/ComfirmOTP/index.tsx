@@ -1,22 +1,23 @@
 import { faChevronLeft, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { useNavigation } from "@react-navigation/core";
 import { Field, Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
-import AwesomeLoading from 'react-native-awesome-loading';
+import CountDown from 'react-native-countdown-component';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
-import { apiOtpChecking, apiResetPass } from '../../../ApiFunction/Auth';
+import { apiResetPass } from '../../../ApiFunction/Auth';
 import ButtonCustom from '../../../Components/ButtonCustom';
 import Input from '../../../Components/Input';
 import { MainStyle } from '../../../Style/main_style';
 import styles from '../styles';
 import { SubmitOTP } from '../validate';
+
 export default ({ route, navigation }) => {
     const { to } = route.params;
+    const [count, setCount] = useState(5);
+
     const checkOTP = (values) => {
-        console.log("valuesOTP", values);
         apiResetPass(values).then((res) => {
             if (res.status == 200) {
                 navigation.navigate('ChangePassword');
@@ -68,6 +69,16 @@ export default ({ route, navigation }) => {
                                 keyboardType="numeric"
                                 underLine
                             />
+                            {count == 0 ? (
+                                <ButtonCustom onPress={() => { setCount(5) }} title="Restart" />
+                            ) : (
+                                <CountDown
+                                    until={count}
+                                    onFinish={() => setCount(0)}
+                                    timeToShow={['S']}
+                                    size={20}
+                                />
+                            )}
                             <ButtonCustom
                                 styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}

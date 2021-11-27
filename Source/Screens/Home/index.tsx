@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";

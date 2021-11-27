@@ -14,60 +14,36 @@ export function* login(body) {
     try {
         const response = yield call(apiSignin, body.body);
         if (STATUS.success.includes(response?.status)) {
+
             httpServices.attachTokenToHeader(response.data.token);
             getFcmToken().finally(async () => {
                 let fcmToken = await AsyncStorage.getItem('fcmToken');
-                Geolocation.getCurrentPosition(
-                    (response) => {
-
-                        apiPlaceDetailByLongLat(response.coords.longitude, response.coords.latitude).then((responseDetail) => {
-                            if (responseDetail.status == 200) {
-                                const place = responseDetail?.data?.results[0]?.address_components;
-                                apiCreateDevice({
-                                    token: fcmToken,
-                                    serial: DeviceInfo.getUniqueId(),
-                                    address: {
-                                        city: {
-                                            code: "",
-                                            id: "",
-                                            name: place[place?.length - 1]?.long_name || ""
-                                        },
-                                        district: {
-                                            code: "",
-                                            id: "",
-                                            name: place[place?.length - 2]?.long_name || ""
-                                        },
-                                        subDistrict: {
-                                            code: "",
-                                            id: "",
-                                            name: place[place?.length - 3]?.long_name || ""
-                                        },
-                                        addressLine: "",
-                                        GPS_long: response.coords.longitude,
-                                        GPS_lati: response.coords.latitude,
-                                        gps_lati: response.coords.latitude,
-                                        gps_long: response.coords.longitude,
-                                    },
-                                }).then((e) => {
-                                    console.log("eeeeee", e);
-                                })
-                            }
-                        });
-
+                apiCreateDevice({
+                    token: fcmToken,
+                    serial: DeviceInfo.getUniqueId(),
+                    address: {
+                        city: {
+                            code: "",
+                            id: "",
+                            name: ""
+                        },
+                        district: {
+                            code: "",
+                            id: "",
+                            name: ""
+                        },
+                        subDistrict: {
+                            code: "",
+                            id: "",
+                            name: ""
+                        },
+                        addressLine: "",
+                        GPS_long: "",
+                        GPS_lati: "",
                     },
-                    (error) => {
-                        if (error.code == 5) {
-                            alert("Yêu cầu quyền truy cập vị trí của bạn để sử dụng chức năng này")
-                            return;
-                        }
-                        return {}
-                    },
-                    {
-                        distanceFilter: 10,
-                        enableHighAccuracy: true,
-                        accuracy: { android: "high" },
-                    }
-                )
+                }).then((e) => {
+                    console.log("eeeeee", e);
+                })
 
             });
 

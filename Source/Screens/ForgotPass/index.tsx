@@ -12,9 +12,10 @@ import Input from "../../Components/Input";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import { SubmitPhone } from './validate';
+import CountDown from 'react-native-countdown-component';
 export default () => {
     const navigation = useNavigation();
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
     const getOtp = (values) => {
         console.log("values", values);
         apiOtpPassword(values).then((e) => {
@@ -59,8 +60,9 @@ export default () => {
                                 maxLength={9}
                                 underLine
                             />
+
                             <ButtonCustom
-                                styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
+                                styleContain={{ backgroundColor: "#F6BB57", marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
                                 title="Tiếp tục"
                                 onPress={submitForm}

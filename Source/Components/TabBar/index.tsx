@@ -6,10 +6,13 @@ import { faBars, faHome, faIdBadge, faPlusCircle, faMapMarkedAlt, faBell } from 
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import { AppColor, BackgoundMain } from "../../Helper/propertyCSS";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { changeStatus } from "../../Redux/Actions/FocusNotificationTab";
 
 export default ({ state, descriptors, navigation }) => {
-    const badgeShow = useSelector((state) => state.badgeReducer)
+    const badgeShow = useSelector((state) => state.badgeReducer);
+    const focusNotificationTab = useSelector((state) => state.forcusNotificationReducer);
+    const dispatch = useDispatch();
     function IconRender({ name, color }) {
         switch (name) {
             case 'Trang chủ':
@@ -69,7 +72,7 @@ export default ({ state, descriptors, navigation }) => {
                 justifyContent: 'space-around',
                 // alignItems: 'center',
                 paddingBottom: 20,
-                backgroundColor: BackgoundMain,
+                backgroundColor: "#FFFF",
                 height: 80,
             }]} >
                 {
@@ -92,6 +95,13 @@ export default ({ state, descriptors, navigation }) => {
 
                             if (!isFocused && !event.defaultPrevented) {
                                 navigation.navigate(route.name);
+                                if (route.name == "Thông báo") {
+                                    dispatch(changeStatus(true));
+                                } else {
+                                    if (focusNotificationTab.status) {
+                                        dispatch(changeStatus(false));
+                                    }
+                                }
                             }
                         };
 
@@ -118,7 +128,7 @@ export default ({ state, descriptors, navigation }) => {
                                     }}
                                 >
 
-                                    {IconRender({ name: route.name, color: isFocused ? "#D71920" : "#A0A6BE" })}
+                                    {IconRender({ name: route.name, color: isFocused ? "#A362EA" : "#A0A6BE" })}
 
                                     <Text style={{ color: isFocused ? AppColor.GRAY_LIGHT : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
                                         {label}
@@ -149,9 +159,9 @@ export default ({ state, descriptors, navigation }) => {
                                         </View>
                                     )
                                 }
-                                {IconRender({ name: route.name, color: isFocused ? "#D71920" : "#A0A6BE" })}
+                                {IconRender({ name: route.name, color: isFocused ? "#A362EA" : "#A0A6BE" })}
 
-                                <Text style={{ color: isFocused ? AppColor.GRAY_LIGHT : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
+                                <Text style={{ color: isFocused ? "#A362EA" : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
                                     {label}
                                 </Text>
                             </TouchableOpacity>

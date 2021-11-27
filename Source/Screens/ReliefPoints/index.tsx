@@ -3,9 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import CheckBox from '@react-native-community/checkbox';
 import { isNull } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Animated, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Animated, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import LinearGradient from "react-native-linear-gradient";
 import Toast from "react-native-toast-message";
 import { useDispatch } from "react-redux";
 import { apiDeleteReliefPoint, apiGetReliefPoint, apiUpdateStatusReliefPoint } from "../../ApiFunction/ReliefPoint";
@@ -19,11 +20,15 @@ const AVATA_SIZE = 60;
 const Margin_BT = 20;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
 
+const page = 1;
+const size = 10;
+const totalItem = 20;
+
 export default ({ navigation }) => {
     const [points, setPoints] = useState([]);
     const [loading, setLoading] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current
-    const [pageSize, setPageSize] = useState({ pageSize: 5, pageIndex: 1 });
+    const [pageSize, setPageSize] = useState({ pageSize: size, pageIndex: page });
     const [totalPage, setTotalPage] = useState(3);
     const [isRefesh, setIsRefesh] = useState(false);
     const [body, setBody] = useState({
@@ -75,9 +80,12 @@ export default ({ navigation }) => {
         apiDeleteReliefPoint({ id: item.id }).then((response) => {
             if (response.status == 200) {
                 if (response.data.code == "200") {
-                    // setIsRefesh(true);
-                    // setPageSize({ pageIndex: 1, pageSize: pageSize.pageIndex * 5 });
                     UpdatePoints(item, "Delete");
+                    if ((pageSize.pageIndex * pageSize.pageSize) >= totalItem - 1) {
+                        setPageSize({ ...pageSize, pageSize: pageSize.pageSize - size });
+                        return;
+                    }
+                    setPageSize({ ...pageSize });
                     return
                 }
                 Toast.show({
@@ -104,17 +112,9 @@ export default ({ navigation }) => {
             pageIndex: pageSize.pageIndex
         }
         apiGetReliefPoint(bodyRequest).then((e) => {
-            // console.log("Resss", e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
-                    // points.push(e.data.obj)
-                    if (isRefesh) {
-                        setPoints(e.data.obj);
-                        setIsRefesh(false);
-                        return;
-                    }
-                    const arr = points.concat(e.data.obj);
-                    setPoints(arr);
+                    setPoints(e.data.obj);
                 } else {
                     Toast.show({
                         type: "error",
@@ -129,11 +129,14 @@ export default ({ navigation }) => {
                     position: "top"
                 });
             }
-        }).finally(() => { setLoading(false) })
+        }).finally(() => {
+            setLoading(false);
+            if (isRefesh) setIsRefesh(false);
+        })
     }
     const handleLoadMore = () => {
-        if (pageSize.pageIndex >= totalPage) return;
-        setPageSize({ ...pageSize, pageIndex: pageSize.pageIndex + 1 });
+        if (pageSize.pageIndex * pageSize.pageSize >= totalItem) return;
+        setPageSize({ ...pageSize, pageSize: pageSize.pageSize + page });
     }
 
     const renderLeftActions = (progress, dragX, item, onchage) => {
@@ -277,19 +280,56 @@ export default ({ navigation }) => {
         )
     }
 
+    const renderFooter = () => {
+        if (loading) {
+            return (
+                <View style={{ width: "100%", alignItems: "center" }}>
+                    <View style={[{ width: 30, height: 30, borderRadius: 30, backgroundColor: "#FFFF", justifyContent: "center", alignItems: "center", marginBottom: 5 }, MainStyle.boxShadowItem]}>
+                        <ActivityIndicator size="small" color="black" />
+                    </View>
+                </View>
+            )
+        } else {
+            return null
+        }
+
+    }
     return (
         <View style={[styles.container]}>
-            <View style={{ height: "20%" }}>
+            <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
+                <ButtonCustom
+                    onPress={() => { navigation.push("AddReliefPoint") }}
+                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: "blue", }}
+                >
+                    <LinearGradient
+                        colors={['rgba(228, 230, 216,0)', 'rgba(228, 230, 216,0.2)', 'rgba(244, 245, 240,1)']}
+                        style={{
+                            height: 50,
+                            width: 50,
+                            position: 'absolute',
+                            bottom: 0,
+                            borderRadius: 50
+                        }}
+                    />
+                    <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
+                </ButtonCustom>
+            </View>
+            <View style={{ height: "7%" }}>
                 <HeaderContainer
                     isBackNavigate={"DrawScreen"}
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}
+                    centerEl={(
+                        <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+                            <Text style={{ fontSize: 20, color: "#FFFF" }}>Điểm cứu trợ</Text>
+                        </View>
+                    )}
 
                 />
             </View>
             <FilterForm body={body} setBody={setBody} setPageSize={setPageSize} pageSize={pageSize} setIsRefesh={setIsRefesh} />
-            <View style={{ height: "55%", marginTop: 10 }}>
+            <View style={{ height: "78%", marginTop: 10 }}>
                 <Animated.FlatList
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -300,13 +340,14 @@ export default ({ navigation }) => {
                     keyExtractor={(item) => item.id + 'Relef'}
                     renderItem={renderItem}
                     style={{ paddingBottom: 50 }}
-                    refreshing={loading}
+                    refreshing={isRefesh}
                     onRefresh={() => {
                         setIsRefesh(true);
-                        setPageSize({ pageIndex: 1, pageSize: 5 });
+                        setPageSize({ pageIndex: page, pageSize: size });
                     }}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}
+                    ListFooterComponent={renderFooter}
                 />
             </View>
         </View>

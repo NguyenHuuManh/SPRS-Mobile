@@ -10,6 +10,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Toast from "react-native-toast-message";
 import { apiGetStoreDetail, apiUpdateStore, apiUploadImg } from "../../ApiFunction/StorePoint";
 import AppCamera from "../../Components/AppCamera";
+import AppSelectStoreStatus from "../../Components/AppSelectStoreStatus";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import HeaderContainer from "../../Components/HeaderContainer";
@@ -27,25 +28,25 @@ const UpdateStorePoint = ({ navigation }) => {
   const item = useRoute<any>().params;
   const [data, setData] = useState<any>({});
   const [loadingImg, setLoadingImg] = useState(false);
-  const [adressPoint, setAdressPoint] = useState<any>({
-    GPS_Lati: item.address.GPS_lati,
-    GPS_long: item.address.GPS_long,
-    city: "",
-    district: "",
-    subDistrict: "",
-  })
+  const [adressPoint, setAdressPoint] = useState<any>({});
   useEffect(() => {
     getStorePoint(item.id);
   }, [item])
   const [imageList, setImageList] = useState<any>([])
-
-
   const getStorePoint = (id) => {
     if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
     apiGetStoreDetail(id).then((res) => {
       console.log("res", res);
       if (res.status == 200) {
         if (res.data.code == "200") {
+
+          setAdressPoint({
+            GPS_Lati: Number(res?.data.obj?.address?.GPS_lati),
+            GPS_long: Number(res?.data.obj?.address?.GPS_long),
+            city: res?.data.obj?.address.city.name,
+            district: res?.data.obj?.address.district.name,
+            subDistrict: res?.data.obj?.address.subDistrict.name,
+          })
           setData(res.data.obj);
           setItems(res.data.obj.store_category);
         } else {
@@ -65,8 +66,10 @@ const UpdateStorePoint = ({ navigation }) => {
     })
   }
 
+
   const UpdateStore = (body) => {
     apiUpdateStore(body).then((res) => {
+      console.log("ressss", res)
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
@@ -75,6 +78,12 @@ const UpdateStorePoint = ({ navigation }) => {
             position: "top"
           })
           getStorePoint(item.id);
+        } else {
+          Toast.show({
+            type: "success",
+            text1: "Cập nhật cửa hàng thành công",
+            position: "top"
+          })
         }
       } else {
         Toast.show({
@@ -123,7 +132,7 @@ const UpdateStorePoint = ({ navigation }) => {
       </View>
       <KeyboardAwareScrollView
         contentContainerStyle={{
-          height: height,
+          height: height + (height * 0.1),
           width: width,
           justifyContent: "flex-start",
           paddingLeft: 10,
@@ -156,6 +165,7 @@ const UpdateStorePoint = ({ navigation }) => {
                 }
               }),
               address: {
+                id: data.address.id,
                 city: {
                   code: "",
                   id: "",
@@ -231,17 +241,28 @@ const UpdateStorePoint = ({ navigation }) => {
                   styleTitle={{ width: 110 }}
                 />
               </ContainerField>
-              <ContainerField title="Địa điểm">
-                <MapPicker
-                  styleTitle={{ width: 110 }}
+              <ContainerField title="Trạng thái">
+                <Field
+                  component={AppSelectStoreStatus}
+                  name="status"
                   horizontal
-                  iconRight={faMapMarkedAlt}
-                  iconSize={20}
-                  setAdress={setAdressPoint}
-                  adress={adressPoint}
-                  defaultAdress={adressPoint}
+                  placeholder="trạng thái"
+                  styleTitle={{ width: 110 }}
                 />
               </ContainerField>
+              {!isEmpty(adressPoint) && (
+                <ContainerField title="Địa điểm">
+                  <MapPicker
+                    styleTitle={{ width: 110 }}
+                    horizontal
+                    iconRight={faMapMarkedAlt}
+                    iconSize={20}
+                    setAdress={setAdressPoint}
+                    adress={adressPoint}
+                    defaultAdress={adressPoint}
+                  />
+                </ContainerField>
+              )}
 
 
               <ContainerField title="Mặt hàng">

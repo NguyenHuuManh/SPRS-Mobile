@@ -37,10 +37,9 @@ const UpdateReliefPoint = ({ navigation }) => {
     district: "",
     subDistrict: "",
   })
+
   const callUpdateReliefPoint = (body) => {
     apiUpdateReliefPoint(body).then((res) => {
-      console.log("res", res);
-
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
@@ -48,6 +47,7 @@ const UpdateReliefPoint = ({ navigation }) => {
             text1: "Cập nhật thành công",
             position: "top"
           })
+          navigation.push('ReliefPoint');
           return;
         }
         Toast.show({
@@ -98,7 +98,7 @@ const UpdateReliefPoint = ({ navigation }) => {
         <HeaderContainer
           flexRight={0}
           flexCenter={10}
-          isBackReLoad="ReliefPoint"
+          isBack
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>Cập nhật điểm cứu trợ</Text>
@@ -250,15 +250,10 @@ const UpdateReliefPoint = ({ navigation }) => {
                   defaultAdress={adressPoint}
                 />
               </ContainerField>
-
-
               <ContainerField title="Mặt hàng">
                 <MultipleAddItem items={items} setItems={setItems} />
               </ContainerField>
-
-              {/* <View style={{ flex: 1 }}> */}
               <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30 }} onPress={() => { submitForm() }} />
-              {/* </View> */}
             </View>
           )}
         </Formik>

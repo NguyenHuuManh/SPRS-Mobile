@@ -15,10 +15,13 @@ import StoreCategory from "../../../Components/StoreCategory";
 import TimePicker from "../../../Components/TimePicker";
 import { AppColor } from "../../../Helper/propertyCSS";
 import { MainStyle } from "../../../Style/main_style";
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { useNavigation } from "@react-navigation/core";
 import styles from "../styles";
-const StoreDetail = ({ point }) => {
+const StoreDetail = ({ point, from }) => {
     const [data, setData] = useState<any>({});
     const [items, setItems] = useState<any>([]);
+    const navigation = useNavigation();
     const getStorePoint = (id) => {
         if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
         apiGetStoreDetail(id).then((res) => {
@@ -113,7 +116,11 @@ const StoreDetail = ({ point }) => {
                 <HeaderContainer
                     flexRight={0}
                     flexCenter={10}
-                    isBack
+                    leftView
+                    iconLeft={faChevronLeft}
+                    leftOnpress={() => {
+                        navigation.replace(from)
+                    }}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
                             <Text style={{ fontSize: 20, color: "#FFFF" }}>{point.name}</Text>

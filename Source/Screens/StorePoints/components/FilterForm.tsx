@@ -62,34 +62,36 @@ export default (props: Props) => {
     return (
         <Formik
             initialValues={{
-                type: "",
-                stage: "",
-                sort: true,
+                type: body.type,
+                status_store: body.status_store,
+                sort: body.sort,
             }}
             onSubmit={(values) => {
-                console.log("valuessss", values);
+                setBody(values);
+                setIsRefesh(true);
+                setPageSize({ pageSize: 5, pageIndex: 1 });
             }}
         >
             {(formikProps) => (
-                <View style={{ height: "15%", width: "100%" }}>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", height: "50%", alignItems: "center", paddingLeft: 5, paddingRight: 10 }}>
-                        <Text style={{ fontSize: 15, fontWeight: "bold" }}>Danh sách cửa hàng</Text>
-                        <TouchableOpacity style={{ justifyContent: "center" }} onPress={() => {
-                            formikProps.setFieldValue("sort", !formikProps.values.sort);
-                            formikProps.submitForm();
-                        }}>
-                            <FontAwesomeIcon icon={formikProps.values.sort ? faSortAlphaDownAlt : faSortAlphaUp} />
-                        </TouchableOpacity>
-                        <ButtonCustom onPress={() => { navigation.push("AddStorePoint") }} ><FontAwesomeIcon icon={faPlus} /></ButtonCustom>
-                    </View>
-                    <View style={{ flexDirection: "row", justifyContent: "space-around", height: "50%", alignItems: "center" }}>
-                        <FilterComponent
-                            formikProps={formikProps}
-                            listComponents={[
-                                { key: "type", title: "Khu vực", data: dataType },
-                                { key: "stage", title: "Loại sản phẩm", data: dataKV }
-                            ]}
-                        />
+                <View style={{ height: "10%", width: "100%", justifyContent: "center" }}>
+                    <View style={{ height: "70%", alignItems: "center" }}>
+                        <View style={{ backgroundColor: "#FFF", flexDirection: "row", width: "90%", paddingRight: 10, paddingLeft: 10, borderRadius: 5, }}>
+                            <FilterComponent
+                                formikProps={formikProps}
+                                listComponents={[
+                                    { key: "type", title: "Loại sản phẩm", data: dataType },
+                                    { key: "status_store", title: "Trạng thái", data: [{ id: 0, name: "Hoạt động" }, { id: 1, name: "Đóng cửa tạm thời" }, { id: 2, name: "Đóng cửa" }] }
+                                ]}
+                            />
+                            <TouchableOpacity style={{ justifyContent: "center" }} onPress={() => {
+                                console.log(formikProps.values.sort, "sort")
+                                formikProps.setFieldValue("sort", !formikProps.values.sort);
+                                formikProps.submitForm();
+                            }}>
+                                <FontAwesomeIcon icon={formikProps.values.sort ? faSortAlphaDownAlt : faSortAlphaUp} />
+                            </TouchableOpacity>
+
+                        </View>
                     </View>
                 </View>
             )}

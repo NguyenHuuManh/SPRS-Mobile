@@ -5,11 +5,11 @@ export const signupStore = `${URL}/sprs/api/users_v2/ownStore`;
 export const singupOrganization = `${URL}/sprs/api/users_v2/organizationlAdmin`
 export const singupStore = `${URL}/sprs/api/users_v2/organizationlAdmin`
 //
-export const signin = `${URL}/authenticate`;
+export const signin = `${URL}/authenticate-mobile`;
 export const profile = `${URL}/sprs/api/user`;
 export const UPDATE_PROFILE = `${URL}/sprs/api/user/update/infor`
 //
-export const groupList = `${URL}/sprs/api/groups`
+export const groupList = `${URL}/sprs/api/groups-register-mobile`
 export const ITEMS = `${URL}/sprs/api/item`
 //
 
@@ -24,6 +24,8 @@ export const RESET_PASSWORD = `${URL}/sprs/api/forgotPassword`
 // export const PLACE_AUTOCOMPLETE = `${URL_GOOGLE}/place/autocomplete/json`
 
 export const PLACE_AUTOCOMPLETE = `${URL_GOONG}/Place/AutoComplete`
+
+export const PLACE_AUTOCOMPLETE_MAP = `${URL}/sprs/api/manage-map/search`
 
 export const DETAIL_PLACE_LAT_LNG = `${URL_GOONG}/Geocode`
 
@@ -52,14 +54,19 @@ export const SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/subcribe`
 export const UNSUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/unsubcribe`
 export const GET_SUBCRIBLE_STORE = `${URL}/sprs/api/subcribe-manage/get`
 export const UPLOAD_IMG_STORE = `${URL}/sprs/api/store-manage/uploadImg`
+export const UPDATE_STATUS_STORE = `${URL}/sprs/api/store-manage/openCloseStore`
+export const GET_ALL_STORE = `${URL}/sprs/api/store-manage/getAll`
 //SOS
 export const UPDATE_SOS = `${URL}/sprs/api/sos-manage/update`
 export const GET_SOS = `${URL}/sprs/api/sos-manage/get`
+
 //loadMap
 export const LOAD_MAP = `${URL}/sprs/api/manage-map/getPoints`
 //Notification
 export const CREATE_DEVICE = `${URL}/sprs/api/device/create`
+export const DELETE_DEVICE = `${URL}/sprs/api/device/delete`
+export const UPDATE_ADDRESS_DEVICE = `${URL}/sprs/api/device/update/address`
 export const GET_ALL_NOTIFICATION = `${URL}/sprs/api/notification-manage/get-all`
 export const GET_UNCHECK_NOTIFICATION = `${URL}/sprs/api/notification-manage/notification/uncheck`
-export const DELETE_DEVICE = `${URL}/sprs/api/device/delete`
 export const UPDATE_NOTIFICATION_STATUS = `${URL}/sprs/api/notification-manage/update`
+export const GET_NOTIFICATION_ID = `${URL}/sprs/api/notification-manage/get`

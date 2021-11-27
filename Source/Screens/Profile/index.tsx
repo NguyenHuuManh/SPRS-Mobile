@@ -9,23 +9,36 @@ import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/core"
 import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../../Redux/Actions";
+import { badgeShowActions, userActions } from "../../Redux/Actions";
+import HeaderContainer from "../../Components/HeaderContainer";
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const profileReducer = useSelector((state) => state.profileReducer);
     return (
         <View style={{ width: width, height: height, paddingBottom: 80, backgroundColor: BackgoundMain, }}>
-            <View style={{ flex: 2, alignItems: "center", zIndex: 100, backgroundColor: "pink", justifyContent: "center" }}>
+            {/* <View style={{ flex: 2, alignItems: "center", zIndex: 100, backgroundColor: "pink", justifyContent: "center" }}>
                 <ImageBackground source={require('../../Assets/Images/Road01.jpg')}
                     resizeMode="stretch"
                     style={{ width: "100%", height: "100%", backgroundColor: "red", alignItems: "center" }}
                 >
                     <View style={[styles.avata, styles.boxShadowAvata, { backgroundColor: "#FFF" }]}></View>
                 </ImageBackground>
+            </View> */}
+            <View style={{ height: "7%" }}>
+                <HeaderContainer
+                    flexRight={1}
+                    flexCenter={10}
+                    centerEl={(
+                        <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+                            <Text style={{ fontSize: 20, color: "#FFF" }}>Tài khoản</Text>
+                        </View>
+                    )}
+                    flexLeft={1}
+                />
             </View>
-            <View style={{ flex: 6, backgroundColor: "#F6F5F5", justifyContent: "space-around", paddingTop: "20%" }}>
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={{ height: "93%", backgroundColor: "#F6F5F5", justifyContent: "space-around", paddingTop: "5%" }}>
+                <View style={{ height: 130, justifyContent: "center", alignItems: "center" }}>
                     <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, justifyContent: "center" }]}>
                         <Text>{profileReducer.data?.full_name}</Text>
                         <Text>Số điện thoại: {profileReducer.data?.phone}</Text>

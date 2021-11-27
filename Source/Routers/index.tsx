@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
-import { badgeShowActions, profileActions } from '../Redux/Actions';
+import { badgeShowActions, profileActions, UpdateAddressDeviceActions } from '../Redux/Actions';
 import ActionTypes from '../Redux/ActionTypes';
 import { RootState } from '../Redux/Reducers';
 import { Home, Signin } from '../Screens';
@@ -48,7 +48,7 @@ const ProfileStack = createStackNavigator();
 
 const GuestStackScreen = () => (
     <GuestStack.Navigator initialRouteName="Map" screenOptions={{ headerShown: false }}>
-        <GuestStack.Screen name="Map" component={MapCluser} options={{ title: "Map", animationEnabled: true }} />
+        <GuestStack.Screen name="Map" component={MapCluserSupper} options={{ title: "Map", animationEnabled: true }} />
     </GuestStack.Navigator>
 )
 
@@ -96,6 +96,7 @@ const DrawScreen = () => (
 )
 const RootStackScreen = () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
+    const profileReducer = useSelector((state: RootState) => state.profileReducer);
     const isUserToken = !isEmpty(userReducer?.data?.token || {})
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -108,7 +109,7 @@ const RootStackScreen = () => {
     useEffect(() => {
         if (!isEmpty(userReducer?.data?.token || {})) {
             dispatch(profileActions.profileRequest());
-            dispatch(badgeShowActions.badgeRequest())
+            dispatch(badgeShowActions.badgeRequest());
         }
         if (isEmpty(userReducer?.data?.token || {}) && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
             navigation.reset({
@@ -116,7 +117,13 @@ const RootStackScreen = () => {
                 routes: [{ name: 'AuStackScreen' }]
             })
         }
-    }, [userReducer])
+    }, [userReducer]);
+
+    useEffect(() => {
+        if (!isEmpty(profileReducer.data) && profileReducer.type == ActionTypes.PROFILE_SUCCESS) {
+            dispatch(UpdateAddressDeviceActions.updateRequest(profileReducer.data.address.id));
+        }
+    }, [profileReducer])
 
     return (
         <>

@@ -129,7 +129,6 @@ const AddStorePoint = ({ navigation }) => {
                 <Field
                   component={Input}
                   name="name"
-                  // title="Tên điểm cứu trợ:"
                   horizontal
                   placeholder="Tên điểm cứu trợ"
                   styleTitle={{ width: 110 }}
@@ -142,7 +141,6 @@ const AddStorePoint = ({ navigation }) => {
                     <Field
                       component={TimePicker}
                       name="open_time"
-                      // title="Thời gian hoạt động"
                       mode="time"
                       horizontal
                       placeholder="Mở cửa"
@@ -155,7 +153,6 @@ const AddStorePoint = ({ navigation }) => {
                     <Field
                       component={TimePicker}
                       name="close_time"
-                      // title="Thời gian kết thúc"
                       mode="time"
                       horizontal
                       placeholder="Đóng cửa"
@@ -177,7 +174,6 @@ const AddStorePoint = ({ navigation }) => {
 
               <ContainerField title="Chọn địa điểm">
                 <MapPicker
-                  // title="Địa điểm"
                   styleTitle={{ width: 110 }}
                   horizontal
                   iconRight={faMapMarkedAlt}

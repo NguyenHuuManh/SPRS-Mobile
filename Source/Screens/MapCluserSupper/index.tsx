@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { apiLoadMap } from "../../ApiFunction/PlaceAPI";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { API_KEY } from "../../Constrants/url";
-import { haversineDistance } from "../../Helper/FunctionCommon";
+import { handleLocationPermission, haversineDistance } from "../../Helper/FunctionCommon";
 import { height } from "../../Helper/responsive";
 import { RootState } from "../../Redux/Reducers";
 import BottomModalSheet from "./Components/BottomModalSheet";
@@ -20,7 +20,32 @@ import ClusterMarker from "./Components/CluserMarker";
 import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
 import RenderMarker from "./Components/RenderMarker";
+interface Store {
+    regionStore: { region: any; setRegion: any };
+    markerToStore: { markerTo: any, setMarkerTo: any };
+    myLocationStore: { myLocation: any, setMylocation: any };
+    mapRefStore: { mapRef: any };
+    directionsRefStore: { directionsRef: any };
+    modalBottom: { visible: boolean, setVisible: any };
+    strokerDirectionStore: { strokerDirection: any, setStrokerDirection: any };
+    dataDirectionStore: { dataDirection: any, setDataDirection: any };
+    modalSearch: { visible: any, setVisible: any };
+}
 
+
+const initialState = {
+    regionStore: { region: {}, setRegion: () => { } },
+    markerToStore: { markerTo: {}, setMarkerTo: () => { } },
+    myLocationStore: { myLocation: {}, setMylocation: () => { } },
+    mapRefStore: { mapRef: null },
+    directionsRefStore: { directionsRef: null },
+    modalBottom: { visible: false, setVisible: () => { } },
+    modalSearch: { visible: false, setVisible: () => { } },
+    strokerDirectionStore: { strokerDirection: 0, setStrokerDirection: () => { } },
+    dataDirectionStore: { dataDirection: {}, setDataDirection: () => { } }
+}
+
+export const MapStore = React.createContext<Store>(initialState);
 export default () => {
     const userReducer = useSelector((state: RootState) => state.userReducer);
     const [region, setRegion] = useState<any>({});
@@ -39,6 +64,22 @@ export default () => {
     const [strokerDirection, setStrokerDirection] = useState(0)
     const [showModal, setShowModal] = useState(false);
     const { params } = useRoute<any>();
+    const [typePoinst, setTypePoints] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [searchVisible, setSearchVisible] = useState(false);
+
+
+    const store: Store = {
+        regionStore: { region, setRegion },
+        markerToStore: { markerTo, setMarkerTo },
+        myLocationStore: { myLocation, setMylocation },
+        mapRefStore: { mapRef },
+        directionsRefStore: { directionsRef },
+        modalBottom: { visible: modalVisible, setVisible: setModalVisible },
+        strokerDirectionStore: { strokerDirection, setStrokerDirection },
+        dataDirectionStore: { dataDirection, setDataDirection },
+        modalSearch: { visible: searchVisible, setVisible: setSearchVisible }
+    };
 
     const getCurrentLocation = () => {
         Geolocation.getCurrentPosition(
@@ -71,9 +112,9 @@ export default () => {
     }
     useEffect(() => {
         getCurrentLocation();
-        // handleLocationPermission().then((e) => {
-        //     // console.log("permission", e);
-        // });
+        handleLocationPermission().then((e) => {
+            console.log("permission", e);
+        });
         Geolocation.watchPosition(
             (response) => {
                 setMylocation({
@@ -118,7 +159,6 @@ export default () => {
         }
     }, [params])
 
-    const [visible, setVisible] = useState(false);
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
             if (e.status == 200) {
@@ -131,7 +171,8 @@ export default () => {
                                     latitude: Number(e?.point.x),
                                     longitude: Number(e?.point.y),
                                 },
-                                type: e.type
+                                type: e.type,
+                                name: e.name
                             }
                         )
                     }));
@@ -139,12 +180,32 @@ export default () => {
             }
         })
     }
-    const debounceLoadMap = useCallback(debounce((nextValue) => callLoadMap(nextValue), 1000), [])
+    const debounceLoadMap = useCallback(debounce((nextValue) => callLoadMap(nextValue), 100), []);
+
+
+    const toStringArr = (arr) => {
+        let fillter = '';
+        for (let i = 0; i < arr.length; i++) {
+            if (i < arr.length - 1) {
+                fillter += arr[i] + ',';
+            } else {
+                fillter += arr[i];
+            }
+        }
+        return fillter;
+    }
+
     useEffect(() => {
         if (isEmpty(centerMark)) return;
-        const distance = haversineDistance([southWest.latitude, southWest.longitude], [northEast.latitude, northEast.longitude], false)
-        debounceLoadMap({ lat: centerMark.latitude, long: centerMark.longitude, radius: distance });
-    }, [centerMark])
+        const distance = haversineDistance([southWest.latitude, southWest.longitude], [northEast.latitude, northEast.longitude], false);
+        const fillter = isEmpty(typePoinst) ? "sos,rp,st,org" : toStringArr(typePoinst.map((e) => { return e.id }))
+        debounceLoadMap({ lat: centerMark.latitude, long: centerMark.longitude, radius: distance, filter: fillter });
+    }, [centerMark]);
+
+    useEffect(() => {
+        setCenterMark({ ...centerMark });
+    }, [typePoinst])
+
 
     const renderDirection = (
         !isEmpty(myLocation) && !isEmpty(markerTo) && (
@@ -171,126 +232,133 @@ export default () => {
     )
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ModalSearch visible={visible} setVisible={setVisible} setText={setText} map={mapRef.current?.mapRef} setRegion={setRegion} region={region} setMarkerTo={setMarkerTo} />
-            <View style={{ height: height * 0.07 }}>
-                <HeaderContainer
-                    isBackNavigate={params?.screen}
-                    centerEl={(
-                        <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <TouchableOpacity onPress={() => { setVisible(true) }} style={{
-                                padding: 5,
-                                borderWidth: 1,
-                                borderColor: "#FFF",
-                                alignItems: "center",
-                                borderRadius: 10,
-                                flexDirection: "row",
-                                width: "100%",
-                                backgroundColor: "#FFF"
-                            }}>
-                                <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
-                                <Text numberOfLines={1} style={{ height: 30, alignSelf: "center", textAlignVertical: "center" }}>{text}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                    flexLeft={0}
-                    flexCenter={8}
-                    flexRight={3}
-                    rightEL={(
-                        <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingRight: 10 }}>
-                            <TouchableOpacity onPress={() => {
-                                if (userReducer.isGuest) {
-                                    Alert.alert(
-                                        'Yêu cầu đăng nhập',
-                                        'Bạn có muốn đăng nhập để vào màn hình chức năng?',
-                                        [
-                                            {
-                                                text: 'Đăng nhập',
-                                                onPress: () => {
-                                                    navigation.reset({
-                                                        index: 0,
-                                                        routes: [{ name: 'AuStackScreen' }]
-                                                    })
-                                                }
-                                            },
-                                            {
-                                                text: 'Hủy',
-                                                onPress: () => { }, style: 'cancel'
-                                            },
-                                        ],
-                                        { cancelable: false },
-                                    );
-                                } else {
-                                    navigation.navigate("DrawScreen")
-                                }
-                            }}>
-                                <FontAwesomeIcon icon={faHome} color="#A0A6BE" size={24} />
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                >
-                </HeaderContainer >
-            </View>
-            <View style={{ height: height }}>
-                <Filter />
-                <BottomModalSheet
-                    dataDirection={dataDirection}
-                    setStrokerDirection={setStrokerDirection}
-                    showModal={showModal}
-                    setShowModal={setShowModal}
-                    mapRef={mapRef}
-                    myLocation={myLocation}
-                    markerTo={markerTo}
-                />
-                <View style={{ position: "absolute", top: 70, left: 20, zIndex: 100 }}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            mapRef.current.getMapRef().animateToRegion({
-                                ...myLocation,
-                                latitudeDelta: 0.006866,
-                                longitudeDelta: 0.006866,
-                            }, 1000);
-                        }}>
-                        <FontAwesomeIcon icon={faStreetView} size={30} style={{ marginTop: 10 }} color="blue" />
-                    </TouchableOpacity>
-                </View>
-                {
-                    !isEmpty(region) && <ClusteredMapView
-                        style={{ flex: 1 }}
-                        data={listMarker}
-                        initialRegion={{ latitude: 21.0053961, longitude: 105.518345, latitudeDelta: 0.006866, longitudeDelta: 0.006866 }}
-                        ref={mapRef}
-                        renderMarker={(item) => {
-                            return <RenderMarker
-                                item={item}
-                                setMarkerTo={setMarkerTo}
-                                setShowModal={setShowModal}
-                                setStrokerDirection={setStrokerDirection}
-                                showModal={showModal}
-                            />
-                        }}
-                        renderCluster={(cluser, onPress) => { return <ClusterMarker cluser={cluser} onPress={onPress} /> }}
-                        clusteringEnabled={true}
-                        onRegionChangeComplete={(e) => {
-                            if (mapReady) {
-                                mapRef.current.getMapRef().getMapBoundaries().then((bound) => {
-                                    setNorthEast(bound.northEast);
-                                    setSouthWest(bound.southWest);
-                                });
-                            }
-                            setCenterMark({
-                                latitude: Number(e?.latitude),
-                                longitude: Number(e?.longitude)
-                            });
-                        }}
-                        onMapReady={() => { onMapReady() }}
-                    // priorityMarker={renderDirection}
+        <MapStore.Provider value={store}>
+            <SafeAreaView style={{ flex: 1 }}>
+                <ModalSearch setText={setText} visible={searchVisible} setVisible={setSearchVisible} />
+                <View style={{ height: height * 0.07 }}>
+                    <HeaderContainer
+                        isBackNavigate={params?.screen}
+                        centerEl={(
+                            <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                                <TouchableOpacity onPress={() => {
+                                    console.log("fsdfdfsdfsd");
+                                    setSearchVisible(true);
+                                }} style={{
+                                    padding: 5,
+                                    borderWidth: 1,
+                                    borderColor: "#FFF",
+                                    alignItems: "center",
+                                    borderRadius: 10,
+                                    flexDirection: "row",
+                                    width: "100%",
+                                    backgroundColor: "#FFF"
+                                }}>
+                                    <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
+                                    <Text numberOfLines={1} style={{ height: 30, alignSelf: "center", textAlignVertical: "center" }}>{text}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        flexLeft={params?.screen ? 2 : 1}
+                        flexCenter={11}
+                        flexRight={2}
+                        rightEL={(
+                            <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingRight: 10 }}>
+                                <TouchableOpacity onPress={() => {
+                                    if (userReducer.isGuest) {
+                                        Alert.alert(
+                                            'Yêu cầu đăng nhập',
+                                            'Bạn có muốn đăng nhập để vào màn hình chức năng?',
+                                            [
+                                                {
+                                                    text: 'Đăng nhập',
+                                                    onPress: () => {
+                                                        navigation.reset({
+                                                            index: 0,
+                                                            routes: [{ name: 'AuStackScreen' }]
+                                                        })
+                                                    }
+                                                },
+                                                {
+                                                    text: 'Hủy',
+                                                    onPress: () => { }, style: 'cancel'
+                                                },
+                                            ],
+                                            { cancelable: false },
+                                        );
+                                    } else {
+                                        navigation.navigate("DrawScreen")
+                                    }
+                                }}>
+                                    <FontAwesomeIcon icon={faHome} color="#A0A6BE" size={24} />
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     >
-                        {renderDirection}
-                    </ClusteredMapView>
-                }
-            </View>
-        </SafeAreaView >
+                    </HeaderContainer >
+                </View>
+                <View style={{ height: height }}>
+                    <Filter typePoinst={typePoinst} setTypePoints={setTypePoints} />
+                    <BottomModalSheet visible={modalVisible} />
+                    <View style={{ position: "absolute", top: 70, left: 20, zIndex: 100 }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                mapRef.current.getMapRef().animateToRegion({
+                                    ...myLocation,
+                                    latitudeDelta: 0.006866,
+                                    longitudeDelta: 0.006866,
+                                }, 1000);
+                            }}>
+                            <FontAwesomeIcon icon={faStreetView} size={30} style={{ marginTop: 10 }} color="blue" />
+                        </TouchableOpacity>
+                    </View>
+                    {
+                        !isEmpty(region) && <ClusteredMapView
+                            style={{ flex: 1 }}
+                            data={listMarker}
+                            initialRegion={{ latitude: 21.0053961, longitude: 105.518345, latitudeDelta: 0.006866, longitudeDelta: 0.006866 }}
+                            ref={mapRef}
+                            showsUserLocation={true}
+                            followsUserLocation
+                            renderMarker={(item) => {
+                                return <RenderMarker
+                                    item={item}
+                                    setMarkerTo={setMarkerTo}
+                                    setShowModal={setShowModal}
+                                    setStrokerDirection={setStrokerDirection}
+                                    showModal={showModal}
+                                />
+                            }}
+                            renderCluster={(cluser, onPress) => { return <ClusterMarker cluser={cluser} onPress={onPress} /> }}
+                            clusteringEnabled={true}
+                            onRegionChangeComplete={(e) => {
+                                if (mapReady) {
+                                    mapRef.current.getMapRef().getMapBoundaries().then((bound) => {
+                                        setNorthEast(bound.northEast);
+                                        setSouthWest(bound.southWest);
+                                    });
+                                }
+                                setCenterMark({
+                                    latitude: Number(e?.latitude),
+                                    longitude: Number(e?.longitude)
+                                });
+                            }}
+                            onMapReady={() => { onMapReady() }}
+                        >
+                            {renderDirection}
+                            {(!markerTo.id && !isEmpty(markerTo.location)) && (
+                                <RenderMarker
+                                    item={markerTo}
+                                    setMarkerTo={setMarkerTo}
+                                    setShowModal={setShowModal}
+                                    setStrokerDirection={setStrokerDirection}
+                                    showModal={showModal}
+                                />
+                            )}
+                        </ClusteredMapView>
+                    }
+                </View>
+            </SafeAreaView >
+        </MapStore.Provider>
     );
 
 }

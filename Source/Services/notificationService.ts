@@ -1,14 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging from '@react-native-firebase/messaging';
 import NetInfo from "@react-native-community/netinfo";
-import { store } from '../Store';
-import { netWorkChecking } from '../Redux/Actions/NetworkActions';
+import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
+import { apiUpdateStatusNotification } from '../ApiFunction/Notification';
+import { navigate } from '../Helper/RootNavigation';
+import { badgeShowActions } from '../Redux/Actions';
 import { badgeRequest } from '../Redux/Actions/BadgeShowActions';
-import { useNavigation } from "@react-navigation/core";
-import { initialRoute } from '../Redux/Actions/InitialRouteActions';
-import { navigate, navigationRef } from '../Helper/RootNavigation';
-import { useLinkTo } from '@react-navigation/native';
+import { netWorkChecking } from '../Redux/Actions/NetworkActions';
+import { store } from '../Store';
 export const getFcmToken = async () => {
     let fcmToken = await AsyncStorage.getItem('fcmToken');
     if (!fcmToken) {
@@ -49,37 +48,28 @@ export const notificationListener = async (callBack?: any) => {
             if (remoteMessage) {
                 console.log(
                     'Notification caused app to open from quit state:',
-                    remoteMessage.notification,
+                    remoteMessage,
                 );
                 // callBack(remoteMessage);
-                const item = {
-                    create_time: null,
-                    id: 293,
-                    message: "Có một địa điểm cứu trợ được tạo gần bạn",
-                    sender: {
-                        close_time: "21-10-2021 12:14",
-                        create_by: null,
-                        create_time: "2021-11-23 09:11:28",
-                        description: "",
-                        id: 289,
-                        modified_by: null,
-                        modified_date: null,
-                        name: "test notification21",
-                        open_time: "20-10-2021 10:14",
-                        status: true,
-                        user_rp: null
-                    },
-                    status: "read",
-                    type: "rp",
+                const item = remoteMessage.data;
+
+                if (['rp', 'st', 'sos', 'org'].includes(item.type)) {
+                    apiUpdateStatusNotification({ id: item.id, status: "read" }).then((e) => {
+                        if (e.status == 200) {
+                            if (e.data.code == '200') {
+                                store.dispatch(badgeShowActions.badgeRequest());
+                            }
+                        } else {
+                            console.log("err");
+                        }
+                    });
+                    navigate("DetailPoint", { point: { id: item.sender, type: item.type }, from: 'MapCluser' });
+                } else {
+                    navigate('NotificationDetail', { item, isBack: true });
                 }
-                navigate("NotificationDetail", { item, isBack: true });
             }
         });
 
-    messaging().onNotificationOpenedApp(async message => {
-        console.log("messageeee", message);
-        // store.dispatch(notificationRoute({ id: 10 }));
-    })
 }
 
 export const networkListener = async () => {

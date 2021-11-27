@@ -3,15 +3,14 @@ import React from "react";
 import StoreDetail from "./Component/StoreDetail";
 import ReliefDetail from "./Component/ReliefDetail";
 const DetailPoint = () => {
-    const { point } = useRoute<any>().params;
-    console.log("point", point);
+    const { point, from } = useRoute<any>().params;
     return (
         <>
             {point?.type === "st" && (
-                <StoreDetail point={point} />
+                <StoreDetail point={point} from={from} />
             )}
             {point?.type === "rp" && (
-                <ReliefDetail point={point} />
+                <ReliefDetail point={point} from={from} />
             )}
         </>
     )

@@ -73,25 +73,24 @@ export default (props: Props) => {
             }}
         >
             {(formikProps) => (
-                <View style={{ height: "15%", width: "100%" }}>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", height: "50%", alignItems: "center", paddingLeft: 5, paddingRight: 10 }}>
-                        <Text style={{ fontSize: 15, fontWeight: "bold" }}>Danh sách điểm cứu trợ</Text>
-                        <TouchableOpacity style={{ justifyContent: "center" }} onPress={() => {
-                            formikProps.setFieldValue("sort", !formikProps.values.sort);
-                            formikProps.submitForm();
-                        }}>
-                            <FontAwesomeIcon icon={formikProps.values.sort ? faSortAlphaDownAlt : faSortAlphaUp} />
-                        </TouchableOpacity>
-                        <ButtonCustom onPress={() => { navigation.push("AddReliefPoint") }} ><FontAwesomeIcon icon={faPlus} /></ButtonCustom>
-                    </View>
-                    <View style={{ flexDirection: "row", justifyContent: "space-around", height: "50%", alignItems: "center" }}>
-                        <FilterComponent
-                            formikProps={formikProps}
-                            listComponents={[
-                                { key: "status", title: "trạng thái hoạt động", data: [{ id: true, name: "hoạt động" }, { id: false, name: "không hoạt động" }] },
-                                { key: "type", title: "Loại sản phẩm", data: dataType }
-                            ]}
-                        />
+                <View style={{ height: "10%", width: "100%", justifyContent: "center" }}>
+                    <View style={{ height: "70%", alignItems: "center" }}>
+                        <View style={{ backgroundColor: "#FFF", flexDirection: "row", width: "90%", paddingRight: 10, paddingLeft: 10, borderRadius: 5, }}>
+                            <FilterComponent
+                                formikProps={formikProps}
+                                listComponents={[
+                                    { key: "status", title: "trạng thái hoạt động", data: [{ id: true, name: "hoạt động" }, { id: false, name: "không hoạt động" }] },
+                                    { key: "type", title: "Loại sản phẩm", data: dataType }
+                                ]}
+                            />
+                            <TouchableOpacity style={{ justifyContent: "center" }} onPress={() => {
+                                formikProps.setFieldValue("sort", !formikProps.values.sort);
+                                formikProps.submitForm();
+                            }}>
+                                <FontAwesomeIcon icon={formikProps.values.sort ? faSortAlphaDownAlt : faSortAlphaUp} />
+                            </TouchableOpacity>
+
+                        </View>
                     </View>
                 </View>
             )}

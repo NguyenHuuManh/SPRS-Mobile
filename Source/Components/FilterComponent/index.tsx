@@ -62,9 +62,9 @@ export default (props: Props) => {
         )
     }
     return (
-        <View style={[styles.container, MainStyle.boxShadow]} >
+        <View style={[styles.container]} >
             <View style={{ flexDirection: "row", height: "100%" }}>
-                <TouchableOpacity onPress={() => { setvisible(true) }} style={{ justifyContent: "center", alignItems: "center", display: "flex", width: "10%" }}><FontAwesomeIcon icon={faFilter} /></TouchableOpacity>
+                <TouchableOpacity onPress={() => { setvisible(true) }} style={{ justifyContent: "center", display: "flex", width: "10%" }}><FontAwesomeIcon icon={faFilter} /></TouchableOpacity>
                 <ScrollView style={{ width: "90%", height: "100%", backgroundColor: "#FFF", flexDirection: "row" }} horizontal showsHorizontalScrollIndicator={false}>
                     {listComponents.map((e) => {
                         const item = getItemSelect({ id: values[e.key], key: e.key });

@@ -196,3 +196,13 @@ export function haversineDistance(latlngA, latlngB, isMiles) {
     if (isMiles) distance /= 1.609344;
     return distance;
 }
+
+export const addAnItems = (targetArray, itemForAdd, key) => {
+    const arrayAfterFilterItem = targetArray.filter((elm) => elm[key] !== itemForAdd[key]);
+    if (arrayAfterFilterItem.length === targetArray.length) {
+        arrayAfterFilterItem.push(itemForAdd);
+    }
+    return arrayAfterFilterItem;
+};
+
+

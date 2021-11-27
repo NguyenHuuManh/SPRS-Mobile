@@ -38,11 +38,16 @@ export default (props: Props) => {
         }
         const date = new Date(selectedDate);
         setShow(false);
-        setFieldValue(name, date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getMinutes().toString());
+        setFieldValue(name, convertTime(date.getHours().toString()) + ":" + convertTime(date.getMinutes().toString()))
     };
 
+    const convertTime = (time) => {
+        if (time.length == 1) return '0' + time;
+        return time;
+    }
+
     const revertTime = (value) => {
-        const dateStr = isEmpty(value) ? moment().format('YYYY-MM-DD HH:mm:ss') : `2021-10-10 ${value}`
+        const dateStr = isEmpty(value) ? moment().format('YYYY-MM-DD HH:mm') : `2021-10-10 ${value}`
         return moment(dateStr).valueOf();
     }
 

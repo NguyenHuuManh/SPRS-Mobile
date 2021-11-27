@@ -28,7 +28,6 @@ const Backdrop = ({ movies, scrollX }) => {
                     // if (!item?.backdrop) {
                     //     return null;
                     // }
-                    console.log("sdsdfdsfsdfsd")
                     const translateX = scrollX.interpolate({
                         inputRange: [(index - 2) * ITEM_SIZE, (index - 1) * ITEM_SIZE],
                         outputRange: [0, width],

@@ -1,7 +1,8 @@
-export const BackgoundMain = "#F6BB57"
 // export const FontText="#FFF"
 export const AppColor = {
-    MAIN_COLOR: '#D71920',
+    MAIN_COLOR: '#A362EA',
+    // "#A362EA",
+    // '#F6BB57',
     GRAY: '#A0A6BE',
     GRAY_LIGHT: '#D2DBE8',
     GRAY_DARK: '#313E5A',

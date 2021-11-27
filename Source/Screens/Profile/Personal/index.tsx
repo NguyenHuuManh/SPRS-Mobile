@@ -148,6 +148,7 @@ export default () => {
                                     horizontal
                                     styleTitle={{ width: 90 }}
                                     editable={!disable}
+                                    disabled
                                 />
                             </ContainerField>
                             <ContainerField title="Họ và tên">

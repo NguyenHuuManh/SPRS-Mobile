@@ -6,6 +6,8 @@ import ProfileReducer from "./ProfileReducer";
 import TabBarVisibleReducer from "./TabBarVisibleReducer";
 import ToastReducer from "./ToastReducer";
 import UserReducer from "./UserReducer";
+import ForcusNotificationReducer from "./ForcusNotificationReducer";
+import UpdateAddressReducer from "./UpdateAddressReducer";
 
 const rootReducer = combineReducers(
     {
@@ -16,6 +18,8 @@ const rootReducer = combineReducers(
         pendingReducer: PendingReducer,
         badgeReducer: BadgeReducer,
         networkCheckingReducer: NetworkCheckingReducer,
+        forcusNotificationReducer: ForcusNotificationReducer,
+        updateAddressReducer: UpdateAddressReducer
     });
 export type RootState = ReturnType<typeof rootReducer>;
 export default rootReducer;

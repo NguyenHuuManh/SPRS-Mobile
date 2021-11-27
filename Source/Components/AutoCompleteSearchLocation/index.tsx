@@ -44,15 +44,6 @@ export default (props: Props) => {
         debounceDropDown(e);
     }
 
-    // useEffect(() => {
-    //     if (isEmpty(data)) setIsShow(false)
-    //     if (!isShow) setIsShow(true);
-    // }, [data])
-
-    // useEffect(() => {
-    //     if (isEmpty(itemSelect)) return
-
-    // }, [itemSelect])
     const onSelectItem = (itemSelect) => {
         setInputState(itemSelect.description)
         apiPlaceDetailById(itemSelect.place_id).then((e) => {

@@ -1,4 +1,4 @@
-import { CITY, DETAIL_PLACE_ID, DETAIL_PLACE_LAT_LNG, DISTRICT, LOAD_MAP, PLACE_AUTOCOMPLETE, SUBDISTRICT } from "../../Constrants/api";
+import { CITY, DETAIL_PLACE_ID, DETAIL_PLACE_LAT_LNG, DISTRICT, LOAD_MAP, PLACE_AUTOCOMPLETE, PLACE_AUTOCOMPLETE_MAP, SUBDISTRICT } from "../../Constrants/api";
 import { API_KEY_GOONG } from "../../Constrants/url";
 import { convertToQuery } from "../../Helper/FunctionCommon";
 import httpServices from "../../Services/httpServices";
@@ -26,6 +26,12 @@ export const apiPlaceAutoComplete = async (key) => {
     );
 };
 
+export const apiPlaceAutoCompleteMap = async (params) => {
+    return await httpServices.get(
+        `${PLACE_AUTOCOMPLETE_MAP}${convertToQuery(params)}`,
+    );
+};
+
 export const apiCity = async () => {
     return await httpServices.get(`${CITY}`);
 };
@@ -39,7 +45,8 @@ export const apiSubDistrict = async (id) => {
 }
 
 export const apiLoadMap = async (params) => {
-    return await httpServices.get(`${LOAD_MAP}${convertToQuery(params)}`);
+    const { filter, ...temp } = params
+    return await httpServices.get(`${LOAD_MAP}${convertToQuery(temp)}&filter=${filter}`);
 }
 
 export const apiCurentLocation = async () => {

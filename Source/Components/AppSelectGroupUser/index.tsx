@@ -16,6 +16,7 @@ export default (props: Props) => {
 
     const callGetGroupList = () => {
         apiGetGroups().then((e) => {
+            console.log("res", e)
             if (e.status == 200 && e.data.code == '200') {
                 setData(e.data.lstObj);
             }
@@ -34,6 +35,7 @@ export default (props: Props) => {
         return (
             <>
                 <AppSelect
+                    header="Loại tài khoản"
                     {...field}
                     {...remainProps}
                     value={value}

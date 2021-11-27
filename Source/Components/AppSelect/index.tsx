@@ -27,6 +27,7 @@ interface Props {
     disableClear?: boolean
     underLine?: any;
     disabled?: boolean
+    header?: string
 
 }
 
@@ -48,6 +49,7 @@ export default (props: Props) => {
         disableClear = true,
         underLine,
         disabled,
+        header,
         ...remainProps
     } = props
     const [show, setShow] = useState(false)
@@ -95,7 +97,7 @@ export default (props: Props) => {
         return (
             <TouchableOpacity
                 key={keyValue(item)}
-                style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? 'rgba(60, 60, 60,0.1)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
+                style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? 'rgba(60, 60, 60,0.2)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
                 onPress={() => { onSelect(item) }}>
                 <Text>{labelValue(item)}</Text>
             </TouchableOpacity>
@@ -153,11 +155,15 @@ export default (props: Props) => {
                         <TouchableWithoutFeedback
                             onPress={(e) => { e.preventDefault() }}
                             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                            <View style={{ maxHeight: "50%", width: "80%", minHeight: "30%", backgroundColor: "#FFFF", borderRadius: 10, paddingTop: 10, paddingBottom: 10 }}>
+                            <View style={{ maxHeight: "50%", width: "80%", minHeight: "20%", backgroundColor: AppColor.MAIN_COLOR, borderRadius: 10, paddingTop: 10, paddingBottom: 20 }}>
+                                <View style={{ backgroundColor: AppColor.MAIN_COLOR, paddingLeft: 10, paddingBottom: 10 }}>
+                                    <Text style={{ color: "#FFFF", fontWeight: "bold" }}>{header || "Chọn"}</Text>
+                                </View>
                                 <FlatList
                                     data={data}
                                     keyExtractor={({ item }) => item?.id}
                                     renderItem={renderItem}
+                                    contentContainerStyle={{ backgroundColor: "#FFFF" }}
                                 />
                             </View>
                         </TouchableWithoutFeedback>

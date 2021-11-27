@@ -1,29 +1,36 @@
-import { faBell, faStore } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faStore } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useNavigation } from "@react-navigation/core";
 import { Field, Formik } from "formik";
 import { isEmpty, isNull, isUndefined } from "lodash";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
+import { apiUpdateStatusNotification } from "../../../ApiFunction/Notification";
 import { apiGetReliefPointDetail } from "../../../ApiFunction/ReliefPoint";
-import { apiGetStoreDetail, apiSubcribleStore, apiUnSubcribleStore } from "../../../ApiFunction/StorePoint";
-import ButtonCustom from "../../../Components/ButtonCustom";
+import { apiSubcribleStore } from "../../../ApiFunction/StorePoint";
 import ContainerField from "../../../Components/ContainerField";
 import HeaderContainer from "../../../Components/HeaderContainer";
 import Input from "../../../Components/Input";
+import MultipleAddItem from "../../../Components/MultipleAddItem";
 import StoreCategory from "../../../Components/StoreCategory";
 import TimePicker from "../../../Components/TimePicker";
 import { AppColor } from "../../../Helper/propertyCSS";
 import { MainStyle } from "../../../Style/main_style";
 import styles from "../styles";
-const StoreDetail = ({ point }) => {
+const type = [
+    'rp', 'st', 'sos', 'org'
+]
+const StoreDetail = ({ point, from }) => {
     const [data, setData] = useState<any>({});
     const [items, setItems] = useState<any>([]);
+    const navigation = useNavigation();
     const getReliefPoint = (id) => {
         if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
         apiGetReliefPointDetail({ id: id }).then((res) => {
             if (res.status == 200) {
+                console.log("res", res)
                 if (res.data.code == "200") {
                     setData(res.data.obj);
                     setItems(res.data.obj.reliefInformations);
@@ -76,9 +83,18 @@ const StoreDetail = ({ point }) => {
         <SafeAreaView style={styles.container}>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
-                    flexRight={0}
+                    flexRight={1}
                     flexCenter={10}
-                    isBack
+                    flexLeft={1}
+                    leftView
+                    iconLeft={faChevronLeft}
+                    leftOnpress={() => {
+                        if (from == 'Notification') {
+                            navigation.navigate(from)
+                        } else {
+                            navigation.replace(from);
+                        }
+                    }}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
                             <Text style={{ fontSize: 20, color: "#FFFF" }}>{point.name}</Text>
@@ -106,7 +122,7 @@ const StoreDetail = ({ point }) => {
                 >
                     {({ submitForm, values }) => (
                         <View >
-                            <ContainerField title="Tên cửa hàng">
+                            <ContainerField title="Tên điểm">
                                 <Field
                                     component={Input}
                                     name="name"
@@ -160,7 +176,7 @@ const StoreDetail = ({ point }) => {
                                 </View>
                             </ContainerField>
                             <ContainerField title="Sản phẩm">
-                                <StoreCategory items={items} readonly />
+                                <MultipleAddItem items={items} readOnly />
                             </ContainerField>
                         </View>
                     )}
