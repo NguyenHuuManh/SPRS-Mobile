@@ -1,10 +1,11 @@
-import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
 import { isEmpty, isNull, isUndefined } from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import {
-  SafeAreaView, Text, View
+  SafeAreaView, Text, TouchableOpacity, View
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
@@ -29,17 +30,18 @@ const UpdateStorePoint = ({ navigation }) => {
   const [data, setData] = useState<any>({});
   const [loadingImg, setLoadingImg] = useState(false);
   const [adressPoint, setAdressPoint] = useState<any>({});
+  const [editEnable, setEditEnable] = useState(false);
+  const formikRef = createRef<any>();
   useEffect(() => {
     getStorePoint(item.id);
   }, [item])
-  const [imageList, setImageList] = useState<any>([])
+  const [imageList, setImageList] = useState<any>([]);
   const getStorePoint = (id) => {
     if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
     apiGetStoreDetail(id).then((res) => {
       console.log("res", res);
       if (res.status == 200) {
         if (res.data.code == "200") {
-
           setAdressPoint({
             GPS_Lati: Number(res?.data.obj?.address?.GPS_lati),
             GPS_long: Number(res?.data.obj?.address?.GPS_long),
@@ -49,6 +51,7 @@ const UpdateStorePoint = ({ navigation }) => {
           })
           setData(res.data.obj);
           setItems(res.data.obj.store_category);
+          setImageList([{ uri: res.data.obj.images.img_url }])
         } else {
           Toast.show({
             type: "error",
@@ -66,7 +69,6 @@ const UpdateStorePoint = ({ navigation }) => {
     })
   }
 
-
   const UpdateStore = (body) => {
     apiUpdateStore(body).then((res) => {
       console.log("ressss", res)
@@ -77,7 +79,9 @@ const UpdateStorePoint = ({ navigation }) => {
             text1: "Cập nhật cửa hàng thành công",
             position: "top"
           })
+          setEditEnable(false);
           getStorePoint(item.id);
+          navigation.goBack();
         } else {
           Toast.show({
             type: "success",
@@ -94,19 +98,15 @@ const UpdateStorePoint = ({ navigation }) => {
       }
     })
   }
-
   const updateImg = () => {
-    const data = new FormData();
-    for (let i = 0; i < imageList.length; i++) {
-      data.append(imageList[i].fileName, imageList[i].base64);
+    const dataBody = {
+      imageName: imageList?.[0]?.fileName,
+      encodedImage: imageList?.[0]?.base64,
+      id: data?.id,
     }
-    console.log("data", data);
-    const body = {
-      file: data,
-      storeDto: { id: item.id }
-    }
+
     setLoadingImg(true);
-    apiUploadImg(body).then((response) => {
+    apiUploadImg(dataBody).then((response) => {
       console.log("reponseImg", response);
     }).finally(() => { setLoadingImg(false) })
   }
@@ -120,14 +120,36 @@ const UpdateStorePoint = ({ navigation }) => {
     >
       <View style={{ height: "7%" }}>
         <HeaderContainer
-          flexRight={0}
+          flexRight={1}
+          flexLeft={1}
           flexCenter={10}
           isBackReLoad="StorePoints"
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ fontSize: 20, color: "#FFF" }}>Cập nhật cửa hàng</Text>
+              <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật cửa hàng" : "Thông tin cửa hàng"}</Text>
             </View>
           )}
+          rightEL={
+            editEnable ?
+              <TouchableOpacity onPress={() => {
+                setEditEnable(false);
+                formikRef.current.resetForm();
+                setItems(data.store_category);
+                setAdressPoint({
+                  GPS_Lati: Number(data?.address?.GPS_lati),
+                  GPS_long: Number(data?.address?.GPS_long),
+                  city: data?.address?.city?.name,
+                  district: data?.address?.district?.name,
+                  subDistrict: data?.address?.subDistrict?.name,
+                })
+              }}>
+                <Text style={{ color: "#FFFF" }}>Hủy</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity onPress={() => { setEditEnable(true) }}>
+                <FontAwesomeIcon icon={faEdit} color="#FFFF" />
+              </TouchableOpacity>
+          }
         />
       </View>
       <KeyboardAwareScrollView
@@ -142,16 +164,18 @@ const UpdateStorePoint = ({ navigation }) => {
       >
         <View style={[{ width: "100%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
           <AppCamera imageList={imageList} setImageList={setImageList} buttonSaveAction={updateImg} loading={loadingImg} />
+          {/* <AppCameraPicker image={image} setImage={setImage} buttonSaveAction={updateImg} /> */}
         </View>
         <Formik
           initialValues={{
             id: data?.id,
             open_time: data?.open_time || "",
             close_time: data?.close_time || "",
-            status: data?.status || "",
+            status: data?.status,
             name: data?.name || "",
             description: data?.description || "",
           }}
+          innerRef={formikRef}
           validationSchema={updateStore}
           enableReinitialize
           onSubmit={(values) => {
@@ -192,9 +216,8 @@ const UpdateStorePoint = ({ navigation }) => {
             UpdateStore(body);
           }}
         >
-          {({ submitForm, errors }) => (
+          {({ submitForm, errors, values }) => (
             <View>
-
               <ContainerField title="Tên cửa hàng">
                 <Field
                   component={Input}
@@ -202,6 +225,7 @@ const UpdateStorePoint = ({ navigation }) => {
                   horizontal
                   placeholder="Tên điểm cứu trợ"
                   styleTitle={{ width: 110 }}
+                  editable={editEnable}
                 />
               </ContainerField>
               <View style={{ flexDirection: "row" }}>
@@ -215,6 +239,7 @@ const UpdateStorePoint = ({ navigation }) => {
                       horizontal
                       placeholder="Mở cửa"
                       styleTitle={{ width: 110 }}
+                      disabled={!editEnable}
                     />
                   </ContainerField>
                 </View>
@@ -228,6 +253,7 @@ const UpdateStorePoint = ({ navigation }) => {
                       horizontal
                       placeholder="Đóng cửa"
                       styleTitle={{ width: 110 }}
+                      disabled={!editEnable}
                     />
                   </ContainerField>
                 </View>
@@ -239,6 +265,7 @@ const UpdateStorePoint = ({ navigation }) => {
                   horizontal
                   placeholder="Mô tả"
                   styleTitle={{ width: 110 }}
+                  editable={editEnable}
                 />
               </ContainerField>
               <ContainerField title="Trạng thái">
@@ -248,9 +275,10 @@ const UpdateStorePoint = ({ navigation }) => {
                   horizontal
                   placeholder="trạng thái"
                   styleTitle={{ width: 110 }}
+                  disabled={!editEnable}
                 />
               </ContainerField>
-              {!isEmpty(adressPoint) && (
+              {(!isEmpty(adressPoint) || true) && (
                 <ContainerField title="Địa điểm">
                   <MapPicker
                     styleTitle={{ width: 110 }}
@@ -260,18 +288,21 @@ const UpdateStorePoint = ({ navigation }) => {
                     setAdress={setAdressPoint}
                     adress={adressPoint}
                     defaultAdress={adressPoint}
+                    disabled={!editEnable}
                   />
                 </ContainerField>
               )}
 
 
               <ContainerField title="Mặt hàng">
-                <StoreCategory items={items} setItems={setItems} />
-                {isEmpty(items) && (
+                <StoreCategory items={items} setItems={setItems} readonly={!editEnable} />
+                {isEmpty(items) && editEnable && (
                   <Text style={[MainStyle.texError,]}>chọn mặt hàng cung cấp</Text>
                 )}
               </ContainerField>
-              <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, }} onPress={() => { submitForm() }} />
+              {editEnable && (
+                <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, }} onPress={() => { submitForm() }} />
+              )}
             </View>
           )}
         </Formik>

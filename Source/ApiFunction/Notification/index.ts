@@ -26,14 +26,14 @@ export const apiGetUncheckNotification = async () => {
     );
 };
 
-export const apiDeleteDevice = async () => {
+export const apiDeleteDevice = async (params) => {
     return await httpServices.delete(
-        `${DELETE_DEVICE}`
+        `${DELETE_DEVICE}${convertToQuery(params)}`
     );
 };
 
-export const apiUpdateAddressDivice = async (body) => {
-    return await httpServices.put(`${UPDATE_ADDRESS_DEVICE}`, body);
+export const apiUpdateAddressDivice = async (body, idDevice) => {
+    return await httpServices.put(`${UPDATE_ADDRESS_DEVICE}/${idDevice}`, body);
 };
 
 export const apiUpdateStatusNotification = async (params) => {

@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 import { apiCreateStore } from "../../ApiFunction/StorePoint";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
@@ -16,18 +17,21 @@ import MapPicker from "../../Components/MapPicker";
 import StoreCategory from "../../Components/StoreCategory";
 import TimePicker from "../../Components/TimePicker";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
+import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import MapView from "./components/MapView";
 import { createStore } from "./validate";
 
 const AddStorePoint = ({ navigation }) => {
+  const addressCurrent = useSelector((state: RootState) => state.updateAddressReducer);
+  console.log("addressCurrent", addressCurrent.data);
   const [adressPoint, setAdressPoint] = useState<any>({
-    GPS_Lati: "21.00554564179488",
-    GPS_long: "105.51689565181731",
-    city: "",
-    district: "",
-    subDistrict: "",
+    GPS_Lati: addressCurrent?.data?.GPS_Lati || "21.00554564179488",
+    GPS_long: addressCurrent?.data.GPS_Lati || "105.51689565181731",
+    city: addressCurrent?.data.city.name || "",
+    district: addressCurrent?.data?.district.name || "",
+    subDistrict: addressCurrent?.data?.subDistrict.name || "",
   })
   const [items, setItems] = useState<any>([]);
 
@@ -56,8 +60,9 @@ const AddStorePoint = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={{ height: "7%" }}>
         <HeaderContainer
-          flexRight={0}
+          flexRight={1}
           flexCenter={10}
+          flexLeft={1}
           isBack
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
@@ -82,7 +87,7 @@ const AddStorePoint = ({ navigation }) => {
           initialValues={{
             open_time: "",
             close_time: "",
-            status: "",
+            status: 0,
             name: "SPRS",
             description: "",
           }}

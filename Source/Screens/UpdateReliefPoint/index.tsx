@@ -1,33 +1,34 @@
-import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import {
-  SafeAreaView, Text, View, ScrollView
-} from "react-native";
+import { isNull, isUndefined } from "lodash";
+import React, { createRef, useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
-import { apiCreateReliefPoint, apiGetReliefPointDetail, apiUpdateReliefPoint } from "../../ApiFunction/ReliefPoint";
+import { apiGetReliefPointDetail, apiUpdateReliefPoint, apiUploadImg } from "../../ApiFunction/ReliefPoint";
+import AppCamera from "../../Components/AppCamera";
 import ButtonCustom from "../../Components/ButtonCustom";
+import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
-import TimePicker from "../../Components/TimePicker";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
 import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
-import { height, width } from "../../Helper/responsive";
-import styles from "../AddLocation/styles";
-import { useRoute } from "@react-navigation/core";
-import MapView from "./components/MapView";
+import TimePicker from "../../Components/TimePicker";
+import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
-import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
-import ContainerField from "../../Components/ContainerField";
-import { isNull, isUndefined } from "lodash";
+import styles from "../AddLocation/styles";
 import { update } from "./validate";
-import AppTimePicker from "../../Components/AppTimePicker";
 
 const UpdateReliefPoint = ({ navigation }) => {
   const [items, setItems] = useState<any>([]);
-  const [data, setData] = useState<any>({})
+  const [data, setData] = useState<any>({});
+  const [editEnable, setEditEnable] = useState(false);
+  const formikRef = createRef<any>();
+  const [loadingImg, setLoadingImg] = useState(false);
+  const [imageList, setImageList] = useState<any>([]);
 
   const item = useRoute<any>().params;
   const [adressPoint, setAdressPoint] = useState<any>({
@@ -64,7 +65,18 @@ const UpdateReliefPoint = ({ navigation }) => {
       }
     })
   }
+  const updateImg = () => {
+    const dataBody = {
+      imageName: imageList?.[0]?.fileName,
+      encodedImage: imageList?.[0]?.base64,
+      id: data?.id,
+    }
 
+    setLoadingImg(true);
+    apiUploadImg(dataBody).then((response) => {
+      console.log("reponseImg", response);
+    }).finally(() => { setLoadingImg(false) })
+  }
   const callGetReliefPointDetail = () => {
     apiGetReliefPointDetail({ id: item.id }).then((res) => {
       if (res.status == 200) {
@@ -78,6 +90,7 @@ const UpdateReliefPoint = ({ navigation }) => {
             subDistrict: res.data.obj.address.subDistrict.name || "",
           })
           setItems(res.data.obj.reliefInformations);
+          setImageList([{ uri: res.data.obj.images.img_url }])
           return;
         }
       } else {
@@ -96,24 +109,50 @@ const UpdateReliefPoint = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ height: height * 0.07 }}>
         <HeaderContainer
-          flexRight={0}
+          flexRight={1}
           flexCenter={10}
+          flexLeft={1}
           isBack
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ fontSize: 20, color: "#FFF" }}>Cập nhật điểm cứu trợ</Text>
+              <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "thông tin điểm cứu trợ"}</Text>
             </View>
           )}
+          rightEL={
+            editEnable ?
+              <TouchableOpacity onPress={() => {
+                setEditEnable(false);
+                formikRef.current.resetForm();
+                setItems(data.reliefInformations);
+                setAdressPoint({
+                  GPS_Lati: Number(data?.address?.GPS_lati),
+                  GPS_long: Number(data?.address?.GPS_long),
+                  city: data?.address?.city?.name,
+                  district: data?.address?.district?.name,
+                  subDistrict: data?.address?.subDistrict?.name,
+                })
+              }}>
+                <Text style={{ color: "#FFFF" }}>Hủy</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity onPress={() => { setEditEnable(true) }}>
+                <FontAwesomeIcon icon={faEdit} color="#FFFF" />
+              </TouchableOpacity>
+          }
         />
       </View>
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={[{ width: "100%", height: 180, backgroundColor: "FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
+        {/* <View style={[{ width: "100%", height: 180, backgroundColor: "FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
           <MapView defaultLocation={{
             latitude: Number(adressPoint.GPS_Lati),
             longitude: Number(adressPoint?.GPS_long),
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           }} />
+        </View> */}
+        <View style={[{ width: "100%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
+          <AppCamera imageList={imageList} setImageList={setImageList} buttonSaveAction={updateImg} loading={loadingImg} />
+          {/* <AppCameraPicker image={image} setImage={setImage} buttonSaveAction={updateImg} /> */}
         </View>
         <Formik
           initialValues={{
@@ -126,6 +165,7 @@ const UpdateReliefPoint = ({ navigation }) => {
             name: data?.name || "",
             description: data?.description || "",
           }}
+          innerRef={formikRef}
           validationSchema={update}
           enableReinitialize
           onSubmit={(values) => {
@@ -183,6 +223,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                   horizontal
                   placeholder="Tên điểm cứu trợ"
                   styleTitle={{ width: 110 }}
+                  editable={editEnable}
                 />
               </ContainerField>
 
@@ -195,6 +236,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                       horizontal
                       placeholder="Mở cửa"
                       styleTitle={{ width: 110 }}
+                      disabled={!editEnable}
                     />
                   </View>
                   <View style={{ flex: 2 }}>
@@ -204,6 +246,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                       horizontal
                       placeholder="Mở cửa"
                       styleTitle={{ width: 110 }}
+                      disabled={!editEnable}
                     />
                   </View>
                 </View>
@@ -217,6 +260,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                       horizontal
                       placeholder="Đóng cửa"
                       styleTitle={{ width: 110 }}
+                      disabled={!editEnable}
                     />
                   </View>
                   <View style={{ flex: 2 }}>
@@ -226,6 +270,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                       horizontal
                       placeholder="Mở cửa"
                       styleTitle={{ width: 110 }}
+                      disabled={!editEnable}
                     />
                   </View>
                 </View>
@@ -237,6 +282,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                   horizontal
                   placeholder="Mô tả"
                   styleTitle={{ width: 110 }}
+                  disabled={!editEnable}
                 />
               </ContainerField>
               <ContainerField title="Địa điểm">
@@ -248,12 +294,15 @@ const UpdateReliefPoint = ({ navigation }) => {
                   setAdress={setAdressPoint}
                   adress={adressPoint}
                   defaultAdress={adressPoint}
+                  disabled={!editEnable}
                 />
               </ContainerField>
               <ContainerField title="Mặt hàng">
-                <MultipleAddItem items={items} setItems={setItems} />
+                <MultipleAddItem items={items} setItems={setItems} readOnly={!editEnable} />
               </ContainerField>
-              <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30 }} onPress={() => { submitForm() }} />
+              {editEnable && (
+                <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, }} onPress={() => { submitForm() }} />
+              )}
             </View>
           )}
         </Formik>

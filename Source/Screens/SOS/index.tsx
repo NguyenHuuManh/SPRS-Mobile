@@ -8,10 +8,12 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Toast from "react-native-toast-message";
 import { apiPlaceDetailByLongLat } from "../../ApiFunction/PlaceAPI";
 import { apiGetSOS, apiUpdateSOS } from "../../ApiFunction/SOS";
+import AppSelectLevelSOS from "../../Components/AppSelectLevelSOS";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
+import Loading from "../../Components/Loading";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
 import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
@@ -28,6 +30,7 @@ const SOS = ({ navigation }) => {
   const [sosInfor, setSosInfor] = useState<any>({});
   const [items, setItems] = useState<any>([]);
   const formikRef = createRef<any>();
+  const [loading, setLoading] = useState(false);
 
 
   const getDetailPlace = (long: string | number, lat: string | number) => {
@@ -61,12 +64,13 @@ const SOS = ({ navigation }) => {
       }
     )
   }
-  console.log("address", adressPoint)
   const callCreatePoint = (body) => {
+    setLoading(true);
     apiUpdateSOS(body).then((res) => {
       console.log("update", res)
       if (res.status == 200) {
         if (res.data.code == "200") {
+          callGetSOS();
           Toast.show({
             type: "success",
             text1: "Cập nhật SOS thành công",
@@ -79,10 +83,12 @@ const SOS = ({ navigation }) => {
           text1: res.data.message,
           position: "top"
         })
+        setLoading(false)
       }
     })
   }
   const callGetSOS = () => {
+    setLoading(true);
     apiGetSOS().then((res) => {
       console.log("res", res)
       if (res.status == 200) {
@@ -96,6 +102,8 @@ const SOS = ({ navigation }) => {
           position: "top"
         })
       }
+    }).finally(() => {
+      setLoading(false);
     })
   }
 
@@ -105,6 +113,7 @@ const SOS = ({ navigation }) => {
   }, [])
   return (
     <SafeAreaView style={styles.container}>
+      {/* <Loading isVisible={loading} /> */}
       <View style={{ height: "7%" }}>
         <HeaderContainer
           flexRight={1}
@@ -135,15 +144,15 @@ const SOS = ({ navigation }) => {
           innerRef={formikRef}
           initialValues={{
             id: sosInfor?.id || "",
-            status: sosInfor?.status || "",
+            status: sosInfor?.status || 0,
             description: sosInfor?.description || "",
-            level: sosInfor?.level + "" || "",
+            level: sosInfor?.level,
           }}
           enableReinitialize
           onSubmit={(values) => {
             const body = {
               ...values,
-              status: values.status ? false : true,
+              // status: values.status ? 1 : 0,
               level: Number(values.level),
               address: {
                 id: sosInfor.address?.id | 0,
@@ -151,15 +160,18 @@ const SOS = ({ navigation }) => {
                 GPS_long: adressPoint.GPS_long,
                 city: {
                   name: adressPoint.city,
-                  code: "",
+                  code: null,
+                  id: null,
                 },
                 district: {
                   name: adressPoint.district,
-                  code: "",
+                  code: null,
+                  id: null,
                 },
                 subDistrict: {
                   name: adressPoint.subDistrict,
-                  code: "",
+                  code: null,
+                  id: null,
                 },
               }
             }
@@ -169,33 +181,49 @@ const SOS = ({ navigation }) => {
         >
           {({ submitForm, errors, values, setFieldValue }) => (
             <View>
+              {/* <ContainerField title="Trạng thái SOS"> */}
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}>
+                <Switch onChange={() => {
+                  // setFieldValue('status', values.status == 1 ? 0 : 1)
+                  const body = { ...sosInfor, status: sosInfor?.status == 1 ? 0 : 1 }
+                  setSosInfor(body);
+                  callCreatePoint(body);
+                }}
+                  style={{ width: 50, height: 50 }}
+                  value={values.status == 1}
+                >
+                </Switch>
+                <Text style={{ textAlign: "center", textAlignVertical: "center", }}>{values?.status == 1 ? "Bật" : "Tắt"}</Text>
+              </View>
+              {/* </ContainerField> */}
               <ContainerField title="Mức độ khẩn cấp">
                 <Field
-                  component={Input}
+                  component={AppSelectLevelSOS}
                   name="level"
                   horizontal
                   placeholder="Mức độ"
                   styleTitle={{ width: 110 }}
+                  header="Mức độ"
                 />
               </ContainerField>
-              <ContainerField title="Mô tả">
+              <ContainerField title="Mô tả" styleCustomContainer={{ height: 100, }}>
                 <Field
                   component={Input}
                   name="description"
                   horizontal
-                  placeholder="Mô tả"
+                  placeholder="Mô tả . . . . "
                   styleTitle={{ width: 110 }}
+                  multiline={true}
+                  numberOfLines={10}
+                  customInputStyle={{ height: 100, }}
+                  textAlign="left"
+                  textAlignVertical="top"
                 />
               </ContainerField>
-              <ContainerField title="Trạng thái SOS">
-                <View style={{ flexDirection: "row" }}>
-                  <Switch onChange={() => { setFieldValue('status', !values.status) }} style={{ width: 50, height: 50 }} value={values.status}></Switch>
-                  <Text style={{ textAlign: "center", textAlignVertical: "center" }}>{values?.status ? "Bật" : "Tắt"}</Text>
-                </View>
-              </ContainerField>
+
               <ButtonCustom
                 title={"Cập nhật"}
-                styleTitle={{ color: "#FFF" }}
+                styleTitle={{ color: "#FFF", }}
                 styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF" }}
                 onPress={() => { submitForm() }} />
             </View>

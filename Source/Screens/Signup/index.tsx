@@ -53,7 +53,7 @@ export default () => {
                     if (e.data.code + "" === "200") {
                         Toast.show({
                             type: "success",
-                            text1: e.data.description,
+                            text1: "Đăng ký tài khoản thành công",
                             position: "top"
                         })
                         navigation.navigate("Signin")

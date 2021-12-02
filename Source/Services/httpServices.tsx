@@ -5,6 +5,7 @@ import { pendingActions, userActions } from "../Redux/Actions";
 import { store } from "../Store"
 import { isUndefined } from "lodash"
 import Toast from "react-native-toast-message";
+import { URL } from "../Constrants/url";
 class Services {
     axios: any;
     interceptors: null;
@@ -22,18 +23,7 @@ class Services {
     }
 
     attachTokenToHeader(token?: string) {
-        // console.log("token", token)
         if (token) {
-            // this.interceptors = this.axios.interceptors.request.use(
-            //     function (config) {
-            //         // Do something before request is sent
-            //         config.headers.Authorization = `Bearer ${token}`;
-            //         return config;
-            //     },
-            //     function (error) {
-            //         return Promise.reject(error);
-            //     }
-            // );
             this.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         } else {
             delete this.axios.defaults.headers.common["Authorization"];
@@ -43,46 +33,21 @@ class Services {
 
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
-        // console.log("err", error?.response);
-        // console.log("response", response);
+        // console.log('error', error)
         if (isSuccess) {
-            if (response.data.code + "" == "501") {
-                if (!store.getState().pendingReducer.isPending) {
-                    store.dispatch(pendingActions.pendingLogout(true));
-                    Alert.alert(
-                        'Yêu cầu đăng nhập',
-                        'Phiên đăng nhập hết hạn?',
-                        [
-                            {
-                                text: 'Đăng nhập',
-                                onPress: () => store.dispatch(userActions.logout())
-                            },
-                        ],
-                        { cancelable: false },
-                        //clicking out side of alert will not cancel
-                    );
-                    return
-                }
-            }
             return response;
         } else {
-            if (error.response && error.response?.status === 401) {
-
-                if ((url || "").includes("sprs/api/authenticate")) {
-                    return;
-                }
-            }
-            if (error.response?.status == 501) {
-
+            if (url == `${URL}/authenticate-mobile`) return;
+            if (error?.response?.status == 401) {
                 if (!store.getState().pendingReducer.isPending) {
-                    store.dispatch(pendingActions.pendingLogout(true));
+                    // store.dispatch(pendingActions.pendingLogout(true));
                     Alert.alert(
                         'Yêu cầu đăng nhập',
                         'Phiên đăng nhập hết hạn?',
                         [
                             {
                                 text: 'Đăng nhập',
-                                onPress: () => store.dispatch(userActions.logout())
+                                onPress: () => store.dispatch(userActions.logout(store.getState().userReducer))
                             },
                         ],
                         { cancelable: false },
@@ -101,15 +66,18 @@ class Services {
                 }
                 return
             }
-            return error.response;
+            return error?.response;
         }
     }
 
     async get(url: string, config?: AxiosRequestConfig) {
         try {
             const response = await this.axios.get(url, config);
+
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
+            // console.log("url", url);
+            // console.log("errorCatch", error)
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
     }
@@ -117,8 +85,11 @@ class Services {
     async post(url: string, data?: any, config?: AxiosRequestConfig) {
         try {
             const response = await this.axios.post(url, data, config);
+            // console.log("responsePost", response);
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
+            // console.log("url", url);
+            // console.log("errorCatch", error)
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
         // return this.axios.post(url, data, config);
@@ -141,5 +112,6 @@ class Services {
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
     }
+
 }
 export default new Services();

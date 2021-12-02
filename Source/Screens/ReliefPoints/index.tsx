@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import CheckBox from '@react-native-community/checkbox';
 import { isNull } from "lodash";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Animated, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import LinearGradient from "react-native-linear-gradient";
@@ -12,17 +12,19 @@ import { useDispatch } from "react-redux";
 import { apiDeleteReliefPoint, apiGetReliefPoint, apiUpdateStatusReliefPoint } from "../../ApiFunction/ReliefPoint";
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { addressToString } from "../../Helper/FunctionCommon";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import FilterForm from "./components/FilterForm";
+import { AppColor } from '../../Helper/propertyCSS';
 import styles from "./styles";
-const AVATA_SIZE = 60;
-const Margin_BT = 20;
+const AVATA_SIZE = 80;
+const Margin_BT = 5;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
 
 const page = 1;
 const size = 10;
-const totalItem = 20;
+const totalItem = 1000;
 
 export default ({ navigation }) => {
     const [points, setPoints] = useState([]);
@@ -136,7 +138,7 @@ export default ({ navigation }) => {
     }
     const handleLoadMore = () => {
         if (pageSize.pageIndex * pageSize.pageSize >= totalItem) return;
-        setPageSize({ ...pageSize, pageSize: pageSize.pageSize + page });
+        setPageSize({ ...pageSize, pageSize: pageSize.pageSize + size });
     }
 
     const renderLeftActions = (progress, dragX, item, onchage) => {
@@ -153,6 +155,7 @@ export default ({ navigation }) => {
                     <TouchableOpacity
                         style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
                         onPress={(e) => {
+                            e.preventDefault();
                             deletePoint(item);
                         }}>
                         <Animated.Text
@@ -164,9 +167,10 @@ export default ({ navigation }) => {
                             <FontAwesomeIcon icon={faTrashAlt} size={20} color="#FFFF" />
                         </Animated.Text>
                     </TouchableOpacity>
-                    <RectButton
+                    <TouchableOpacity
                         style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center", }}
-                        onPress={(e) => {
+                        onPress={(e: any) => {
+                            e.preventDefault();
                             ChangeStatusPoint({ ...item, status: !item.status });
                         }}>
                         <Animated.Text
@@ -178,11 +182,12 @@ export default ({ navigation }) => {
                             {/* <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" /> */}
                             <Switch value={item.status} disabled></Switch>
                         </Animated.Text>
-                    </RectButton>
+                    </TouchableOpacity>
                     <TouchableOpacity
                         style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
                             // console.log("item", item)
+                            e.preventDefault();
                             navigation.navigate("MapCluser",
                                 {
                                     toLocation:
@@ -264,14 +269,23 @@ export default ({ navigation }) => {
                 >
                     <Swipeable
                         renderRightActions={(x, y) => renderLeftActions(x, y, item, onchage)}
-                        containerStyle={{ width: "100%", height: AVATA_SIZE, paddingLeft: 10 }}
+                        containerStyle={{ width: "100%", height: AVATA_SIZE, paddingLeft: 10, paddingRight: 10 }}
                         onSwipeableClose={() => {
                             onchage(false)
                         }}
                     >
-                        <View style={{ width: "50%", justifyContent: "space-around", height: AVATA_SIZE }}>
-                            <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: item.status ? "#32a864" : "red" }}></View>
-                            <Text>{item.name}</Text>
+                        <View style={{ width: "100%", height: AVATA_SIZE, justifyContent: "space-around" }}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Text style={{ width: "50%", fontSize: 12, fontWeight: "bold" }}>{item.name}</Text>
+                                <View style={{ width: "50%", alignItems: "flex-end", paddingRight: 5, justifyContent: "center" }}>
+                                    <View style={[styles.statusIcon, { backgroundColor: item.status ? "#32a864" : "red" }]}></View>
+                                </View>
+                            </View>
+                            <Text numberOfLines={1} ellipsizeMode="middle" style={{ color: AppColor.CORLOR_TEXT }}>Địa chỉ: {addressToString(item?.address?.subDistrict.name) + " - " + addressToString(item?.address?.district.name) + " - " + addressToString(item?.address?.city.name)}</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <Image source={require("../../Assets/Icons/alarm_clock_30px.png")} style={{ width: 15, height: 15, marginRight: 5 }} />
+                                <Text style={{ color: AppColor.CORLOR_TEXT }}>{(item.open_time + '').split(" ")[0] + " - " + (item.close_time + '').split(" ")[0]}</Text>
+                            </View>
                         </View>
                     </Swipeable>
                 </TouchableOpacity>

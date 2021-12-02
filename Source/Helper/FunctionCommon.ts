@@ -131,15 +131,34 @@ export const filterDetailPalce = (res) => {
     return;
 }
 
+export function checkLatLng(lat, long) {
+    if (lat == 'NaN' || long == 'NaN' || isEmpty(lat) || isEmpty(long) || isNaN(Number(lat) || isNaN(Number(long)))) return false
+    return true;
+}
 
+export function addressToString(address: string) {
+    const keys = ['Xã', 'Huyện', 'Quận', 'Tỉnh', 'Phường'];
+    let addressArr = address.split(" ");
+    let addressTemp = "";
+    if (keys.includes(addressArr[0])) {
+        addressArr.splice(0, 1);
+    }
+    // console.log("addressArr", addressArr);
+    addressArr.forEach((e, index) => {
+        if (index == addressArr.length) {
+            addressTemp += e;
+        } else {
+            addressTemp += e + " ";
+        }
+    });
+    addressTemp = addressTemp.replace('Thành phố', '');
+    addressTemp = addressTemp.replace('Thị Trấn', '');
+    addressTemp = addressTemp.replace('Thị Xã', '');
+    return addressTemp;
+}
 
 export function checkKeyNull(obj: any) {
     for (let v in obj) {
-        // if (typeof obj[v] !== "boolean") {
-        //   if (isEmpty(obj[v])) {
-        //     delete obj[v];
-        //   } else if (typeof obj[v] == "string") obj[v] = obj[v].trim();
-        // }
         switch (typeof obj[v]) {
             case "number":
                 if (isNaN(obj[v]) || obj[v] == null) delete obj[v];

@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { debounce, isEmpty } from "lodash";
 import React, { createRef, useCallback, useContext, useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Geolocation from 'react-native-geolocation-service';
 import { MapStore } from "../..";
-import { apiPlaceAutoCompleteMap, apiPlaceDetailById, apiPlaceDetailByLongLat } from "../../../../ApiFunction/PlaceAPI";
+import { apiPlaceAutoCompleteMap, apiPlaceDetailById } from "../../../../ApiFunction/PlaceAPI";
 import ButtonCustom from "../../../../Components/ButtonCustom";
 import HeaderContainer from "../../../../Components/HeaderContainer";
 import { height } from "../../../../Helper/responsive";
-import Geolocation from 'react-native-geolocation-service';
 
 interface Props {
     setText: any;
@@ -28,10 +28,10 @@ export default (props: Props) => {
     const [itemSelected, setItemSelected] = useState<any>({});
     const inputRef = createRef<any>();
     const [keyWord, setKeyWord] = useState("");
-    useEffect(() => {
-        if (isEmpty(itemSelected)) setText("");
-        setText(itemSelected.label);
-    }, [itemSelected])
+    // useEffect(() => {
+    //     if (isEmpty(itemSelected)) setText("");
+    //     setText(itemSelected.label);
+    // }, [itemSelected])
     const [data, setData] = useState([])
     const [location, setLocation] = useState<any>({})
     const getCurrentLocation = () => {
@@ -42,7 +42,7 @@ export default (props: Props) => {
                     latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
                 });
-                getPoint(keyWord, response.coords.latitude, response.coords.longitude);
+                // getPoint(keyWord, response.coords.latitude, response.coords.longitude);
             },
             (error) => {
                 if (error.code == 5) {
@@ -69,7 +69,7 @@ export default (props: Props) => {
             limit: limit,
         }
         apiPlaceAutoCompleteMap(params).then((e) => {
-            console.log("eeessera", e);
+            // console.log("eeessera", e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setData(e.data.obj);
@@ -79,7 +79,10 @@ export default (props: Props) => {
     }
 
     useEffect(() => {
-        if (!visible) return;
+        if (!visible) {
+            // setData([]);
+            return;
+        };
         getCurrentLocation();
         if (inputRef?.current) {
             inputRef.current.focus();
@@ -96,15 +99,15 @@ export default (props: Props) => {
 
 
     const animateMap = (item) => {
-        setItemSelected(item);
+        // setItemSelected(item);
         const marker = {
             latitude: Number(item.location.latitu),
             longitude: Number(item.location.longtitude),
             latitudeDelta: 0.006866,
             longitudeDelta: 0.006866
         }
-
-        mapRef.current.getMapRef().animateToRegion(marker, 1000);
+        // console.log("marker", marker);
+        mapRef?.current?.getMapRef().animateToRegion(marker, 1000);
         setMarkerTo && setMarkerTo({
             id: item.place_id,
             location: {
@@ -112,7 +115,8 @@ export default (props: Props) => {
                 longitude: Number(marker.longitude),
             },
             name: item.name,
-            description: item.description
+            description: item.description,
+            type: item.type
         })
         setText(item.description);
         setVisible(false);
@@ -134,7 +138,7 @@ export default (props: Props) => {
                     latitude: Number(marker.latitude),
                     longitude: Number(marker.longitude),
                 },
-                name: item.description
+                // name: item.description,
             });
             setVisible(false);
             modalBottom.setVisible(true);
@@ -145,7 +149,7 @@ export default (props: Props) => {
         if (item.type == 'rp') return 'Điểm cứu trợ ' + item.name + " " + item.description
         if (item.type == 'st') return 'Cửa hàng ' + item.name + " " + item.description
         if (item.type == 'sos') return 'Điểm SOS ' + item.name + " " + item.description
-        if (item.type == 'org') return 'Tổ chức' + item.name + " " + item.description
+        if (item.type == 'org') return 'Tổ chức ' + item.name + " " + item.description
         return item.description;
     }
     const renderItem = ({ item, index }) => {
@@ -168,6 +172,13 @@ export default (props: Props) => {
                     }
                 </Text>
             </TouchableOpacity>
+        )
+    }
+    const renderEmtyFlatlist = () => {
+        return (
+            <Text style={{ textAlign: "center", marginTop: 100 }}>
+                {isEmpty(keyWord) ? "" : "Không tìm thấy kết quả"}
+            </Text>
         )
     }
     return (
@@ -220,6 +231,7 @@ export default (props: Props) => {
                 data={data}
                 keyExtractor={(item) => item.place_id + ""}
                 renderItem={renderItem}
+                ListEmptyComponent={renderEmtyFlatlist}
             />
         </Modal>
     )

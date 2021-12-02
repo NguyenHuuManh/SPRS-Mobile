@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { AppColor } from '../../Helper/propertyCSS';
 import { height, width } from '../../Helper/responsive';
 
 export default StyleSheet.create({
@@ -11,10 +12,8 @@ export default StyleSheet.create({
     scrollContainer: {
         height: height,
         width: width,
-        // alignItems: "center",
+        alignItems: "center",
         justifyContent: "flex-start",
-        paddingLeft: 10,
-        paddingRight: 10
     },
     containMap: {
         width: "90%",
@@ -24,6 +23,42 @@ export default StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         backgroundColor: "#FFF"
+    },
+
+    headerPoint: {
+        width: "100%",
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    textHeader: {
+        fontWeight: "bold",
+        fontSize: 25
+    },
+
+    inforView: {
+        width: "95%",
+        // backgroundColor: "pink"
+    },
+    addressView: {
+        // flexDirection: "row",
+        marginTop: 10
+    },
+    titleView: {
+        flexDirection: "row"
+    },
+    titleText: {
+        fontWeight: "bold", marginRight: 5
+    },
+    textDescription: {
+        color: AppColor.CORLOR_TEXT,
+    },
+
+    underLine: {
+        borderStyle: "solid",
+        borderWidth: 0,
+        borderBottomWidth: 1,
+        borderColor: AppColor.CORLOR_TEXT
     }
 
 });

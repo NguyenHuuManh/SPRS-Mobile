@@ -34,16 +34,6 @@ const Backdrop = ({ movies, scrollX }) => {
                         extrapolate: 'clamp'
                     });
                     return (
-                        // <Animated.View
-                        //     removeClippedSubviews={false}
-                        //     style={{
-                        //         position: 'absolute',
-                        //         width: translateX,
-                        //         height: "100%",
-                        //         overflow: 'hidden',
-                        //         // backgroundColor: "red"
-                        //     }}
-                        // >
                         <Image
                             source={require('../../../Assets/Images/backdgroundpng.png')}
                             style={{

@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
-import { badgeShowActions, profileActions, UpdateAddressDeviceActions } from '../Redux/Actions';
+import { badgeShowActions, profileActions } from '../Redux/Actions';
 import ActionTypes from '../Redux/ActionTypes';
 import { RootState } from '../Redux/Reducers';
 import { Home, Signin } from '../Screens';
@@ -23,6 +23,7 @@ import ComfirmOTP from '../Screens/ForgotPass/ComfirmOTP';
 import MapCluser from '../Screens/MapCluser';
 import MapCluserSupper from '../Screens/MapCluserSupper';
 import Notification from '../Screens/Notification';
+import NotificationDetail from '../Screens/NotificationDetail';
 import Profile from '../Screens/Profile';
 import Personal from '../Screens/Profile/Personal';
 import ReliefPoints from '../Screens/ReliefPoints';
@@ -32,9 +33,7 @@ import StorePoints from '../Screens/StorePoints';
 import SubcribleList from '../Screens/SubcribleList';
 import UpdateReliefPoint from '../Screens/UpdateReliefPoint';
 import UpdateStorePoint from '../Screens/UpdateStorePoint';
-import NotificationDetail from '../Screens/NotificationDetail';
-import { notificationListener } from '../Services/notificationService';
-import { store } from '../Store';
+import { getCurrentLocation, notificationListener } from '../Services/notificationService';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -49,6 +48,7 @@ const ProfileStack = createStackNavigator();
 const GuestStackScreen = () => (
     <GuestStack.Navigator initialRouteName="Map" screenOptions={{ headerShown: false }}>
         <GuestStack.Screen name="Map" component={MapCluserSupper} options={{ title: "Map", animationEnabled: true }} />
+        <GuestStack.Screen name="DetailPoint" component={DetailPoint} options={{ title: "DetailPoint", animationEnabled: true }} />
     </GuestStack.Navigator>
 )
 
@@ -110,6 +110,7 @@ const RootStackScreen = () => {
         if (!isEmpty(userReducer?.data?.token || {})) {
             dispatch(profileActions.profileRequest());
             dispatch(badgeShowActions.badgeRequest());
+            getCurrentLocation();
         }
         if (isEmpty(userReducer?.data?.token || {}) && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
             navigation.reset({
@@ -119,11 +120,13 @@ const RootStackScreen = () => {
         }
     }, [userReducer]);
 
-    useEffect(() => {
-        if (!isEmpty(profileReducer.data) && profileReducer.type == ActionTypes.PROFILE_SUCCESS) {
-            dispatch(UpdateAddressDeviceActions.updateRequest(profileReducer.data.address.id));
-        }
-    }, [profileReducer])
+    // useEffect(() => {
+    //     if (!isEmpty(profileReducer.data) && profileReducer.type == ActionTypes.PROFILE_SUCCESS) {
+    //         getCurrentLocation();
+    //     }
+    // }, [profileReducer])
+
+
 
     return (
         <>

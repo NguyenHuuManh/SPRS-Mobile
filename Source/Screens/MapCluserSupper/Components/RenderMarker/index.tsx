@@ -23,7 +23,7 @@ export default memo((props: Props) => {
     const navigation = useNavigation();
     return (
         <Marker
-            key={item?.id | 0}
+            // key={item?.id | 0}
             coordinate={item.location}
             onPress={(e) => {
                 if (item?.id) setMarkerTo(item);

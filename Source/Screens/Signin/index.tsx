@@ -1,19 +1,18 @@
-import { faLock, faMobileAlt, faEyeSlash, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faLock, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from "@react-navigation/core";
 import { Field, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ImageBackground, Text, View } from "react-native";
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch, useSelector } from "react-redux";
 import ButtonCustom from "../../Components/ButtonCustom";
 import Input from "../../Components/Input";
+import Loading from '../../Components/Loading';
 import { userActions } from "../../Redux/Actions";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
-import Toast from 'react-native-toast-message';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Loading from '../../Components/Loading';
 import { signinForm } from './validate';
 export default () => {
     const navigation = useNavigation();
@@ -28,7 +27,7 @@ export default () => {
         <Formik
             initialValues={{
                 username: "manhhe",
-                password: "123@123aA"
+                password: "321@321aA"
             }}
             validationSchema={signinForm}
             onSubmit={(values) => {

@@ -1,19 +1,20 @@
-import { faBellSlash, faMapMarked, faMapMarkedAlt, faStore } from "@fortawesome/free-solid-svg-icons";
+import { faBellSlash, faMapMarked, faStore } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React, { useEffect, useState } from "react";
-import { Animated, FlatList, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Animated, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { apiGetSubcribleStore } from "../../ApiFunction/StorePoint";
-import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { addressToString } from "../../Helper/FunctionCommon";
+import { AppColor } from "../../Helper/propertyCSS";
 import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 
-const AVATA_SIZE = 60;
-const Margin_BT = 20;
+const AVATA_SIZE = 70;
+const Margin_BT = 5;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
 export default ({ navigation }) => {
-    const [data, setData] = useState([{ name: "SPRS", id: 1, status: true }, { name: "SPRS", id: 2, status: true }, { name: "SPRS", id: 3, status: true }]);
+    const [data, setData] = useState<any>({});
     const [pageSize, setPageSize] = useState({ pageSize: 5, pageIndex: 1 });
     const [totalPage, setTotalPage] = useState(3);
     const [isRefesh, setIsRefesh] = useState(false);
@@ -29,10 +30,8 @@ export default ({ navigation }) => {
         })
     }
 
+    useEffect(() => { getPoint() }, []);
 
-    // useEffect(() => {
-    //     getPoint()
-    // }, [])
 
     const renderLeftActions = (progress, dragX, item, onchage) => {
         const trans = dragX.interpolate({
@@ -46,23 +45,19 @@ export default ({ navigation }) => {
             >
                 <>
                     <TouchableOpacity
-                        style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
-                        onPress={(e) => {
-                            // deletePoint(item);
-                        }}>
-                        <Animated.Text
-                            style={[
-                                {
-                                    transform: [{ translateX: trans }],
-                                },
-                            ]}>
-                            <FontAwesomeIcon icon={faBellSlash} size={20} color="#FFFF" />
-                        </Animated.Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
                         style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
-                            navigation.navigate("MapCluser", { toLocation: { latitude: Number(item.address.GPS_lati), longitude: Number(item.address.GPS_long) }, screen: "SubcribeList" })
+                            navigation.navigate("MapCluser", {
+                                toLocation: {
+                                    id: item.id,
+                                    location: {
+                                        latitude: Number(item.address.GPS_lati),
+                                        longitude: Number(item.address.GPS_long)
+                                    },
+                                    type: "st"
+                                },
+                                screen: "SubcribeList"
+                            })
                         }}
                     >
                         <Animated.Text
@@ -121,7 +116,7 @@ export default ({ navigation }) => {
             >
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
-                        navigation.navigate("UpdateReliefPoint", item);
+                        navigation.navigate("DetailPoint", { point: { id: 565, type: 'st' }, from: "SubcribeList" });
                     } else {
                         onchage(false);
                     }
@@ -135,14 +130,22 @@ export default ({ navigation }) => {
                             onchage(false)
                         }}
                     >
-                        <View style={{ width: "50%", justifyContent: "space-around", height: AVATA_SIZE }}>
-                            <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: item.status ? "#32a864" : "red" }}></View>
-                            <Text>{item.name}</Text>
+                        <View style={{ width: "100%", height: AVATA_SIZE, justifyContent: "space-around" }}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Text style={{ width: "50%", fontSize: 12, fontWeight: "bold" }}>{item?.name}</Text>
+                                <View style={{ width: "50%", alignItems: "flex-end", paddingRight: 5, justifyContent: "center" }}>
+                                    <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: item?.status == 0 ? "#32a864" : item?.status == 1 ? "#F6BB57" : "red" }} />
+                                </View>
+                            </View>
+                            <Text numberOfLines={1} ellipsizeMode="middle" style={{ color: AppColor.CORLOR_TEXT }}>Địa chỉ: {addressToString(item?.address?.subDistrict.name + '') + " - " + addressToString(item?.address?.district.name + '') + " - " + addressToString(item?.address?.city.name + '')}</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <Image source={require("../../Assets/Icons/alarm_clock_30px.png")} style={{ width: 15, height: 15, marginRight: 5 }} />
+                                <Text style={{ color: AppColor.CORLOR_TEXT }}>{(item?.open_time + '')?.split(" ")?.[0] + " - " + (item?.close_time + '')?.split(" ")?.[0]}</Text>
+                            </View>
                         </View>
                     </Swipeable>
                 </TouchableOpacity>
             </Animated.View >
-
         )
     }
     const handleLoadMore = () => {
@@ -153,7 +156,7 @@ export default ({ navigation }) => {
         <View style={{ flex: 1 }}>
             <View style={{ height: height * 0.07 }}>
                 <HeaderContainer
-                    isBack
+                    isBackNavigate={"DrawScreen"}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
                             <Text style={{ fontSize: 20, color: "#FFFF" }}>Cửa hàng yêu thích</Text>
@@ -173,7 +176,7 @@ export default ({ navigation }) => {
                         { useNativeDriver: true }
                     )}
                     showsVerticalScrollIndicator={false}
-                    data={data}
+                    data={data?.user_subcribe}
                     keyExtractor={(item: any) => item.id}
                     renderItem={renderItem}
                     style={{ paddingBottom: 50 }}

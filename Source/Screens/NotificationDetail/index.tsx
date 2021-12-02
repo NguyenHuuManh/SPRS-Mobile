@@ -17,6 +17,7 @@ export default () => {
 
     const getNotificationId = (id) => {
         apiGetNotificationId(id).then((e) => {
+            console.log("Notification", e)
             if (e.status == 200) {
                 if (e.data.code == '200') {
                     setData(e.data.obj);
@@ -29,9 +30,11 @@ export default () => {
 
     useEffect(() => {
         if (isEmpty(params.item)) return;
+        console.log("onchangeReadiing", params.item)
         getNotificationId(params.item.id);
         if (params.item.status == 'read') return;
         apiUpdateStatusNotification({ id: params.item.id, status: "read" }).then((e) => {
+            console.log("readding", e);
             if (e.status == 200) {
                 if (e.data.code == '200') {
                     dispatch(badgeShowActions.badgeRequest());

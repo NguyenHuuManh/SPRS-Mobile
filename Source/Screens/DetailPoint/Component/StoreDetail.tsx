@@ -1,30 +1,28 @@
-import { faBell, faStore } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBellSlash, faChevronLeft, faMapMarked } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { Field, Formik } from "formik";
+import { useNavigation } from "@react-navigation/core";
 import { isEmpty, isNull, isUndefined } from "lodash";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, Text, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { apiGetStoreDetail, apiSubcribleStore, apiUnSubcribleStore } from "../../../ApiFunction/StorePoint";
+import { useSelector } from "react-redux";
+import { apiGetStoreCommon } from "../../../ApiFunction/PointPublic";
+import { apiSubcribleStore, apiUnSubcribleStore } from "../../../ApiFunction/StorePoint";
 import ButtonCustom from "../../../Components/ButtonCustom";
-import ContainerField from "../../../Components/ContainerField";
 import HeaderContainer from "../../../Components/HeaderContainer";
-import Input from "../../../Components/Input";
-import StoreCategory from "../../../Components/StoreCategory";
-import TimePicker from "../../../Components/TimePicker";
-import { AppColor } from "../../../Helper/propertyCSS";
+import { RootState } from "../../../Redux/Reducers";
 import { MainStyle } from "../../../Style/main_style";
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
-import { useNavigation } from "@react-navigation/core";
 import styles from "../styles";
 const StoreDetail = ({ point, from }) => {
     const [data, setData] = useState<any>({});
     const [items, setItems] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
+    const userReducer = useSelector((state: RootState) => state.userReducer);
+    console.log("userReducer", userReducer)
     const getStorePoint = (id) => {
         if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
-        apiGetStoreDetail(id).then((res) => {
+        apiGetStoreCommon(id).then((res) => {
             console.log("res", res);
             if (res.status == 200) {
                 if (res.data.code == "200") {
@@ -44,184 +42,163 @@ const StoreDetail = ({ point, from }) => {
                     position: "top"
                 })
             }
-        })
+        }).finally(() => { setLoading(false) });
     }
 
     useEffect(() => {
         getStorePoint(point?.id);
-    }, [point])
+    }, [point]);
 
-    const subcribeStore = () => {
+
+    const subcribleStore = () => {
         const body = {
-            store_id: point.id
+            store_id: data.stores.id
         }
-        apiSubcribleStore(body).then((res) => {
-            if (res.status == 200) {
-                if (res.data.code == "200") {
+        setLoading(true);
+        apiSubcribleStore(body).then((e) => {
+            console.log("resSubcrible", e);
+            if (e.status == 200) {
+                if (e.data.code == '200') {
+                    getStorePoint(point?.id)
+                } else {
                     Toast.show({
-                        type: "success",
-                        text1: "Đã theo dõi cửa hàng",
+                        type: "error",
+                        text1: e?.data?.message,
                         position: "top"
                     })
+                    setLoading(false);
                     return;
                 }
-                Toast.show({
-                    type: "error",
-                    text1: res.data.message,
-                    position: "top"
-                })
-            } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Chức năng đang được bảo trì",
-                    position: "top"
-                })
+                setLoading(false);
+                return;
             }
         })
     }
 
-    const unSubcribeStore = () => {
+    const unsubcribleStore = () => {
         const body = {
-            store_id: point.id
+            store_id: data.stores.id
         }
-        apiUnSubcribleStore(body).then((res) => {
-            if (res.status == 200) {
-                if (res.data.code == "200") {
-                    Toast.show({
-                        type: "success",
-                        text1: "bỏ theo dõi cửa hàng",
-                        position: "top"
-                    })
-                    return;
-                }
-                Toast.show({
-                    type: "error",
-                    text1: res.data.message,
-                    position: "top"
-                })
+        setLoading(true);
+        apiUnSubcribleStore(body).then((e) => {
+            console.log("unresSubcrible", e);
+            if (e.data.code == '200') {
+                getStorePoint(point?.id)
             } else {
                 Toast.show({
                     type: "error",
-                    text1: "Chức năng đang được bảo trì",
+                    text1: e?.data?.message,
                     position: "top"
                 })
+                setLoading(false);
+                return
             }
+            setLoading(false);
+            return;
         })
     }
-
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
-                    flexRight={0}
+                    flexRight={1}
                     flexCenter={10}
+                    flexLeft={1}
                     leftView
                     iconLeft={faChevronLeft}
                     leftOnpress={() => {
+                        if (userReducer.isGuest) {
+                            navigation.replace('Map');
+                            return;
+                        }
+                        if (from == 'SubcribeList') {
+                            navigation.goBack();
+                            return;
+                        }
                         navigation.replace(from)
                     }}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
-                            <Text style={{ fontSize: 20, color: "#FFFF" }}>{point.name}</Text>
-                            <FontAwesomeIcon icon={faStore} style={{ marginLeft: 10 }} color="#f57842" size={26} />
+                            <Text style={{ fontSize: 20, color: "#FFFF" }}>Thông tin cửa hàng</Text>
                         </View>
                     )}
                 />
             </View>
 
-            <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
-                <View style={[{ width: "100%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
-
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={[styles.headerPoint]}><Text style={[styles.textHeader]}>{data?.stores?.name}</Text></View>
+                <View style={[{ width: "90%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }]}>
+                    <Image source={{ uri: data?.stores?.images?.img_url }} style={{ width: "100%", height: "100%" }} resizeMethod="scale" resizeMode="cover" />
                 </View>
-                <Formik
-                    initialValues={{
-                        open_time: data?.open_time || "",
-                        close_time: data?.close_time || "",
-                        status: data?.status || "",
-                        name: data?.name || "",
-                        description: data?.description || "",
-                        address: data?.address?.subDistrict.name + " - " + data?.address?.district.name + " - " + data?.address?.city.name
-                    }}
-                    enableReinitialize
-                    onSubmit={(values) => { }}
-                >
-                    {({ submitForm, values }) => (
-                        <View >
-                            <View style={{ flexDirection: "row-reverse" }}>
-                                <ButtonCustom
-                                    styleContain={{ backgroundColor: "#F6BB57", marginTop: 20, flexWrap: "wrap" }}
-                                    onPress={() => {
-                                        // subcribeStore();
-                                        unSubcribeStore()
-                                    }}
-                                >
-                                    <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                                        <Text style={{ color: "#FFFF", marginRight: 10 }}>Theo dõi</Text>
-                                        <FontAwesomeIcon icon={faBell} color="red" />
-                                    </View>
+                {!userReducer.isGuest && (
+                    <View style={{ width: "90%", flexDirection: "row-reverse" }}>
+                        {data?.isSubcribe ? (
+                            <ButtonCustom styleContain={{ backgroundColor: "#F6BB57", flexWrap: "wrap" }} onPress={unsubcribleStore}>
+                                <Text style={{ color: "#FFFF", marginRight: 2 }}> Bỏ theo dõi</Text>
+                                <FontAwesomeIcon icon={faBellSlash} color="#FFF" />
+                            </ButtonCustom>
+                        ) :
+                            (
+                                <ButtonCustom styleContain={{ backgroundColor: "#F6BB57", flexWrap: "wrap" }} onPress={subcribleStore}>
+                                    <Text style={{ color: "#FFFF", marginRight: 2 }}>Theo dõi</Text>
+                                    <FontAwesomeIcon icon={faBell} color="#FFF" />
                                 </ButtonCustom>
-                            </View>
-                            <ContainerField title="Tên cửa hàng">
-                                <Field
-                                    component={Input}
-                                    name="name"
-                                    horizontal
-                                    styleTitle={{ width: 110 }}
-                                />
-                            </ContainerField>
-
-                            <View style={{ flexDirection: "row" }}>
-                                <View style={{ width: "50%", paddingRight: 5 }}>
-                                    <ContainerField title="Giờ mở cửa">
-                                        <Field
-                                            component={TimePicker}
-                                            name="open_time"
-                                            mode="time"
-                                            horizontal
-                                            placeholder="Mở cửa"
-                                            styleTitle={{ width: 110 }}
-                                        />
-                                    </ContainerField>
-                                </View>
-                                <View style={{ width: "50%", paddingLeft: 5 }}>
-                                    <ContainerField title="Giờ đóng cửa">
-                                        <Field
-                                            component={TimePicker}
-                                            name="close_time"
-                                            mode="time"
-                                            horizontal
-                                            placeholder="Đóng cửa"
-                                            styleTitle={{ width: 110 }}
-                                        />
-                                    </ContainerField>
-                                </View>
-                            </View>
-
-                            <ContainerField title="Mô tả">
-                                <Field
-                                    component={Input}
-                                    name="description"
-                                    horizontal
-                                    placeholder="Mô tả"
-                                    styleTitle={{ width: 110 }}
-                                />
-                            </ContainerField>
-
-                            <ContainerField title="địa điểm">
-                                <View style={{ height: 50, width: "100%", display: "flex", justifyContent: "center", paddingLeft: 15 }}>
-                                    <Text style={{ color: AppColor.CORLOR_TEXT }}>
-                                        {values.address}
-                                    </Text>
-                                </View>
-                            </ContainerField>
-                            <ContainerField title="Sản phẩm">
-                                <StoreCategory items={items} readonly />
-                            </ContainerField>
+                            )
+                        }
+                    </View>
+                )}
+                <View style={[styles.inforView]}>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView]}>
+                            <Text style={[styles.titleText]}>Địa điểm</Text>
+                            <FontAwesomeIcon icon={faMapMarked} />
+                            <Text>:</Text>
                         </View>
-                    )}
-                </Formik>
-            </KeyboardAwareScrollView>
+                        <Text style={[styles.textDescription]}>{data?.stores?.address?.subDistrict.name + " - " + data?.stores?.address?.district.name + " - " + data?.stores?.address?.city.name}</Text>
+                    </View>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView]}>
+                            <Text style={[styles.titleText]}>Trạng thái: </Text>
+                        </View>
+                        <Text style={[styles.textDescription]}>{data?.stores?.status == 0 ? "Mở cửa" : data?.stores?.status == 1 ? "Đang mở cửa" : "Đóng cửa"}</Text>
+                    </View>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView]}>
+                            <Text style={[styles.titleText]}>Mở cửa: </Text>
+                        </View>
+                        <Text style={[styles.textDescription]}>{`Từ ${data?.stores?.open_time} đến ${data?.stores?.close_time}`}</Text>
+                    </View>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView, styles.underLine]}>
+                            <Text style={[styles.titleText]}>Mặt hàng cung cấp: </Text>
+                        </View>
+                        {data?.stores?.store_category?.map((e) => (
+                            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                                <Text style={[styles.textDescription, { width: "100%", textAlign: "left" }]}>{e?.name || ''}: </Text>
+                            </View>
+                        ))}
+                    </View>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView, styles.underLine]}>
+                            <Text style={[styles.titleText]}>Thông tin liên hệ: </Text>
+                        </View>
+                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Họ và tên: </Text>
+                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{`${data?.stores?.user_st?.full_name || ''}`}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Số điện thoạt: </Text>
+                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{`${data?.stores?.user_st?.phone || ''}`}</Text>
+                        </View>
+                        {/* <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Ngày tạo </Text>
+                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{`${data.full_name}`}</Text>
+                        </View> */}
+                    </View>
+                </View>
+
+            </ScrollView>
         </SafeAreaView>
     )
 }

@@ -25,6 +25,7 @@ interface Props {
     leftIconOnpress?: () => {};
     underLine?: boolean;
     editable?: boolean;
+    customStyle?: propStyle;
 }
 const Input = (props: Props) => {
     const {
@@ -35,6 +36,7 @@ const Input = (props: Props) => {
         multiline, leftIconOnpress,
         textContentType, underLine,
         editable,
+        customStyle,
         ...remainProps
     } = props
     const { name, value } = field
@@ -67,7 +69,7 @@ const Input = (props: Props) => {
                         {...remainProps}
                         value={value}
                         onChangeText={onChangeText}
-                        style={styles.input}
+                        style={[styles.input, customInputStyle]}
                         placeholder={placeholder}
                         secureTextEntry={secureTextEntry}
                         multiline={multiline || false}

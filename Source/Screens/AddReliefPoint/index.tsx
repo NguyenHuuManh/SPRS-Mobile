@@ -3,12 +3,13 @@ import { Field, Formik } from "formik";
 import { isEmpty, isNull } from "lodash";
 import React, { createRef, useEffect, useState } from "react";
 import {
-  SafeAreaView, Text, View
+  SafeAreaView, ScrollView, Text, View
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Marker } from "react-native-maps";
 import Toast from "react-native-toast-message";
 import { apiCreateReliefPoint } from "../../ApiFunction/ReliefPoint";
+import Relief from "../../Assets/Images/locationRelief.svg";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
@@ -18,14 +19,10 @@ import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
-import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import MapView from "./components/MapView";
 import { register } from "./validate";
-import Relief from "../../Assets/Images/locationRelief.svg";
-import AppTimePicker from "../../Components/AppTimePicker";
-import AppDatePicker from "../../Components/AppDatePicker";
 const AddReliefPoint = ({ navigation }) => {
   const [adressPoint, setAdressPoint] = useState<any>({
     GPS_Lati: "21.00554564179488",
@@ -87,185 +84,186 @@ const AddReliefPoint = ({ navigation }) => {
           )}
         />
       </View>
-
-      <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={[{ width: "100%", height: 180, backgroundColor: "FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
-          <MapView
-            defaultLocation={{
-              latitude: Number(adressPoint.GPS_Lati),
-              longitude: Number(adressPoint?.GPS_long),
-              latitudeDelta: LATITUDE_DELTA,
-              longitudeDelta: LONGITUDE_DELTA,
+      <ScrollView>
+        <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={[{ width: "100%", height: 180, backgroundColor: "FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
+            <MapView
+              defaultLocation={{
+                latitude: Number(adressPoint.GPS_Lati),
+                longitude: Number(adressPoint?.GPS_long),
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+              }}
+            />
+          </View>
+          <Formik
+            innerRef={formikRef}
+            initialValues={{
+              open_Hour_time: "",
+              close_Hour_time: "",
+              open_Date_time: "",
+              close_Date_time: "",
+              status: "",
+              name: "SPRS",
+              description: "",
+              address: "",
             }}
-          />
-        </View>
-        <Formik
-          innerRef={formikRef}
-          initialValues={{
-            open_Hour_time: "",
-            close_Hour_time: "",
-            open_Date_time: "",
-            close_Date_time: "",
-            status: "",
-            name: "SPRS",
-            description: "",
-            address: "",
-          }}
-          validationSchema={register}
-          onSubmit={(values) => {
-            if (isEmpty(items)) {
-              Toast.show({
-                type: "error",
-                text1: "Chưa chọn mặt hàng cung cấp",
-                position: "top"
-              });
-              return;
-            }
-            const body = {
-              ...values,
-              open_time: values.open_Date_time + " " + (isEmpty(values.open_Hour_time) ? "00:00:00" : values.open_Hour_time),
-              close_time: values.close_Date_time + " " + (isEmpty(values.close_Hour_time) ? "00:00:00" : values.close_Hour_time),
-              reliefInformations: items.map((e) => {
-                return {
-                  id: e.id,
-                  quantity: e.quantity,
-                  item: {
-                    id: e.item.id
+            validationSchema={register}
+            onSubmit={(values) => {
+              if (isEmpty(items)) {
+                Toast.show({
+                  type: "error",
+                  text1: "Chưa chọn mặt hàng cung cấp",
+                  position: "top"
+                });
+                return;
+              }
+              const body = {
+                ...values,
+                open_time: values.open_Date_time + " " + (isEmpty(values.open_Hour_time) ? "00:00:00" : values.open_Hour_time),
+                close_time: values.close_Date_time + " " + (isEmpty(values.close_Hour_time) ? "00:00:00" : values.close_Hour_time),
+                reliefInformations: items.map((e) => {
+                  return {
+                    id: e.id,
+                    quantity: e.quantity,
+                    item: {
+                      id: e.item.id
+                    }
                   }
-                }
-              }),
-              address: {
-                city: {
-                  code: "",
-                  id: "",
-                  name: adressPoint.city
+                }),
+                address: {
+                  city: {
+                    code: "",
+                    id: "",
+                    name: adressPoint.city
+                  },
+                  district: {
+                    code: "",
+                    id: "",
+                    name: adressPoint?.district,
+                  },
+                  subDistrict: {
+                    code: "",
+                    id: "",
+                    name: adressPoint?.subDistrict,
+                  },
+                  addressLine: "",
+                  addressLine2: "",
+                  GPS_lati: adressPoint?.GPS_Lati,
+                  GPS_long: adressPoint?.GPS_long
                 },
-                district: {
-                  code: "",
-                  id: "",
-                  name: adressPoint?.district,
-                },
-                subDistrict: {
-                  code: "",
-                  id: "",
-                  name: adressPoint?.subDistrict,
-                },
-                addressLine: "",
-                addressLine2: "",
-                GPS_lati: adressPoint?.GPS_Lati,
-                GPS_long: adressPoint?.GPS_long
-              },
-            }
-            delete body.close_Date_time;
-            delete body.close_Hour_time;
-            delete body.open_Date_time;
-            delete body.open_Hour_time;
-            callCreatePoint(body);
-          }}
-        >
-          {({ submitForm, errors }) => (
-            <View>
-              <ContainerField title="Tên điểm">
-                <Field
-                  component={Input}
-                  name="name"
-                  // title="Tên điểm cứu trợ:"
-                  horizontal
-                  placeholder="Tên điểm cứu trợ"
-                  styleTitle={{ width: 110 }}
-                  maxLength={30}
-                />
-              </ContainerField>
+              }
+              delete body.close_Date_time;
+              delete body.close_Hour_time;
+              delete body.open_Date_time;
+              delete body.open_Hour_time;
+              callCreatePoint(body);
+            }}
+          >
+            {({ submitForm, errors }) => (
+              <>
+                <ContainerField title="Tên điểm">
+                  <Field
+                    component={Input}
+                    name="name"
+                    // title="Tên điểm cứu trợ:"
+                    horizontal
+                    placeholder="Tên điểm cứu trợ"
+                    styleTitle={{ width: 110 }}
+                    maxLength={30}
+                  />
+                </ContainerField>
 
-              <ContainerField title="Thời gian hoạt động">
-                <View style={{ flexDirection: "row" }}>
-                  <View style={{ flex: 3, paddingRight: 10 }}>
-                    <Field
-                      component={DateTimePicker}
-                      name="open_Date_time"
-                      placeholder="Ngày nở cửa"
-                      iconRight={faCalendar}
-                      iconSize={20}
-                    />
+                <ContainerField title="Thời gian hoạt động">
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{ flex: 3, paddingRight: 10 }}>
+                      <Field
+                        component={DateTimePicker}
+                        name="open_Date_time"
+                        placeholder="Ngày nở cửa"
+                        iconRight={faCalendar}
+                        iconSize={20}
+                      />
+                    </View>
+                    <View style={{ flex: 2, paddingRight: 10 }}>
+                      <Field
+                        component={TimePicker}
+                        name="open_Hour_time"
+                        placeholder="Giờ mở cửa"
+                        iconRight={faClock}
+                        iconSize={20}
+                      />
+                    </View>
                   </View>
-                  <View style={{ flex: 2, paddingRight: 10 }}>
-                    <Field
-                      component={TimePicker}
-                      name="open_Hour_time"
-                      placeholder="Giờ mở cửa"
-                      iconRight={faClock}
-                      iconSize={20}
-                    />
+                </ContainerField>
+                <ContainerField title="Thời gian kết thúc">
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{ flex: 3, paddingRight: 10 }}>
+                      <Field
+                        component={DateTimePicker}
+                        name="close_Date_time"
+                        placeholder="Ngày đóng cửa"
+                        iconRight={faCalendar}
+                        iconSize={20}
+                      />
+                    </View>
+                    <View style={{ flex: 2, paddingRight: 10 }}>
+                      <Field
+                        component={TimePicker}
+                        name="close_Hour_time"
+                        horizontal
+                        placeholder="Giờ đóng cửa"
+                        iconRight={faClock}
+                        iconSize={20}
+                      />
+                    </View>
                   </View>
-                </View>
-              </ContainerField>
-              <ContainerField title="Thời gian kết thúc">
-                <View style={{ flexDirection: "row" }}>
-                  <View style={{ flex: 3, paddingRight: 10 }}>
-                    <Field
-                      component={DateTimePicker}
-                      name="close_Date_time"
-                      placeholder="Ngày đóng cửa"
-                      iconRight={faCalendar}
-                      iconSize={20}
-                    />
-                  </View>
-                  <View style={{ flex: 2, paddingRight: 10 }}>
-                    <Field
-                      component={TimePicker}
-                      name="close_Hour_time"
-                      horizontal
-                      placeholder="Giờ đóng cửa"
-                      iconRight={faClock}
-                      iconSize={20}
-                    />
-                  </View>
-                </View>
-              </ContainerField>
+                </ContainerField>
 
-              <ContainerField title="Mô tả">
-                <Field
-                  component={Input}
-                  name="description"
-                  horizontal
-                  placeholder="Mô tả"
-                  styleTitle={{ width: 110 }}
-                  maxLength={200}
-                />
-              </ContainerField>
+                <ContainerField title="Mô tả">
+                  <Field
+                    component={Input}
+                    name="description"
+                    horizontal
+                    placeholder="Mô tả"
+                    styleTitle={{ width: 110 }}
+                    maxLength={200}
+                  />
+                </ContainerField>
 
-              <ContainerField title="Chọn địa điểm">
-                <MapPicker
-                  styleTitle={{ width: 110 }}
-                  horizontal
-                  iconRight={faMapMarkedAlt}
-                  iconSize={20}
-                  setAdress={setAdressPoint}
-                  adress={adressPoint}
-                  markerRender={(marker) => {
-                    return (
-                      <Marker
-                        coordinate={marker}
-                      >
-                        <Relief fill={'#F4A921'} width={30} height={30} />
-                      </Marker>
-                    )
-                  }}
-                />
-                {errors["address"] && <Text style={[MainStyle.texError,]}>{errors["address"]}</Text>}
-              </ContainerField>
-              <ContainerField title="Sản phẩm">
-                <MultipleAddItem items={items} setItems={setItems} />
-              </ContainerField>
-              <ButtonCustom
-                title={"Thêm mới"}
-                styleTitle={{ color: "#FFF" }}
-                styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF", }}
-                onPress={() => { submitForm() }} />
-            </View>
-          )}
-        </Formik>
-      </KeyboardAwareScrollView>
+                <ContainerField title="Chọn địa điểm">
+                  <MapPicker
+                    styleTitle={{ width: 110 }}
+                    horizontal
+                    iconRight={faMapMarkedAlt}
+                    iconSize={20}
+                    setAdress={setAdressPoint}
+                    adress={adressPoint}
+                    markerRender={(marker) => {
+                      return (
+                        <Marker
+                          coordinate={marker}
+                        >
+                          <Relief fill={'#F4A921'} width={30} height={30} />
+                        </Marker>
+                      )
+                    }}
+                  />
+                  {errors["address"] && <Text style={[MainStyle.texError,]}>{errors["address"]}</Text>}
+                </ContainerField>
+                <ContainerField title="Sản phẩm">
+                  <MultipleAddItem items={items} setItems={setItems} />
+                </ContainerField>
+                <ButtonCustom
+                  title={"Thêm mới"}
+                  styleTitle={{ color: "#FFF" }}
+                  styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF", }}
+                  onPress={() => { submitForm() }} />
+              </>
+            )}
+          </Formik>
+        </KeyboardAwareScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 }

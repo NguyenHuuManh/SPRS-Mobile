@@ -69,7 +69,7 @@ export default (props: Props) => {
             onSubmit={(values) => {
                 setBody(values);
                 setIsRefesh(true);
-                setPageSize({ pageSize: 5, pageIndex: 1 });
+                setPageSize({ pageSize: 10, pageIndex: 0 });
             }}
         >
             {(formikProps) => (

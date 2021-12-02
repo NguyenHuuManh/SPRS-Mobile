@@ -5,7 +5,7 @@ import { Modal, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { apiPlaceDetailByLongLat } from "../../ApiFunction/PlaceAPI";
-import { checkKeyNull } from "../../Helper/FunctionCommon";
+import { checkKeyNull, checkLatLng } from "../../Helper/FunctionCommon";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import AutoCompleteSearchLocation from "../AutoCompleteSearchLocation";
@@ -30,6 +30,7 @@ interface Props {
     defaultAdress?: any;
     underLine?: boolean;
     markerRender?: any;
+    disabled?: boolean;
 }
 
 export default (props: Props) => {
@@ -43,12 +44,13 @@ export default (props: Props) => {
         defaultAdress,
         underLine,
         markerRender,
+        disabled,
         ...remainProps
     } = props
     const [region, setRegion] = useState<any>({});
     const [mapReady, setMapReady] = useState(false);
-    const [marker, setMarker] = useState<any>({})
-    const [visible, setVisible] = useState(false)
+    const [marker, setMarker] = useState<any>({});
+    const [visible, setVisible] = useState(false);
     const mapRef = createRef<any>();
 
     const getDetailPlace = (long: string | number, lat: string | number) => {
@@ -71,10 +73,10 @@ export default (props: Props) => {
         }
     }
     useEffect(() => {
-        getDetailPlace(marker.longitude, marker.latitude);
+        if (!disabled) {
+            getDetailPlace(marker.longitude, marker.latitude);
+        }
     }, [marker])
-
-
     const getCurrentLocation = () => {
         Geolocation.getCurrentPosition(
             (response) => {
@@ -96,10 +98,16 @@ export default (props: Props) => {
         )
 
     }
-    // console.log("defaultAdress", adress);
-    // console.log("defaultAdress", defaultAdress);
     useEffect(() => {
-        if (defaultAdress) {
+        const address = checkKeyNull({ ...defaultAdress });
+        if (!disabled) {
+            if (visible && (isEmpty(address) || !checkLatLng(defaultAdress?.GPS_Lati || "", defaultAdress?.GPS_long || ""))) {
+                getCurrentLocation();
+            }
+        }
+    }, [visible])
+    useEffect(() => {
+        if (defaultAdress && checkLatLng(defaultAdress.GPS_Lati, defaultAdress.GPS_long)) {
             setRegion({
                 ...region,
                 latitude: Number(defaultAdress.GPS_Lati),
@@ -115,7 +123,6 @@ export default (props: Props) => {
             )
             return;
         }
-        getCurrentLocation();
     }, [])
     const onMapReady = () => {
         setMapReady(true);
@@ -132,22 +139,26 @@ export default (props: Props) => {
                                 <FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconLeft} />
                             </View>)
                     }
-                    <View style={[styles.inputContainer, underLine ? styles.underLine : {}]}>
-                        {isEmpty(checkKeyNull(adress)) ? (
-                            <Text onPress={() => { setVisible(true) }} style={styles.input}>Chọn địa điểm</Text>
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (disabled) return;
+                            setVisible(true);
+                        }}
+                        style={[styles.inputContainer, underLine ? styles.underLine : {}]}>
+                        {isEmpty(checkKeyNull({ city: adress.city, district: adress.district, subDistrict: adress.subDistrict })) ? (
+                            <Text style={styles.input}>Chọn địa điểm</Text>
                         ) : (
-                            <Text numberOfLines={1} ellipsizeMode='tail' onPress={() => { setVisible(true) }} style={styles.input}>{`${adress?.subDistrict}-${adress?.district}-${adress?.city}`}</Text>
+                            <Text numberOfLines={1} ellipsizeMode='tail' style={styles.input}>{`${adress?.subDistrict}-${adress?.district}-${adress?.city}`}</Text>
                         )}
                         {
                             iconRight && (
-                                <TouchableOpacity
-                                    onPress={leftIconOnpress}
+                                <View
                                     style={[styles.iconRight]}>
                                     <FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconRight} />
-                                </TouchableOpacity>
+                                </View>
                             )
                         }
-                    </View>
+                    </TouchableOpacity>
                 </View>
             </View>
             <Modal visible={visible} animationType="fade">

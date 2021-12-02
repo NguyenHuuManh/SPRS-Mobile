@@ -1,8 +1,9 @@
 // export const FontText="#FFF"
 export const AppColor = {
-    MAIN_COLOR: '#A362EA',
+    MAIN_COLOR: '#F6BB57',
+    //  '#A362EA',
     // "#A362EA",
-    // '#F6BB57',
+    // ,
     GRAY: '#A0A6BE',
     GRAY_LIGHT: '#D2DBE8',
     GRAY_DARK: '#313E5A',

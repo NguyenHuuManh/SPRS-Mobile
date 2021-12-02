@@ -8,9 +8,7 @@ import { addAnItems } from "../../../../Helper/FunctionCommon";
 import { MainStyle } from "../../../../Style/main_style";
 import { AppColor } from "../../../../Helper/propertyCSS";
 
-const AVATA_SIZE = 25;
 const Margin_BT = 20;
-const ITEM_SIZE = AVATA_SIZE
 
 interface Props {
     typePoinst: any;
@@ -19,7 +17,6 @@ interface Props {
 
 export default (props: Props) => {
     const { typePoinst, setTypePoints } = props
-    const scrollX = React.useRef(new Animated.Value(0)).current
     const points = [
         { name: "Điểm cứu trợ", id: "rp" }, { name: "SOS", id: "sos" }, { name: "Cửa hàng", id: "st" }, { name: "Tổ chức", id: "org" }
     ]

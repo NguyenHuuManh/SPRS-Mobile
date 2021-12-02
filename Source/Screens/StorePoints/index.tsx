@@ -2,38 +2,37 @@ import { faMapMarked, faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Animated, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
+import { ActivityIndicator, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import LinearGradient from "react-native-linear-gradient";
 import Toast from "react-native-toast-message";
-import { apiDeleteStore, apiGetStore, apiGetStoreAll, apiUpdateStatus } from "../../ApiFunction/StorePoint";
+import { apiDeleteStore, apiGetStore, apiUpdateStatus } from "../../ApiFunction/StorePoint";
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { addressToString } from "../../Helper/FunctionCommon";
 import { AppColor } from "../../Helper/propertyCSS";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import FilterForm from "./components/FilterForm";
 import styles from "./styles";
 
-const AVATA_SIZE = 60;
-const Margin_BT = 20;
+const AVATA_SIZE = 80;
+const Margin_BT = 5;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
 
-const page = 1;
+const page = 0;
 const size = 10;
-const totalItem = 20;
 export default ({ navigation }) => {
     const [points, setPoints] = useState([]);
     const [isRefesh, setIsRefesh] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current
     const [pageSize, setPageSize] = useState({ pageSize: size, pageIndex: page });
-    const [totalPage, setTotalPage] = useState(3);
     const [loading, setLoading] = useState(false);
+    const [totalItem, setTotalItem] = useState(0);
     const [body, setBody] = useState({
         sort: true,
         type: null,
-        status_store: null,
+        status_store: 3,
     });
 
     const UpdatePoints = (item, type) => {
@@ -54,7 +53,8 @@ export default ({ navigation }) => {
             console.log("response", response)
             if (response.status == 200) {
                 if (response.data.code == "200") {
-                    UpdatePoints(item, "Update");
+                    UpdatePoints(response.data.obj, "Update");
+                    setPageSize({ ...pageSize });
                     return
                 }
                 Toast.show({
@@ -76,28 +76,19 @@ export default ({ navigation }) => {
     useEffect(() => { getPoint() }, [pageSize]);
     const getPoint = () => {
         const bodyRequest = {
-            types: isNull(body.type) ? null : [body.type],
-            status_store: body.status_store,
+            // types: isNull(body.type) ? null : [body.type],
+            type: isNull(body.type) ? 0 : body.type,
+            status_store: isNull(body.status_store) ? 3 : body.status_store,
             sort: body.sort,
             pageSize: pageSize.pageSize,
             pageIndex: pageSize.pageIndex
         }
-        // apiGetStore(bodyRequest).then((e) => {
-        //     console.log("res", e);
-        //     if (e.status == 200) {
-        //         if (e.data.code === "200") {
-        //             setPoints(e.data.obj);
-        //         }
-        //     }
-        // }).finally(() => {
-        //     setLoading(false);
-        //     if (isRefesh) setIsRefesh(false);
-        // })
-        apiGetStoreAll().then((e) => {
+        apiGetStore(bodyRequest).then((e) => {
             console.log("res", e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
-                    setPoints(e.data.obj);
+                    setPoints(e.data.obj.stores);
+                    setTotalItem(e.data.obj.totalItems)
                 }
             }
         }).finally(() => {
@@ -124,7 +115,7 @@ export default ({ navigation }) => {
 
     const handleLoadMore = () => {
         if (pageSize.pageIndex * pageSize.pageSize >= totalItem) return;
-        setPageSize({ ...pageSize, pageSize: pageSize.pageSize + page });
+        setPageSize({ ...pageSize, pageSize: pageSize.pageSize + size });
     }
 
     const renderLeftActions = (progress, dragX, item, onchage) => {
@@ -238,7 +229,7 @@ export default ({ navigation }) => {
             >
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
-                        navigation.navigate("UpdateStorePoint", item);
+                        navigation.push("UpdateStorePoint", item);
                     } else {
                         onchage(false);
                     }
@@ -247,17 +238,23 @@ export default ({ navigation }) => {
                 >
                     <Swipeable
                         renderRightActions={(x, y) => renderLeftActions(x, y, item, onchage)}
-                        containerStyle={{ width: "100%", height: AVATA_SIZE, paddingLeft: 10 }}
+                        containerStyle={{ width: "100%", height: AVATA_SIZE, paddingLeft: 10, paddingRight: 10 }}
                         onSwipeableClose={() => {
                             onchage(false)
                         }}
                     >
-                        <View style={{ width: "50%", justifyContent: "space-around", height: AVATA_SIZE }}>
-                            <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: item.status == 0 ? "#32a864" : "red" }} />
-                                <Text style={{ color: AppColor.CORLOR_TEXT, paddingLeft: 5 }}>{item.status == 0 ? "Đang mở cửa" : item.status == 1 ? "Đóng cửa tạm thời" : "Đóng cửa"}</Text>
+                        <View style={{ width: "100%", height: AVATA_SIZE, justifyContent: "space-around" }}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Text style={{ width: "50%", fontSize: 12, fontWeight: "bold" }}>{item.name}</Text>
+                                <View style={{ width: "50%", alignItems: "flex-end", paddingRight: 5, justifyContent: "center" }}>
+                                    <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: item.status == 0 ? "#32a864" : item.status == 1 ? "#F6BB57" : "red" }} />
+                                </View>
                             </View>
-                            <Text>{item.name}</Text>
+                            <Text numberOfLines={1} ellipsizeMode="middle" style={{ color: AppColor.CORLOR_TEXT }}>Địa chỉ: {addressToString(item?.address?.subDistrict.name + '') + " - " + addressToString(item?.address?.district.name + '') + " - " + addressToString(item?.address?.city.name + '')}</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <Image source={require("../../Assets/Icons/alarm_clock_30px.png")} style={{ width: 15, height: 15, marginRight: 5 }} />
+                                <Text style={{ color: AppColor.CORLOR_TEXT }}>{(item.open_time + '')?.split(" ")?.[0] + " - " + (item.close_time + '')?.split(" ")?.[0]}</Text>
+                            </View>
                         </View>
                     </Swipeable>
                 </TouchableOpacity>
@@ -312,6 +309,11 @@ export default ({ navigation }) => {
                             <Text style={{ fontSize: 20, color: "#FFFF" }}>Cửa hàng của bạn</Text>
                         </View>
                     )}
+                // rightEL={(
+                //     <TouchableOpacity onPress={() => { navigation.navigate("UpdateStorePoint", { id: 586 }); }}>
+                //         <FontAwesomeIcon icon={faEdit} color="#FFFF" />
+                //     </TouchableOpacity>
+                // )}
 
                 />
             </View>

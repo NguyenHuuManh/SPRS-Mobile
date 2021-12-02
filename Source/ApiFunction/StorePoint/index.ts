@@ -31,21 +31,8 @@ export const apiUpdateStatus = async (body) => {
     return await httpServices.post(`${UPDATE_STATUS_STORE}`, body);
 };
 
-export const apiUploadImg = async (bodyFormData) => {
-    return await axios({
-        method: "post",
-        url: `${UPLOAD_IMG_STORE}`,
-        data: bodyFormData,
-        headers: { "Content-Type": "multipart/form-data" },
-    })
-        .then(function (response) {
-            //handle success
-            return response
-        })
-        .catch(function (response) {
-            //handle error
-            return response;
-        });
+export const apiUploadImg = async (body) => {
+    return await httpServices.post(`${UPLOAD_IMG_STORE}`, body);
 };
 
 export const apiSubcribleStore = async (body) => {

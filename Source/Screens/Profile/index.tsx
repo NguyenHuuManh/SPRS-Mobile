@@ -11,10 +11,12 @@ import { useNavigation } from "@react-navigation/core"
 import { useDispatch, useSelector } from "react-redux";
 import { badgeShowActions, userActions } from "../../Redux/Actions";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { RootState } from "../../Redux/Reducers";
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const profileReducer = useSelector((state) => state.profileReducer);
+    const profileReducer = useSelector((state: RootState) => state.profileReducer);
+    const userReducer = useSelector((state: RootState) => state.userReducer);
     return (
         <View style={{ width: width, height: height, paddingBottom: 80, backgroundColor: BackgoundMain, }}>
             {/* <View style={{ flex: 2, alignItems: "center", zIndex: 100, backgroundColor: "pink", justifyContent: "center" }}>
@@ -82,7 +84,7 @@ export default () => {
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.rowItem]}>
-                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { dispatch(userActions.logout()) }}>
+                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { dispatch(userActions.logout(userReducer)) }}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
                                     <FontAwesomeIcon style={{ marginRight: 10 }} size={15} color={"#A0A6BE"} icon={faSignOutAlt} />
                                     <Text >Đăng xuất</Text>

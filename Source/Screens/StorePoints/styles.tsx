@@ -34,5 +34,10 @@ export default StyleSheet.create({
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
+    },
+    statusIcon: {
+        width: 10,
+        height: 10,
+        borderRadius: 10,
     }
 });

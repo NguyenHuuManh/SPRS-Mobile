@@ -9,12 +9,14 @@ export default StyleSheet.create({
         backgroundColor: "#FFF",
     },
     scrollContainer: {
-        height: height + (height * 0.1),
+        // height: height + (height * 0.1),
         width: width,
+        // flex: 1,
         // alignItems: "center",
         justifyContent: "flex-start",
         paddingLeft: 10,
-        paddingRight: 10
+        paddingRight: 10,
+        paddingBottom: 50,
     },
     containMap: {
         width: "90%",

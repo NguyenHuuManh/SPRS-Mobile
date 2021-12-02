@@ -1,7 +1,7 @@
-import { faChevronLeft, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faEye, faEyeSlash, faLock, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Field, Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
@@ -12,6 +12,9 @@ import { MainStyle } from '../../Style/main_style';
 import styles from './styles';
 import { updatePass } from './validate';
 export default ({ navigation }) => {
+    const [newSecureTextEntry, setNewSecureTextEntry] = useState(true);
+    const [oldSecureTextEntry, setOldSecureTextEntry] = useState(true);
+    const [reSecureTextEntry, setReSecureTextEntry] = useState(true);
     const OnchangePass = (values) => {
         apiUpdatePass(values).then((e) => {
             console.log("e update P", e);
@@ -19,7 +22,7 @@ export default ({ navigation }) => {
                 if (e.data.code == "200") {
                     Toast.show({
                         type: "success",
-                        text1: e.data.description,
+                        text1: "Cập nhật mật khẩu thành công",
                         position: "top"
                     })
                 } else {
@@ -41,7 +44,7 @@ export default ({ navigation }) => {
     return (
         <Formik
             initialValues={{
-                oldPasword: "u3WvyfOA",
+                oldPassword: "",
                 newPassword: "",
                 reNewPassword: "",
             }}
@@ -66,27 +69,41 @@ export default ({ navigation }) => {
                         <View style={[MainStyle.boxShadow, styles.containLogin]}>
                             <Field
                                 component={Input}
-                                name="oldPasword"
-                                iconLeft={faMobileAlt}
+                                name="oldPassword"
+                                iconLeft={faLock}
+                                iconRight={oldSecureTextEntry ? faEyeSlash : faEye}
                                 placeholder="Nhập mật khẩu cũ"
+                                underLine
+                                type="password"
+                                leftIconOnpress={() => { setOldSecureTextEntry(!oldSecureTextEntry) }}
+                                secureTextEntry={oldSecureTextEntry}
 
                             />
                             <Field
                                 component={Input}
                                 name="newPassword"
-                                iconLeft={faMobileAlt}
+                                secureTextEntry={newSecureTextEntry}
+                                iconLeft={faLock}
+                                iconRight={newSecureTextEntry ? faEyeSlash : faEye}
                                 placeholder="Nhập mật khẩu mới"
+                                leftIconOnpress={() => { setNewSecureTextEntry(!newSecureTextEntry) }}
+                                underLine
 
                             />
                             <Field
                                 component={Input}
                                 name="reNewPassword"
-                                iconLeft={faMobileAlt}
+                                secureTextEntry={reSecureTextEntry}
+                                iconLeft={faLock}
+                                iconRight={reSecureTextEntry ? faEyeSlash : faEye}
                                 placeholder="Nhập lại mật khẩu mới"
+                                leftIconOnpress={() => { setReSecureTextEntry(!reSecureTextEntry) }}
+                                underLine
+                                type="password"
 
                             />
                             <ButtonCustom
-                                styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
+                                styleContain={{ backgroundColor: "#F6BB57", marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
                                 title="Tiếp tục"
                                 onPress={submitForm}

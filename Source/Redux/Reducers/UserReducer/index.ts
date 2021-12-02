@@ -50,6 +50,7 @@ export default (state = initialState, action) => {
                 type: action.type,
                 data: {},
                 isGuest: false,
+                isLoading: false,
             }
         default:
             return state

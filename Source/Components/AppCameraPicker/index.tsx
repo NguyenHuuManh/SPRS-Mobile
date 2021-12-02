@@ -4,9 +4,9 @@
 // Import React
 import { faCamera, faFileImage, faSave, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import AwesomeLoading from 'react-native-awesome-loading';
 import { size } from 'lodash';
 import React, { useState } from 'react';
+import { isEmpty } from 'lodash'
 // Import required components
 import {
     SafeAreaView,
@@ -32,20 +32,16 @@ import {
 } from 'react-native-image-picker';
 import { MainStyle } from '../../Style/main_style';
 import Loading from '../Loading';
-import { width } from '../../Helper/responsive';
 
 interface Props {
-    imageList: any,
-    setImageList: any,
+    image: any,
+    setImage: any,
     buttonSaveAction?: any,
     loading?: any;
-    multiImg?: boolean;
-    numberImg?: number;
-
 }
 
 const ImagePicker = (props: Props) => {
-    const { imageList, setImageList, buttonSaveAction, loading, multiImg, numberImg } = props;
+    const { image, setImage, buttonSaveAction, loading } = props;
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -92,7 +88,7 @@ const ImagePicker = (props: Props) => {
             mediaType: type,
             quality: 0,
             saveToPhotos: true,
-            includeBase64: true,
+            // includeBase64: true,
 
         };
         let isCameraPermitted = await requestCameraPermission();
@@ -112,37 +108,17 @@ const ImagePicker = (props: Props) => {
                     alert(response.errorMessage);
                     return;
                 }
-                if (multiImg) {
-                    setImageList(catListImage(imageList, [response.assets[0]]));
-                }
-                setImageList([response.assets[0]]);
+                setImage(response.assets[0]);
             });
         }
     };
-
-    const catListImage = (arr1, arr2) => {
-        const arr = arr1.concat(arr2);
-        let size = 0;
-        for (let i = 0; i < arr.length; i++) {
-            size += arr[i].fileSize / 1000000;
-        }
-        if (size > 8) {
-            alert(" số lượng ảnh chọn vượt quá 8MB");
-            return arr1;
-        }
-        if (arr.length > 4) {
-            alert("giới hạn chọn 4 ảnh")
-            return arr.slice(arr.length - 4, arr.length);
-        }
-        return arr;
-    }
-
+    console.log("image", image.uri);
     const chooseFile = (type) => {
         let options: ImageLibraryOptions = {
             mediaType: type,
             quality: 1,
-            selectionLimit: multiImg ? numberImg : 1,
-            includeBase64: true,
+            selectionLimit: 1,
+            // includeBase64: true,
         };
         launchImageLibrary(options, (response: any) => {
             if (response.didCancel) {
@@ -158,41 +134,10 @@ const ImagePicker = (props: Props) => {
                 alert(response.errorMessage);
                 return;
             }
-            if (multiImg) {
-                setImageList(catListImage(imageList, response.assets[0]));
-            } else {
-                setImageList([response.assets[0]])
-            }
+            setImage(response.assets[0]);
         });
     };
 
-    const renderImage = ({ item, index }) => {
-        return (
-            <View
-                key={item.fileName + "it"}
-                style={[{ width: width * 0.7, marginBottom: 5, marginRight: 5, marginTop: 5, backgroundColor: "#FFF", borderRadius: 10 }]}>
-                {item?.fileName && (
-                    <TouchableOpacity style={{ position: "absolute", top: 5, right: 5, zIndex: 10 }}
-                        onPress={() => {
-                            const arr = imageList.filter(e => e.fileName !== item.fileName);
-                            setImageList(arr);
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faTimesCircle} size={20} color="black" />
-                    </TouchableOpacity>
-                )}
-                <TouchableOpacity style={{ width: "100%", height: "100%", marginRight: 10, marginBottom: 10, justifyContent: "center", alignItems: "center" }}>
-                    <Image
-                        source={{ uri: `${item.uri}` }}
-                        style={styles.imageStyle}
-                        loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
-                        resizeMethod="scale"
-                        resizeMode="cover"
-                    />
-                </TouchableOpacity>
-            </View>
-        )
-    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -217,23 +162,26 @@ const ImagePicker = (props: Props) => {
                         </TouchableOpacity>
                     )}
                 </View>
-                {imageList && (
+                {isEmpty(image) && (
                     <>
                         {loading && (
                             <View style={{ position: "absolute", zIndex: 1000, backgroundColor: "rgba(10, 10, 10,0.1)", width: "100%", height: "100%", justifyContent: "center", borderRadius: 10 }}>
                                 <ActivityIndicator size="large" color="violet" />
                             </View>
                         )}
-                        <FlatList
-                            data={imageList}
-                            keyExtractor={(item) => item.fileName}
-                            renderItem={renderImage}
-                            style={{ height: "100%" }}
-                            contentContainerStyle={{ height: "100%", paddingLeft: 5 }}
-                            showsHorizontalScrollIndicator={false}
-                            horizontal
-                            refreshing={loading}
-                        />
+                        <View
+                            style={[{ width: 130, marginBottom: 5, marginRight: 5, marginTop: 5, backgroundColor: "#FFF", borderRadius: 10 }, MainStyle.boxShadow]}>
+                            <TouchableOpacity style={{ position: "absolute", top: 5, right: 5, zIndex: 10 }}
+                                onPress={() => { }}
+                            >
+                                <FontAwesomeIcon icon={faTimesCircle} size={20} color="black" />
+                            </TouchableOpacity>
+                            <Image
+                                source={{ uri: image.uri }}
+                                style={[styles.imageStyle]}
+                                width={50}
+                            />
+                        </View>
                     </>
                 )}
             </View>
@@ -268,7 +216,10 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     imageStyle: {
-        width: "80%",
-        height: "80%",
+        // width: "80%",
+        // height: "80%",
+        backgroundColor: "red",
+        width: 50,
+        height: 50
     },
 });

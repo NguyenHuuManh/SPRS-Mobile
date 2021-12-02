@@ -31,8 +31,9 @@ export const loginGuest = () => {
     }
 }
 
-export const logout = () => {
+export const logout = (payload) => {
     return {
         type: ActionTypes.LOGOUT,
+        data: payload,
     }
 }

@@ -24,9 +24,10 @@ interface Props {
     horizontal?: boolean;
     styleTitle?: any;
     underLine?: any;
+    disabled?: boolean;
 }
 export default (props: Props) => {
-    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, ...remainProps } = props
+    const { form, field, onChangeCustom, placeholder, customInputStyle, title, iconSize, iconLeft, iconColor, iconRight, horizontal, styleTitle, underLine, disabled, ...remainProps } = props
     const [show, setShow] = useState(false);
     const { name, value } = field
     // const [date, setDate] = useState(new Date());
@@ -55,7 +56,7 @@ export default (props: Props) => {
         <View>
             <View style={[styles.containerInput]}>
                 {(!horizontal && title) && (<Text style={styles.text}>{title}</Text>)}
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row" }} pointerEvents={disabled ? "none" : "auto"}>
                     {(horizontal && title) && (<View style={[styles.containText, styleTitle]}><Text style={styles.textHorizontal}>{title}</Text></View>)}
                     {
                         iconLeft && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 17} color={iconColor || "#222"} icon={iconLeft} /></View>)

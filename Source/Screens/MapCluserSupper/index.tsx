@@ -64,10 +64,9 @@ export default () => {
     const [strokerDirection, setStrokerDirection] = useState(0)
     const [showModal, setShowModal] = useState(false);
     const { params } = useRoute<any>();
-    const [typePoinst, setTypePoints] = useState([]);
+    const [typePoinst, setTypePoints] = useState<any>([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [searchVisible, setSearchVisible] = useState(false);
-
 
     const store: Store = {
         regionStore: { region, setRegion },
@@ -112,9 +111,6 @@ export default () => {
     }
     useEffect(() => {
         getCurrentLocation();
-        handleLocationPermission().then((e) => {
-            console.log("permission", e);
-        });
         Geolocation.watchPosition(
             (response) => {
                 setMylocation({
@@ -143,24 +139,25 @@ export default () => {
             setMapReady(true);
         });
 
+
     }
     useEffect(() => {
         if (params?.toLocation) {
-            mapRef.current.getMapRef().animateToRegion({
-                ...params?.toLocation,
+            const regionTo = {
+                latitude: params?.toLocation.location.latitude,
+                longitude: params?.toLocation.location.longitude,
                 latitudeDelta: 0.006866,
                 longitudeDelta: 0.006866,
-            }, 1000);
-            setMarkerTo(params.toLocation);
-            if (!showModal) {
-                setStrokerDirection(0);
             }
-            setShowModal(true);
+            mapRef.current.getMapRef().animateToRegion(regionTo, 1000);
+            setMarkerTo(params.toLocation);
+            setStrokerDirection(5);
         }
     }, [params])
 
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
+            // console.log("e", e);
             if (e.status == 200) {
                 if (e.data.code == 200) {
                     setListMarker(e.data.obj.map((e) => {
@@ -180,7 +177,7 @@ export default () => {
             }
         })
     }
-    const debounceLoadMap = useCallback(debounce((nextValue) => callLoadMap(nextValue), 100), []);
+    const debounceLoadMap = useCallback(debounce((nextValue) => callLoadMap(nextValue), 50), []);
 
 
     const toStringArr = (arr) => {
@@ -205,7 +202,6 @@ export default () => {
     useEffect(() => {
         setCenterMark({ ...centerMark });
     }, [typePoinst])
-
 
     const renderDirection = (
         !isEmpty(myLocation) && !isEmpty(markerTo) && (
@@ -253,8 +249,8 @@ export default () => {
                                     width: "100%",
                                     backgroundColor: "#FFF"
                                 }}>
-                                    <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
-                                    <Text numberOfLines={1} style={{ height: 30, alignSelf: "center", textAlignVertical: "center" }}>{text}</Text>
+                                    <View style={{ paddingRight: 5, paddingLeft: 5, width: "10%" }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
+                                    <Text numberOfLines={1} style={{ height: 30, alignSelf: "center", textAlignVertical: "center", width: "90%" }} ellipsizeMode="tail">{text}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -316,11 +312,13 @@ export default () => {
                             style={{ flex: 1 }}
                             data={listMarker}
                             initialRegion={{ latitude: 21.0053961, longitude: 105.518345, latitudeDelta: 0.006866, longitudeDelta: 0.006866 }}
+                            // region={region}
                             ref={mapRef}
                             showsUserLocation={true}
                             followsUserLocation
                             renderMarker={(item) => {
                                 return <RenderMarker
+                                    key={item.id}
                                     item={item}
                                     setMarkerTo={setMarkerTo}
                                     setShowModal={setShowModal}
@@ -347,6 +345,7 @@ export default () => {
                             {renderDirection}
                             {(!markerTo.id && !isEmpty(markerTo.location)) && (
                                 <RenderMarker
+                                    key="customMark"
                                     item={markerTo}
                                     setMarkerTo={setMarkerTo}
                                     setShowModal={setShowModal}
