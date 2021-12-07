@@ -101,13 +101,32 @@ export default (props: Props) => {
     useEffect(() => {
         const address = checkKeyNull({ ...defaultAdress });
         if (!disabled) {
-            if (visible && (isEmpty(address) || !checkLatLng(defaultAdress?.GPS_Lati || "", defaultAdress?.GPS_long || ""))) {
+            if (visible && (isEmpty(address) || !checkLatLng(defaultAdress?.GPS_Lati + '', defaultAdress?.GPS_long + ''))) {
+                // console.log('address', address)
                 getCurrentLocation();
+            } else {
+                if (visible) {
+                    // console.log('addressVaoffdff', address)
+                    setRegion({
+                        ...region,
+                        latitude: Number(defaultAdress.GPS_Lati),
+                        longitude: Number(defaultAdress.GPS_long),
+                        latitudeDelta: 0.006866,
+                        longitudeDelta: 0.006866,
+                    })
+                    setMarker(
+                        {
+                            latitude: Number(defaultAdress.GPS_Lati),
+                            longitude: Number(defaultAdress.GPS_long),
+                        }
+                    )
+                }
             }
         }
     }, [visible])
     useEffect(() => {
         if (defaultAdress && checkLatLng(defaultAdress.GPS_Lati, defaultAdress.GPS_long)) {
+            // console.log("addressDefaul", defaultAdress)
             setRegion({
                 ...region,
                 latitude: Number(defaultAdress.GPS_Lati),
@@ -123,7 +142,8 @@ export default (props: Props) => {
             )
             return;
         }
-    }, [])
+    }, []);
+    // console.log("regions", region);
     const onMapReady = () => {
         setMapReady(true);
     }

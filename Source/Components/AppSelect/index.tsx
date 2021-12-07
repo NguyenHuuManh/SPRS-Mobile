@@ -141,7 +141,7 @@ export default (props: Props) => {
                                 : (<View ></View>)
                         }
 
-                        <FontAwesomeIcon icon={faChevronDown} size={iconSize || 15} color={iconColor || "black"} />
+                        <FontAwesomeIcon icon={faChevronDown} size={iconSize || 15} color={disabled ? 'gray' : (iconColor || "black")} />
                     </View>
                 </TouchableOpacity>
                 {show && <Modal
@@ -161,7 +161,7 @@ export default (props: Props) => {
                                 </View>
                                 <FlatList
                                     data={data}
-                                    keyExtractor={({ item }) => item?.id}
+                                    keyExtractor={({ item }) => item?.id + ''}
                                     renderItem={renderItem}
                                     contentContainerStyle={{ backgroundColor: "#FFFF" }}
                                 />

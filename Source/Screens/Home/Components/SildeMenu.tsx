@@ -1,25 +1,13 @@
-import React, { Fragment, Component, useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/core';
+import React, { useEffect, useState } from 'react';
 import {
-    StyleSheet,
-    View,
-    Text,
-    Image,
-    Dimensions
+    ImageBackground, StyleSheet, Text, View
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { apiGetPermission } from '../../../ApiFunction/Auth';
-import { AppColor } from '../../../Helper/propertyCSS';
-import { width } from '../../../Helper/responsive';
-import SOS from "../../../Assets/Images/locationSOS.svg";
-import Relief from "../../../Assets/Images/locationRelief.svg";
-import ORG from "../../../Assets/Images/locationOrganization.svg";
-import Store from "../../../Assets/Images/locationStore.svg";
 import ButtonCustom from '../../../Components/ButtonCustom';
-import { MainStyle } from '../../../Style/main_style';
-import { useNavigation } from '@react-navigation/core';
-
-
-const codes = ["PER_STR_ACEN", "PER_RLP_ACEN", "", "PER_MOB_SOS", "PER_MOB_SUBCRIBE"]
+import { AppColor } from '../../../Helper/propertyCSS';
+import { height, width } from '../../../Helper/responsive';
 export default () => {
     const [menu, setMenu] = useState<any>([]);
     const navigation = useNavigation<any>();
@@ -27,62 +15,61 @@ export default () => {
         apiGetPermission().then((e) => {
             setMenu(e.data.lstObj);
         })
-    }, [])
+    }, []);
+    console.log('menu', menu)
     return (
-        <Swiper style={styles.wrapper} showsButtons containerStyle={{ marginBottom: 70 }}>
-            {menu.map((e) => (
-                <View style={styles.slide1}>
-                    {e.code == 'PER_RLP_ACEN' && (
-                        <View>
-                            <ButtonCustom styleContain={[styles.text, { backgroundColor: AppColor.MAIN_COLOR }]}
-                                onPress={() => { navigation.navigate("ReliefPoint") }}
-                            >
-                                <Text style={{ color: "#FFFF" }}>{e.name}</Text>
-                            </ButtonCustom>
-                            <View style={{ justifyContent: "center", alignItems: "center", marginTop: 50 }}>
-                                <Relief fill={'#F4A921'} width={100} height={100} />
-                            </View>
-                        </View>
-                    )}
-                    {e.code == 'PER_STR_ACEN' && (
-                        <View>
-                            <ButtonCustom styleContain={[styles.text, { backgroundColor: AppColor.MAIN_COLOR }]}
-                                onPress={() => { navigation.navigate("StorePoints") }}
-                            >
-                                <Text style={{ color: "#FFFF" }}>{e.name}</Text>
-                            </ButtonCustom>
-                            <View style={{ justifyContent: "center", alignItems: "center", marginTop: 50 }}>
-                                <Store fill={'#F4A921'} width={100} height={100} />
-                            </View>
-                        </View>
-                    )}
-                    {e.code == 'PER_MOB_SOS' && (
-                        <View>
-                            <ButtonCustom styleContain={[styles.text, { backgroundColor: AppColor.MAIN_COLOR }]}
-                                onPress={() => { navigation.navigate("SOS") }}
-                            >
-                                <Text style={{ color: "#FFFF" }}>{e.name}</Text>
-                            </ButtonCustom>
-                            <View style={{ justifyContent: "center", alignItems: "center", marginTop: 50 }}>
-                                <SOS fill={'#F4A921'} width={100} height={100} />
-                            </View>
-                        </View>
-                    )}
-                    {e.code == 'PER_MOB_SUBCRIBE' && (
-                        <View>
-                            <ButtonCustom styleContain={[styles.text, { backgroundColor: AppColor.MAIN_COLOR }]}
-                                onPress={() => { navigation.navigate("SubcribeList") }}
-                            >
-                                <Text style={{ color: "#FFFF" }}>{e.name}</Text>
-                            </ButtonCustom>
-                            <View style={{ justifyContent: "center", alignItems: "center", marginTop: 50 }}>
-                                <ORG fill={'#F4A921'} width={100} height={100} />
-                            </View>
-                        </View>
-                    )}
-                </View>
-            ))}
-        </Swiper>
+        <>
+            <Swiper style={styles.wrapper} showsButtons loop>
+                {menu && menu?.map((e) => (
+                    <View style={styles.slide1} key={e.code}>
+                        {e.code == 'PER_MOB_RELIEF' && (
+                            <ImageBackground source={require('../../../Assets/Images/reliefBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
+                                <ButtonCustom
+                                    styleContain={[styles.styleButton]}
+                                    noShadow
+                                    onPress={() => { navigation.navigate("ReliefPoint") }}
+                                >
+                                    <Text style={styles.text}>{e.name}</Text>
+                                </ButtonCustom>
+                            </ImageBackground>
+                        )}
+                        {e.code == 'PER_MOB_STORE' && (
+                            <ImageBackground source={require('../../../Assets/Images/storeBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
+                                <ButtonCustom
+                                    styleContain={[styles.styleButton]}
+                                    noShadow
+                                    onPress={() => { navigation.navigate("StorePoints") }}
+                                >
+                                    <Text style={styles.text}>{e.name}</Text>
+                                </ButtonCustom>
+                            </ImageBackground>
+                        )}
+                        {e.code == 'PER_MOB_SOS' && (
+                            <ImageBackground source={require('../../../Assets/Images/sosBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
+                                <ButtonCustom
+                                    noShadow
+                                    styleContain={[styles.styleButton]}
+                                    onPress={() => { navigation.navigate("SOS") }}
+                                >
+                                    <Text style={styles.text}>{e.name}</Text>
+                                </ButtonCustom>
+                            </ImageBackground>
+                        )}
+                        {e.code == 'PER_MOB_SUBCRIBE' && (
+                            <ImageBackground source={require('../../../Assets/Images/subcribleBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
+                                <ButtonCustom
+                                    noShadow
+                                    styleContain={[styles.styleButton]}
+                                    onPress={() => { navigation.navigate("SubcribeList") }}
+                                >
+                                    <Text style={styles.text}>{e.name}</Text>
+                                </ButtonCustom>
+                            </ImageBackground>
+                        )}
+                    </View>
+                ))}
+            </Swiper>
+        </>
     );
 }
 
@@ -94,10 +81,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent'
     },
     text: {
-        color: '#fff',
-        fontSize: 30,
-        fontWeight: 'bold',
-        width: 200
+        color: "#FF6F00",
+        height: 30,
+        textAlignVertical: "center",
+        fontSize: 20,
+        fontWeight: "bold"
     },
     image: {
         width: width,
@@ -105,8 +93,6 @@ const styles = StyleSheet.create({
     },
     slide1: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: '#9DD6EB'
     },
     slide2: {
@@ -123,7 +109,6 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         backgroundColor: AppColor.BG_LIGHT,
-
     },
     engine: {
         position: 'absolute',
@@ -167,5 +152,18 @@ const styles = StyleSheet.create({
     paginationText: {
         color: 'white',
         fontSize: 20
+    },
+    styleButton: {
+        backgroundColor: 'rgba(212,225,231,0.7)',
+        justifyContent: "center",
+        // width: 100,
+    },
+    imageBG: {
+        height: height,
+        width: width,
+        backgroundColor: "#FFFF",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        paddingBottom: 150,
     }
 });

@@ -8,6 +8,7 @@ export const singupStore = `${URL}/sprs/api/users_v2/ownStore`
 export const signin = `${URL}/authenticate-mobile`;
 export const profile = `${URL}/sprs/api/user`;
 export const UPDATE_PROFILE = `${URL}/sprs/api/user/update/infor`
+export const UPLOAD_IMG_USER = `${URL}/sprs/api/user/uploadImg`
 //
 export const groupList = `${URL}/sprs/api/groups-register-mobile`
 export const ITEMS = `${URL}/sprs/api/item`

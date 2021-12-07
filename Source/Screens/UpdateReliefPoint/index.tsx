@@ -1,4 +1,4 @@
-import { faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
@@ -32,8 +32,8 @@ const UpdateReliefPoint = ({ navigation }) => {
 
   const item = useRoute<any>().params;
   const [adressPoint, setAdressPoint] = useState<any>({
-    GPS_Lati: item.address.GPS_lati,
-    GPS_long: item.address.GPS_long,
+    GPS_Lati: item?.address?.GPS_lati || '',
+    GPS_long: item?.address?.GPS_long || '',
     city: "",
     district: "",
     subDistrict: "",
@@ -47,7 +47,8 @@ const UpdateReliefPoint = ({ navigation }) => {
             type: "success",
             text1: "Cập nhật thành công",
             position: "top"
-          })
+          });
+          if (item?.from == 'MapCluser') return;
           navigation.push('ReliefPoint');
           return;
         }
@@ -112,7 +113,16 @@ const UpdateReliefPoint = ({ navigation }) => {
           flexRight={1}
           flexCenter={10}
           flexLeft={1}
-          isBack
+          // isBack
+          leftView
+          iconLeft={faChevronLeft}
+          leftOnpress={() => {
+            if (item?.from == 'MapCluser') {
+              navigation.replace('MapCluser');
+              return;
+            }
+            navigation.goBack();
+          }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "thông tin điểm cứu trợ"}</Text>
@@ -142,17 +152,8 @@ const UpdateReliefPoint = ({ navigation }) => {
         />
       </View>
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* <View style={[{ width: "100%", height: 180, backgroundColor: "FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
-          <MapView defaultLocation={{
-            latitude: Number(adressPoint.GPS_Lati),
-            longitude: Number(adressPoint?.GPS_long),
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-          }} />
-        </View> */}
         <View style={[{ width: "100%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
           <AppCamera imageList={imageList} setImageList={setImageList} buttonSaveAction={updateImg} loading={loadingImg} />
-          {/* <AppCameraPicker image={image} setImage={setImage} buttonSaveAction={updateImg} /> */}
         </View>
         <Formik
           initialValues={{
@@ -209,7 +210,7 @@ const UpdateReliefPoint = ({ navigation }) => {
             delete body.close_Hour_time;
             delete body.open_Date_time;
             delete body.open_Hour_time;
-            console.log("body", body);
+            // console.log("body", body);
             callUpdateReliefPoint(body);
           }}
         >

@@ -2,7 +2,7 @@ import { faMapMarked, faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Alert, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import LinearGradient from "react-native-linear-gradient";
 import Toast from "react-native-toast-message";
@@ -49,28 +49,45 @@ export default ({ navigation }) => {
         }
     }
     const ChangeStatusPoint = (item) => {
-        apiUpdateStatus(item).then((response) => {
-            console.log("response", response)
-            if (response.status == 200) {
-                if (response.data.code == "200") {
-                    UpdatePoints(response.data.obj, "Update");
-                    setPageSize({ ...pageSize });
-                    return
-                }
-                Toast.show({
-                    type: "error",
-                    text1: response.data.message,
-                    position: "top"
-                });
-                return
-            }
-            Toast.show({
-                type: "error",
-                text1: "Chức năng đang bảo trì",
-                position: "top"
-            });
+        Alert.alert(
+            `${item.status == 0 ? "Mở lại cửa hàng" : "Đóng cửa hàng"}`,
+            `${item.status == 0 ? "Hệ thống sẽ tự động cập nhật lại giờ mở cửa của cửa hàng là giờ hiện tại " : "Hệ thống sẽ tự động cập nhật lại giờ đóng cửa của cửa hàng là giờ hiện tại"}`,
+            [
+                {
+                    text: 'đồng ý',
+                    onPress: () => {
+                        apiUpdateStatus(item).then((response) => {
+                            console.log("response", response)
+                            if (response.status == 200) {
+                                if (response.data.code == "200") {
+                                    UpdatePoints(response.data.obj, "Update");
+                                    setPageSize({ ...pageSize });
+                                    return
+                                }
+                                Toast.show({
+                                    type: "error",
+                                    text1: response.data.message,
+                                    position: "top"
+                                });
+                                return
+                            }
+                            Toast.show({
+                                type: "error",
+                                text1: "Chức năng đang bảo trì",
+                                position: "top"
+                            });
 
-        })
+                        })
+                    }
+                },
+                {
+                    text: 'Hủy',
+                    onPress: () => { },
+                },
+            ],
+            { cancelable: true },
+        );
+
     }
 
     useEffect(() => { getPoint() }, [pageSize]);
@@ -155,7 +172,12 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <Switch thumbColor="blue" value={item.status == 0} disabled></Switch>
+                            <Switch thumbColor="blue" value={item.status == 0} disabled
+                                trackColor={{
+                                    false: "gray",
+                                    true: "blue"
+                                }}>
+                            </Switch>
                         </Animated.Text>
                     </TouchableOpacity>
                     <TouchableOpacity

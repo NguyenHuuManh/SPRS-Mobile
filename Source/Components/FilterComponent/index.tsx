@@ -97,11 +97,11 @@ export default (props: Props) => {
                                         {
                                             listComponents.map((e, index) => {
                                                 return (
-                                                    <View style={[styles.containerColumn, { borderRightWidth: index <= listComponents.length - 2 ? 1 : 0, }]}>
+                                                    <View style={[styles.containerColumn, { borderRightWidth: index <= listComponents.length - 2 ? 1 : 0, }]} key={index}>
                                                         <View style={[styles.headerColumn]}><Text>{e.title}</Text></View>
                                                         <FlatList
                                                             data={e.data}
-                                                            keyExtractor={({ item, index }) => index}
+                                                            keyExtractor={(item) => item.id + ''}
                                                             renderItem={({ item, index }) => renderItem(item, index, e.key)}
                                                         />
 

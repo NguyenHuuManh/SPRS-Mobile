@@ -1,12 +1,10 @@
-import { faDirections, faSearchLocation, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
+import { faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { debounce } from 'lodash';
 import * as React from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
 import ButtonCustom from '../../../../Components/ButtonCustom';
 import { height } from '../../../../Helper/responsive';
-import styles from './styles';
 interface Props {
     dataDirection?: any;
     strokerDirection?: number

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import CheckBox from '@react-native-community/checkbox';
 import { isNull } from "lodash";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Alert, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import LinearGradient from "react-native-linear-gradient";
@@ -33,6 +33,7 @@ export default ({ navigation }) => {
     const [pageSize, setPageSize] = useState({ pageSize: size, pageIndex: page });
     const [totalPage, setTotalPage] = useState(3);
     const [isRefesh, setIsRefesh] = useState(false);
+    const [onScroll, setOnScroll] = useState(false);
     const [body, setBody] = useState({
         sort: true,
         type: null,
@@ -56,53 +57,87 @@ export default ({ navigation }) => {
     }
 
     const ChangeStatusPoint = (item) => {
-        apiUpdateStatusReliefPoint({ id: item.id, status: item.status }).then((response) => {
-            if (response.status == 200) {
-                if (response.data.code == "200") {
-                    UpdatePoints(item, "Update");
-                    return
-                }
-                Toast.show({
-                    type: "error",
-                    text1: response.data.message,
-                    position: "top"
-                });
-                return
-            }
-            Toast.show({
-                type: "error",
-                text1: "Chức năng đang bảo trì",
-                position: "top"
-            });
+        Alert.alert(
+            `${item.status ? "Bật điểm cứu trợ" : "Tắt điểm cứu trợ"}`,
+            `${item.status ? "Hệ thống sẽ tự động cập nhật lại ngày giờ mở cửa của điểm cứu trợ là ngày giờ hiện tại " : "Hệ thống sẽ tự động cập nhật lại ngày giờ đóng cửa của điểm cứu trợ là ngày giờ hiện tại"}`,
+            [
+                {
+                    text: 'đồng ý',
+                    onPress: () => {
+                        apiUpdateStatusReliefPoint({ id: item.id, status: item.status }).then((response) => {
+                            if (response.status == 200) {
+                                if (response.data.code == "200") {
+                                    UpdatePoints(item, "Update");
+                                    return
+                                }
+                                Toast.show({
+                                    type: "error",
+                                    text1: response.data.message,
+                                    position: "top"
+                                });
+                                return
+                            }
+                            Toast.show({
+                                type: "error",
+                                text1: "Chức năng đang bảo trì",
+                                position: "top"
+                            });
 
-        })
+                        })
+                    }
+                },
+                {
+                    text: 'Hủy',
+                    onPress: () => { },
+                },
+            ],
+            { cancelable: true },
+        );
+
     }
 
     const deletePoint = (item) => {
-        apiDeleteReliefPoint({ id: item.id }).then((response) => {
-            if (response.status == 200) {
-                if (response.data.code == "200") {
-                    UpdatePoints(item, "Delete");
-                    if ((pageSize.pageIndex * pageSize.pageSize) >= totalItem - 1) {
-                        setPageSize({ ...pageSize, pageSize: pageSize.pageSize - size });
-                        return;
+        Alert.alert(
+            "Xóa điểm cứu trợ",
+            `Bạn có chắc chắn xóa ${item.name}`,
+            [
+                {
+                    text: 'Xóa',
+                    onPress: () => {
+                        apiDeleteReliefPoint({ id: item.id }).then((response) => {
+                            if (response.status == 200) {
+                                if (response.data.code == "200") {
+                                    UpdatePoints(item, "Delete");
+                                    if ((pageSize.pageIndex * pageSize.pageSize) >= totalItem - 1) {
+                                        setPageSize({ ...pageSize, pageSize: pageSize.pageSize - size });
+                                        return;
+                                    }
+                                    setPageSize({ ...pageSize });
+                                    return
+                                }
+                                Toast.show({
+                                    type: "error",
+                                    text1: response.data.message,
+                                    position: "top"
+                                });
+                                return
+                            }
+                            Toast.show({
+                                type: "error",
+                                text1: "Chức năng đang bảo trì",
+                                position: "top"
+                            });
+                        })
                     }
-                    setPageSize({ ...pageSize });
-                    return
-                }
-                Toast.show({
-                    type: "error",
-                    text1: response.data.message,
-                    position: "top"
-                });
-                return
-            }
-            Toast.show({
-                type: "error",
-                text1: "Chức năng đang bảo trì",
-                position: "top"
-            });
-        })
+                },
+                {
+                    text: 'Hủy',
+                    onPress: () => { },
+                },
+            ],
+            { cancelable: true },
+        );
+
     }
     const getPoint = () => {
         setLoading(true);
@@ -114,9 +149,11 @@ export default ({ navigation }) => {
             pageIndex: pageSize.pageIndex
         }
         apiGetReliefPoint(bodyRequest).then((e) => {
+            console.log('eRelief', e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setPoints(e.data.obj);
+                    setOnScroll(false);
                 } else {
                     Toast.show({
                         type: "error",
@@ -137,8 +174,10 @@ export default ({ navigation }) => {
         })
     }
     const handleLoadMore = () => {
-        if (pageSize.pageIndex * pageSize.pageSize >= totalItem) return;
-        setPageSize({ ...pageSize, pageSize: pageSize.pageSize + size });
+        if (onScroll) {
+            if (pageSize.pageIndex * pageSize.pageSize >= totalItem) return;
+            setPageSize({ ...pageSize, pageSize: pageSize.pageSize + size });
+        }
     }
 
     const renderLeftActions = (progress, dragX, item, onchage) => {
@@ -180,7 +219,11 @@ export default ({ navigation }) => {
                                 },
                             ]}>
                             {/* <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" /> */}
-                            <Switch value={item.status} disabled></Switch>
+                            <Switch value={item.status} disabled
+                                trackColor={{
+                                    false: "gray",
+                                    true: "blue"
+                                }}></Switch>
                         </Animated.Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -214,7 +257,7 @@ export default ({ navigation }) => {
                     </TouchableOpacity>
                 </>
 
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback >
         );
     };
 
@@ -290,7 +333,6 @@ export default ({ navigation }) => {
                     </Swipeable>
                 </TouchableOpacity>
             </Animated.View >
-
         )
     }
 
@@ -345,10 +387,13 @@ export default ({ navigation }) => {
             <FilterForm body={body} setBody={setBody} setPageSize={setPageSize} pageSize={pageSize} setIsRefesh={setIsRefesh} />
             <View style={{ height: "78%", marginTop: 10 }}>
                 <Animated.FlatList
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                        { useNativeDriver: true }
-                    )}
+                    onScroll={() => {
+                        Animated.event(
+                            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                            { useNativeDriver: true }
+                        );
+                        setOnScroll(true);
+                    }}
                     showsVerticalScrollIndicator={false}
                     data={points}
                     keyExtractor={(item) => item.id + 'Relef'}

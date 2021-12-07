@@ -1,14 +1,12 @@
-import { faPlus, faSortAlphaDownAlt, faSortAlphaUp } from "@fortawesome/free-solid-svg-icons";
+import { faSortAlphaDownAlt, faSortAlphaUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useNavigation } from "@react-navigation/core";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import ButtonCustom from "../../../Components/ButtonCustom";
+import { TouchableOpacity, View } from "react-native";
+import { apiGetItemType } from "../../../ApiFunction/List";
 import FilterComponent from "../../../Components/FilterComponent";
-import { useNavigation } from "@react-navigation/core";
-import { apiCity } from "../../../ApiFunction/PlaceAPI";
 import { checkCallAPI } from "../../../Helper/FunctionCommon";
-import { apiGetItemType, apiGetStoreCategory } from "../../../ApiFunction/List";
 interface Props {
     body: any,
     setBody: any,
@@ -19,26 +17,10 @@ interface Props {
 }
 export default (props: Props) => {
     const { body, setBody, pageSize, setPageSize, setIsRefesh } = props
-    const navigation = useNavigation<any>();
-    const [dataKV, setDataKV] = useState([]);
     const [dataType, setDataType] = useState([]);
 
 
-    const callGetGroupList = () => {
-        apiCity()
-            .then((res) => {
-                checkCallAPI(
-                    res,
-                    (response) => {
-                        setDataKV(response.obj);
-                    },
-                    (e) => { }
-                );
-            })
-            .catch((error) => { })
-    }
     useEffect(() => {
-        callGetGroupList();
         callGetItems();
     }, []);
 
@@ -56,7 +38,7 @@ export default (props: Props) => {
             })
             .catch((error) => { })
     }
-
+    console.log("dataType", dataType)
 
     return (
         <Formik

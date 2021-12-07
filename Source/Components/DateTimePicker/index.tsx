@@ -58,7 +58,7 @@ export default (props: Props) => {
         return moment(dateStr).valueOf();
     }
     return (
-        <View>
+        <View pointerEvents={`${disabled ? 'none' : 'auto'}`}>
             <View style={[styles.containerInput]}>
                 {(!horizontal && title) && (<Text style={styles.text}>{title}</Text>)}
 

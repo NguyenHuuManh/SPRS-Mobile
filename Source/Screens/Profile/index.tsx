@@ -1,32 +1,73 @@
-import { faArrowRight, faChevronLeft, faChevronRight, faHistory, faIdBadge, faLock, faPersonBooth, faSignOutAlt, faUserLock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCamera, faChevronLeft, faChevronRight, faHistory, faIdBadge, faLock, faPersonBooth, faSignOutAlt, faUserLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import React from "react";
-import { Text, View, ImageBackground } from 'react-native';
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import React, { useState } from "react";
+import { Text, View, ImageBackground, TouchableOpacity, Image } from 'react-native';
+import { ScrollView } from "react-native-gesture-handler";
 import { BackgoundMain } from "../../Helper/propertyCSS";
 import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/core"
 import { useDispatch, useSelector } from "react-redux";
-import { badgeShowActions, userActions } from "../../Redux/Actions";
+import { badgeShowActions, profileActions, userActions } from "../../Redux/Actions";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { RootState } from "../../Redux/Reducers";
+import AppImageCrop from "../../Components/AppImageCrop";
+import { apiUploadImg } from "../../ApiFunction/Auth";
+import Toast from "react-native-toast-message";
+import { isEmpty } from "lodash";
+import { IMAGE_URL } from "../../Constrants/url";
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const profileReducer = useSelector((state: RootState) => state.profileReducer);
     const userReducer = useSelector((state: RootState) => state.userReducer);
+    const [imageModal, setImageModal] = useState(false);
+    const uploadImage = (image) => {
+        if (isEmpty(image)) {
+            Toast.show({
+                type: "error",
+                text1: 'Bạn chưa chọn ảnh nào',
+                position: "top"
+            })
+            return;
+        }
+        const arr = image.path.split('/');
+        const name = arr[arr.length - 1];
+        const body = {
+            imageName: name,
+            encodedImage: image.data,
+            id: profileReducer.data.id
+        }
+        apiUploadImg(body).then((e) => {
+            if (e.status == 200) {
+                if (e.data.code == '200') {
+                    Toast.show({
+                        type: "success",
+                        text1: 'Cập nhật ảnh thành công',
+                        position: "top"
+                    });
+                    dispatch(profileActions.profileRequest())
+                    return;
+                }
+                Toast.show({
+                    type: "error",
+                    text1: e.data.message,
+                    position: "top"
+                })
+                return;
+            }
+            Toast.show({
+                type: "error",
+                text1: 'Chức năng đang bảo trì',
+                position: "top"
+            })
+            return;
+        })
+    }
+
     return (
         <View style={{ width: width, height: height, paddingBottom: 80, backgroundColor: BackgoundMain, }}>
-            {/* <View style={{ flex: 2, alignItems: "center", zIndex: 100, backgroundColor: "pink", justifyContent: "center" }}>
-                <ImageBackground source={require('../../Assets/Images/Road01.jpg')}
-                    resizeMode="stretch"
-                    style={{ width: "100%", height: "100%", backgroundColor: "red", alignItems: "center" }}
-                >
-                    <View style={[styles.avata, styles.boxShadowAvata, { backgroundColor: "#FFF" }]}></View>
-                </ImageBackground>
-            </View> */}
             <View style={{ height: "7%" }}>
                 <HeaderContainer
                     flexRight={1}
@@ -39,12 +80,37 @@ export default () => {
                     flexLeft={1}
                 />
             </View>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <View style={{ width: 200, height: 200, alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity style={{ position: "absolute", bottom: 10, right: 10, zIndex: 100 }} onPress={() => { setImageModal(true) }}>
+                        <FontAwesomeIcon icon={faCamera} />
+                    </TouchableOpacity>
+                    {profileReducer?.data?.images?.img_url ? (
+                        <Image
+                            source={{ uri: `${IMAGE_URL}${profileReducer?.data?.images?.img_url}` }}
+                            style={{ width: height * 0.25, height: height * 0.25, borderRadius: (height * 0.25) / 2 }}
+                            loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
+                            resizeMethod="scale"
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <Image
+                            source={require('../../Assets/Images/userAvata.jpeg')}
+                            style={{ width: height * 0.25, height: height * 0.25 }}
+                            loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
+                            resizeMethod="scale"
+                            resizeMode="cover"
+                        />
+                    )}
+                </View>
+                <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={uploadImage} />
+            </View>
             <View style={{ height: "93%", backgroundColor: "#F6F5F5", justifyContent: "space-around", paddingTop: "5%" }}>
                 <View style={{ height: 130, justifyContent: "center", alignItems: "center" }}>
                     <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, justifyContent: "center" }]}>
                         <Text>{profileReducer.data?.full_name}</Text>
                         <Text>Số điện thoại: {profileReducer.data?.phone}</Text>
-                        <Text>Địa chỉ: {profileReducer.data?.address?.addressLine}</Text>
+                        <Text>Địa chỉ: {profileReducer.data?.address?.subDistrict?.name + '-' + profileReducer.data?.address?.district?.name + '-' + profileReducer.data?.address?.city?.name}</Text>
                         <Text>Tài khoản: Người dùng bình thường </Text>
                     </View>
                 </View>

@@ -1,27 +1,24 @@
 import { faHome, faSearchLocation, faStreetView } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useNavigation } from "@react-navigation/core";
+import { useNavigation, useRoute } from "@react-navigation/core";
 import { debounce, isEmpty } from "lodash";
 import React, { createRef, useCallback, useEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
-import { ClusterMap, } from 'react-native-cluster-map';
+import { Alert, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { ClusterMap } from 'react-native-cluster-map';
 import Geolocation from 'react-native-geolocation-service';
-import { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from 'react-native-maps-directions';
 import { useSelector } from "react-redux";
 import { apiLoadMap } from "../../ApiFunction/PlaceAPI";
-import SOS from "../../Assets/Images/locationSOS.svg";
-import Relief from "../../Assets/Images/locationRelief.svg";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { API_KEY } from "../../Constrants/url";
-import { handleLocationPermission, haversineDistance } from "../../Helper/FunctionCommon";
+import { haversineDistance } from "../../Helper/FunctionCommon";
 import { height } from "../../Helper/responsive";
 import { RootState } from "../../Redux/Reducers";
 import BottomModalSheet from "./Components/BottomModalSheet";
 import ClusterMarker from "./Components/CluserMarker";
 import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
-import { useRoute } from "@react-navigation/core";
 import RenderMarker from "./Components/RenderMarker";
 
 export default () => {
@@ -30,8 +27,8 @@ export default () => {
     const [markerTo, setMarkerTo] = useState<any>({});
     const [myLocation, setMylocation] = useState<any>({});
     const [mapReady, setMapReady] = useState(false);
-    const [northEast, setNorthEast] = useState<any>({})
-    const [southWest, setSouthWest] = useState<any>({})
+    const [northEast, setNorthEast] = useState<any>({});
+    const [southWest, setSouthWest] = useState<any>({});
     const [centerMark, setCenterMark] = useState<any>({});
     const navigation = useNavigation<any>();
     const mapRef = createRef<any>();
@@ -39,7 +36,7 @@ export default () => {
     const [text, setText] = useState("Tìm Kiếm");
     const directionsRef = createRef<any>();
     const [dataDirection, setDataDirection] = useState({});
-    const [strokerDirection, setStrokerDirection] = useState(0)
+    const [strokerDirection, setStrokerDirection] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const { params } = useRoute<any>();
 

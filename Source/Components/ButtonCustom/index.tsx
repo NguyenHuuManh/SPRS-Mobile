@@ -7,14 +7,15 @@ interface Props extends TouchableOpacityProps {
     children?: any;
     styleContain?: any;
     styleTitle?: any;
+    noShadow?: boolean;
 
 }
 export default (props: Props) => {
-    const { title, children, styleContain, styleTitle } = props
+    const { title, children, styleContain, styleTitle, noShadow } = props
     return (
         <TouchableOpacity
             {...props}
-            style={[styles.TouchableOpacity, MainStyle.boxShadow, styleContain]}
+            style={[styles.TouchableOpacity, noShadow ? "" : MainStyle.boxShadow, styleContain]}
         >
             {title ? <Text style={[styles.Text, styleTitle]}>{title}</Text> : children}
         </TouchableOpacity>

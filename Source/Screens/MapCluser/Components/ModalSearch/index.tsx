@@ -77,7 +77,6 @@ export default (props: Props) => {
                 <HeaderContainer
                     centerEl={(
                         <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            {/* <ModalSwipe /> */}
                             <TouchableOpacity onPress={() => { setVisible(true) }} style={{
                                 padding: 5,
                                 borderWidth: 1,

@@ -1,14 +1,15 @@
-import { faClock, faDirections, faMapMarked, faMapMarkerAlt, faMarsStroke, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faDirections, faMapMarked, faMapMarkerAlt, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon, Props } from '@fortawesome/react-native-fontawesome';
 import { useNavigation } from "@react-navigation/core";
-import { isEmpty, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 import * as React from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { useSelector } from 'react-redux';
 import { MapStore } from '../..';
 import { apiPlaceDetailByLongLat } from '../../../../ApiFunction/PlaceAPI';
 import ButtonCustom from '../../../../Components/ButtonCustom';
 import { AppColor } from '../../../../Helper/propertyCSS';
-import { height } from '../../../../Helper/responsive';
+import { RootState } from '../../../../Redux/Reducers';
 
 interface Props {
     visible?: any;
@@ -16,6 +17,7 @@ interface Props {
 export default React.memo((props: Props) => {
     const { visible } = props;
     const [description, setdescription] = React.useState("");
+    const profileReducer = useSelector((state: RootState) => state.profileReducer);
     const {
         modalBottom: { setVisible },
         strokerDirectionStore: { setStrokerDirection, strokerDirection },
@@ -56,7 +58,7 @@ export default React.memo((props: Props) => {
         if (visible && !isUndefined(markerTo?.location)) {
             getDetailPlace(markerTo.location.longitude, markerTo.location.latitude);
         }
-    }, [visible])
+    }, [visible]);
     return (
         <>
             {visible ? (
@@ -108,7 +110,13 @@ export default React.memo((props: Props) => {
                                     {
                                         markerTo?.id && (
                                             <ButtonCustom onPress={() => {
-                                                navigation.navigate("DetailPoint", { point: markerTo, from: "MapCluser" });
+                                                if (markerTo?.user_id == profileReducer.data.id) {
+                                                    if (markerTo.type == 'rp') navigation.navigate("UpdateReliefPoint", { id: markerTo.id, from: 'MapCluser' });
+                                                    if (markerTo.type == 'st') navigation.navigate("UpdateStorePoint", { id: markerTo.id, from: 'MapCluser' });
+                                                    if (markerTo.type == 'sos') navigation.push("SOS", { id: markerTo.id, from: 'MapCluser' });
+                                                } else {
+                                                    navigation.navigate("DetailPoint", { point: markerTo, from: "MapCluser" });
+                                                }
                                             }} styleContain={{ alignItems: "center", backgroundColor: AppColor.MAIN_COLOR }}>
                                                 <Text style={{ color: "#FFF" }}>Xem chi tiết</Text>
                                             </ButtonCustom>

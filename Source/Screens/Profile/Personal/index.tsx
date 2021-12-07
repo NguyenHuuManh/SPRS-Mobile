@@ -81,6 +81,7 @@ export default () => {
 
                     const dataBody = {
                         ...body,
+                        full_name: values.full_name.replace(/\s\s+/g, ' '),
                         address: {
                             city: {
                                 code: "",
@@ -147,8 +148,7 @@ export default () => {
                                     iconLeft={faUserCircle}
                                     horizontal
                                     styleTitle={{ width: 90 }}
-                                    editable={!disable}
-                                    disabled
+                                    editable={false}
                                 />
                             </ContainerField>
                             <ContainerField title="Họ và tên">

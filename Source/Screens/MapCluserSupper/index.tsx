@@ -5,14 +5,13 @@ import { debounce, isEmpty } from "lodash";
 import React, { createRef, useCallback, useEffect, useState } from "react";
 import { Alert, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
-import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from 'react-native-maps-directions';
 import ClusteredMapView from 'react-native-maps-super-cluster';
 import { useSelector } from "react-redux";
 import { apiLoadMap } from "../../ApiFunction/PlaceAPI";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { API_KEY } from "../../Constrants/url";
-import { handleLocationPermission, haversineDistance } from "../../Helper/FunctionCommon";
+import { haversineDistance } from "../../Helper/FunctionCommon";
 import { height } from "../../Helper/responsive";
 import { RootState } from "../../Redux/Reducers";
 import BottomModalSheet from "./Components/BottomModalSheet";
@@ -157,7 +156,7 @@ export default () => {
 
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
-            // console.log("e", e);
+            console.log("e", e);
             if (e.status == 200) {
                 if (e.data.code == 200) {
                     setListMarker(e.data.obj.map((e) => {
@@ -169,7 +168,8 @@ export default () => {
                                     longitude: Number(e?.point.y),
                                 },
                                 type: e.type,
-                                name: e.name
+                                name: e.name,
+                                user_id: e.user_id
                             }
                         )
                     }));

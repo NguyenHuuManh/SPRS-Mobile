@@ -1,3 +1,5 @@
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
 import React, { createRef, useEffect, useState } from "react";
 import {
@@ -26,12 +28,12 @@ const SOS = ({ navigation }) => {
     city: "",
     district: "",
     subDistrict: "",
-  })
+  });
+  const item = useRoute<any>().params;
   const [sosInfor, setSosInfor] = useState<any>({});
   const [items, setItems] = useState<any>([]);
   const formikRef = createRef<any>();
   const [loading, setLoading] = useState(false);
-
 
   const getDetailPlace = (long: string | number, lat: string | number) => {
     try {
@@ -76,11 +78,18 @@ const SOS = ({ navigation }) => {
             text1: "Cập nhật SOS thành công",
             position: "top"
           })
+        } else {
+          Toast.show({
+            type: "error",
+            text1: res.data.message,
+            position: "top"
+          })
+          setLoading(false)
         }
       } else {
         Toast.show({
           type: "error",
-          text1: res.data.message,
+          text1: 'Chức năng đang bảo trì',
           position: "top"
         })
         setLoading(false)
@@ -98,7 +107,7 @@ const SOS = ({ navigation }) => {
       } else {
         Toast.show({
           type: "error",
-          text1: res.data.message,
+          text1: 'Chức năng đang bảo trì',
           position: "top"
         })
       }
@@ -118,7 +127,16 @@ const SOS = ({ navigation }) => {
         <HeaderContainer
           flexRight={1}
           flexCenter={10}
-          isBackNavigate={"Home"}
+          // isBackNavigate={"Home"}
+          leftView
+          iconLeft={faChevronLeft}
+          leftOnpress={() => {
+            if (item?.from == 'MapCluser') {
+              navigation.replace('MapCluser');
+              return;
+            }
+            navigation.navigate('Home');
+          }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFFF" }}>SOS</Text>
@@ -156,7 +174,7 @@ const SOS = ({ navigation }) => {
               level: Number(values.level),
               address: {
                 id: sosInfor.address?.id | 0,
-                GPS_Lati: adressPoint.GPS_Lati,
+                GPS_lati: adressPoint.GPS_Lati,
                 GPS_long: adressPoint.GPS_long,
                 city: {
                   name: adressPoint.city,

@@ -196,6 +196,7 @@ export default () => {
                 onEndReachedThreshold={0}
                 ListFooterComponent={renderFooter}
                 contentContainerStyle={{ paddingBottom: 10 }}
+                onScroll={() => { setOnscroll(true) }}
             />
         </View>
     )

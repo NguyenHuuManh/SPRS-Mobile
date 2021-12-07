@@ -56,7 +56,7 @@ export default () => {
                             text1: "Đăng ký tài khoản thành công",
                             position: "top"
                         })
-                        navigation.navigate("Signin")
+                        navigation.navigate("Signin");
                     } else {
                         Toast.show({
                             type: "error",
@@ -95,7 +95,7 @@ export default () => {
                         username: values.username,
                         phone: values.phone,
                         password: values.password,
-                        full_name: values.full_name,
+                        full_name: values.full_name.replace(/\s\s+/g, ' '),
                         dob: values.dob,
                         address: {
                             city: {

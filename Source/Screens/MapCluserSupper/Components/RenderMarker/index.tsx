@@ -1,12 +1,11 @@
-import React, { memo, useContext } from "react";
-import { Callout, Marker } from "react-native-maps";
-import SOS from "../../../../Assets/Images/locationSOS.svg";
-import Relief from "../../../../Assets/Images/locationRelief.svg";
-import ORG from "../../../../Assets/Images/locationOrganization.svg";
 import { useNavigation } from "@react-navigation/core";
+import React, { memo, useContext } from "react";
 import { Text, View } from "react-native";
+import { Marker } from "react-native-maps";
 import { MapStore } from "../..";
-import { height } from "../../../../Helper/responsive";
+import ORG from "../../../../Assets/Images/locationOrganization.svg";
+import Relief from "../../../../Assets/Images/locationRelief.svg";
+import SOS from "../../../../Assets/Images/locationSOS.svg";
 import Store from "../../../../Assets/Images/locationStore.svg";
 import { AppColor } from "../../../../Helper/propertyCSS";
 interface Props {
@@ -20,12 +19,12 @@ const types = ['rp', 'st', 'sos', 'org', 'sp']
 export default memo((props: Props) => {
     const { modalBottom: { visible, setVisible }, markerToStore: { markerTo } } = useContext(MapStore)
     const { setMarkerTo, setStrokerDirection, showModal, setShowModal, item } = props
-    const navigation = useNavigation();
     return (
         <Marker
             // key={item?.id | 0}
             coordinate={item.location}
             onPress={(e) => {
+                console.log('item', item);
                 if (item?.id) setMarkerTo(item);
                 setStrokerDirection(0);
                 setVisible(true);
