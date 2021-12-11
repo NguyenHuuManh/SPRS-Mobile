@@ -20,12 +20,12 @@ export const createStore = Yup.object().shape({
     open_time: Yup.string().required("không được bỏ trống").nullable().test("test", "Giờ mở cửa phải nhỏ hơn giờ đóng cửa", function () {
         const { parent } = this;
         const { open_time, close_time } = parent;
-        return compareTime(close_time, open_time);
+        return compareTime(close_time + '', open_time + '');
     }),
     close_time: Yup.string().required("không được bỏ trống").nullable().test("test", "Giờ đóng cửa phải lớn hơn giờ mở cửa", function () {
         const { parent } = this;
         const { open_time, close_time } = parent;
-        return compareTime(close_time, open_time);
+        return compareTime(close_time + '', open_time + '');
     }),
     name: Yup.string().required("không được bỏ trống").nullable(),
 });

@@ -192,7 +192,7 @@ export default ({ navigation }) => {
             >
                 <>
                     <TouchableOpacity
-                        style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
+                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
                         onPress={(e) => {
                             e.preventDefault();
                             deletePoint(item);
@@ -203,11 +203,11 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <FontAwesomeIcon icon={faTrashAlt} size={20} color="#FFFF" />
+                            <FontAwesomeIcon icon={faTrashAlt} size={20} color="red" />
                         </Animated.Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center", }}
+                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center", }}
                         onPress={(e: any) => {
                             e.preventDefault();
                             ChangeStatusPoint({ ...item, status: !item.status });
@@ -220,18 +220,20 @@ export default ({ navigation }) => {
                             ]}>
                             {/* <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" /> */}
                             <Switch value={item.status} disabled
+                                thumbColor={'#0169ff'}
                                 trackColor={{
-                                    false: "gray",
-                                    true: "blue"
-                                }}></Switch>
+                                    false: AppColor.CORLOR_TEXT,
+                                    true: AppColor.BUTTON_MAIN
+                                }}
+                            ></Switch>
                         </Animated.Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
+                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
                             // console.log("item", item)
                             e.preventDefault();
-                            navigation.navigate("MapCluser",
+                            navigation.replace("MapCluser",
                                 {
                                     toLocation:
                                     {
@@ -252,7 +254,7 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <FontAwesomeIcon icon={faMapMarked} size={20} color="#FFFF" />
+                            <FontAwesomeIcon icon={faMapMarked} size={20} color={AppColor.BUTTON_MAIN} />
                         </Animated.Text>
                     </TouchableOpacity>
                 </>
@@ -355,24 +357,14 @@ export default ({ navigation }) => {
             <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
                 <ButtonCustom
                     onPress={() => { navigation.push("AddReliefPoint") }}
-                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: "blue", }}
+                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: AppColor.BUTTON_MAIN, }}
                 >
-                    <LinearGradient
-                        colors={['rgba(228, 230, 216,0)', 'rgba(228, 230, 216,0.2)', 'rgba(244, 245, 240,1)']}
-                        style={{
-                            height: 50,
-                            width: 50,
-                            position: 'absolute',
-                            bottom: 0,
-                            borderRadius: 50
-                        }}
-                    />
                     <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
                 </ButtonCustom>
             </View>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
-                    isBackNavigate={"DrawScreen"}
+                    isReplace={"DrawScreen"}
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}

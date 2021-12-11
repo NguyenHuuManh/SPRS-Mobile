@@ -8,6 +8,7 @@ import * as toastActions from "./ToastActions"
 import * as userActions from "./UserActions"
 import * as focusNotificationTab from "./FocusNotificationTab"
 import * as UpdateAddressDeviceActions from "./UpdateAddressDeviceActions"
+import * as MenuActions from "./MenuActions"
 export {
     userActions,
     tabBarVisibleActons,
@@ -17,5 +18,6 @@ export {
     badgeShowActions,
     networkActions,
     focusNotificationTab,
-    UpdateAddressDeviceActions
+    UpdateAddressDeviceActions,
+    MenuActions
 }

@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
-import { badgeShowActions, profileActions } from '../Redux/Actions';
+import { badgeShowActions, MenuActions, profileActions } from '../Redux/Actions';
 import ActionTypes from '../Redux/ActionTypes';
 import { RootState } from '../Redux/Reducers';
 import { Home, Signin } from '../Screens';
@@ -100,19 +100,19 @@ const RootStackScreen = () => {
     const isUserToken = !isEmpty(userReducer?.data?.token || {})
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const link = useLinkTo();
 
     React.useEffect(() => {
         notificationListener();
     }, [])
 
     useEffect(() => {
-        if (!isEmpty(userReducer?.data?.token || {})) {
+        if (userReducer?.data?.token) {
             dispatch(profileActions.profileRequest());
             dispatch(badgeShowActions.badgeRequest());
             getCurrentLocation();
+            dispatch(MenuActions.MenuRequest());
         }
-        if (isEmpty(userReducer?.data?.token || {}) && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
+        if (!userReducer?.data?.token && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'AuStackScreen' }]

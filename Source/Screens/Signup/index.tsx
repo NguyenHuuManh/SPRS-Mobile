@@ -17,6 +17,7 @@ import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
 import Input from "../../Components/Input";
 import MapPicker from "../../Components/MapPicker";
+import { AppColor } from "../../Helper/propertyCSS";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
@@ -70,7 +71,7 @@ export default () => {
         }
     }
     return (
-        <KeyboardAwareScrollView style={{ backgroundColor: "#F6BB57", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "5%", paddingBottom: 50 }} showsVerticalScrollIndicator={false}>
+        <KeyboardAwareScrollView style={{ backgroundColor: AppColor.BUTTON_MAIN, flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "5%", paddingBottom: 50 }} showsVerticalScrollIndicator={false}>
             <Formik
                 initialValues={{
                     username: "manhhe",
@@ -226,13 +227,13 @@ export default () => {
                         </ContainerField>
 
                         <ButtonCustom
-                            styleContain={{ backgroundColor: "#F6BB57", marginTop: "10%" }}
+                            styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
                             styleTitle={{ color: "#FFFF", fontSize: 25 }}
                             title="Đăng ký"
                             onPress={submitForm}
                         />
                         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
-                            <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.goBack() }}>đăng nhập</Text>
+                            <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.goBack() }}>Đăng nhập</Text>
                         </View>
                     </View>
                 )

@@ -32,11 +32,11 @@ export default (props: Props) => {
                 height: 40,
                 borderRadius: 10,
                 marginRight: 10,
-                backgroundColor: Boolean(typePoinst.filter((elm) => elm.id === item.id).length > 0) ? '#e4f0c7' : "#FFFF",
+                backgroundColor: "#FFFF",
                 marginBottom: Margin_BT,
                 justifyContent: "center",
-                borderWidth: 1,
-                borderColor: "#FFFF",
+                borderWidth: Boolean(typePoinst.filter((elm) => elm.id === item.id).length > 0) ? 2 : 1,
+                borderColor: Boolean(typePoinst.filter((elm) => elm.id === item.id).length > 0) ? '#579cfe' : "#FFFF",
             }, MainStyle.boxShadow,]}
                 onPress={() => {
                     onSelectedItem(item);
@@ -45,25 +45,33 @@ export default (props: Props) => {
                 {item.id == 'rp' && (
                     <View style={{ flexDirection: "row" }}>
                         <Relief width={30} height={30} />
-                        <Text style={{ textAlignVertical: "center", color: AppColor.CORLOR_TEXT }}>Cứu trợ</Text>
+                        <View style={{ width: 70, alignItems: 'center', justifyContent: 'center', paddingRight: 7 }}>
+                            <Text style={{ textAlignVertical: "center", color: 'black' }}>Cứu trợ</Text>
+                        </View>
                     </View>
                 )}
                 {item.id == 'st' && (
                     <View style={{ flexDirection: "row" }}>
                         <Store width={30} height={30} />
-                        <Text style={{ textAlignVertical: "center", color: AppColor.CORLOR_TEXT }}>Cửa hàng</Text>
+                        <View style={{ width: 70, alignItems: 'center', justifyContent: 'center', paddingRight: 7 }}>
+                            <Text style={{ textAlignVertical: "center", color: 'black' }}>Cửa hàng</Text>
+                        </View>
                     </View>
                 )}
                 {item.id == 'sos' && (
                     <View style={{ flexDirection: "row" }}>
                         <SOS width={30} height={30} />
-                        <Text style={{ textAlignVertical: "center", color: AppColor.CORLOR_TEXT }}>SOS</Text>
+                        <View style={{ width: 70, alignItems: 'center', justifyContent: 'center', paddingRight: 7 }}>
+                            <Text style={{ textAlignVertical: "center", color: 'black' }}>SOS</Text>
+                        </View>
                     </View>
                 )}
                 {item.id == 'org' && (
                     <View style={{ flexDirection: "row" }}>
                         <ORG width={30} height={30} />
-                        <Text style={{ textAlignVertical: "center", color: AppColor.CORLOR_TEXT }}>Tổ chức</Text>
+                        <View style={{ width: 70, alignItems: 'center', justifyContent: 'center', paddingRight: 7 }}>
+                            <Text style={{ textAlignVertical: "center", color: 'black' }}>Tổ chức</Text>
+                        </View>
                     </View>
                 )}
             </TouchableOpacity>

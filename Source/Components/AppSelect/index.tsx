@@ -4,6 +4,7 @@ import { findIndex, isEmpty } from "lodash";
 import React, { memo, useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import { AppColor } from "../../Helper/propertyCSS";
+import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 interface Props {
     // name: any;
@@ -97,9 +98,9 @@ export default (props: Props) => {
         return (
             <TouchableOpacity
                 key={keyValue(item)}
-                style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? 'rgba(60, 60, 60,0.2)' : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
+                style={{ minHeight: 50, borderBottomWidth: 0.5, justifyContent: "center", backgroundColor: `${item.id + "" == value + "" ? AppColor.BUTTON_MAIN : "#FFF"}`, paddingLeft: 10, paddingRight: 10 }}
                 onPress={() => { onSelect(item) }}>
-                <Text>{labelValue(item)}</Text>
+                <Text style={{ color: `${item.id + "" == value + "" ? '#FFFF' : AppColor.CORLOR_TEXT}` }}>{labelValue(item)}</Text>
             </TouchableOpacity>
         )
     }
@@ -154,14 +155,14 @@ export default (props: Props) => {
                         style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: 'rgba(60, 60, 60,0.2)' }}>
                         <TouchableWithoutFeedback
                             onPress={(e) => { e.preventDefault() }}
-                            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                            style={[{ flex: 1, justifyContent: "center", alignItems: "center" }, MainStyle.boxShadow]}>
                             <View style={{ maxHeight: "50%", width: "80%", minHeight: "20%", backgroundColor: AppColor.MAIN_COLOR, borderRadius: 10, paddingTop: 10, paddingBottom: 20 }}>
                                 <View style={{ backgroundColor: AppColor.MAIN_COLOR, paddingLeft: 10, paddingBottom: 10 }}>
                                     <Text style={{ color: "#FFFF", fontWeight: "bold" }}>{header || "Chọn"}</Text>
                                 </View>
                                 <FlatList
                                     data={data}
-                                    keyExtractor={({ item }) => item?.id + ''}
+                                    keyExtractor={(item) => item?.id + ''}
                                     renderItem={renderItem}
                                     contentContainerStyle={{ backgroundColor: "#FFFF" }}
                                 />

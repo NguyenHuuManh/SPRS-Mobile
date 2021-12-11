@@ -8,6 +8,7 @@ import { MapStore } from "../..";
 import { apiPlaceAutoCompleteMap, apiPlaceDetailById } from "../../../../ApiFunction/PlaceAPI";
 import ButtonCustom from "../../../../Components/ButtonCustom";
 import HeaderContainer from "../../../../Components/HeaderContainer";
+import { AppColor } from "../../../../Helper/propertyCSS";
 import { height } from "../../../../Helper/responsive";
 
 interface Props {
@@ -90,7 +91,7 @@ export default (props: Props) => {
 
     }, [visible])
 
-    const debounceSearch = useCallback(debounce(({ key, location }) => getPoint(key, location.latitude, location.longitude), 100), [])
+    const debounceSearch = useCallback(debounce(({ key, location }) => getPoint(key, location.latitude, location.longitude), 500), [])
 
     function handleInputOnchange(e) {
         setKeyWord(e);
@@ -165,7 +166,7 @@ export default (props: Props) => {
                 }}
                 key={item.id}
             >
-                <FontAwesomeIcon icon={faMapMarkedAlt} />
+                <FontAwesomeIcon icon={faMapMarkedAlt} color={AppColor.MAIN_COLOR} />
                 <Text ellipsizeMode="tail" numberOfLines={1} style={{ paddingLeft: 10 }}>
                     {
                         types.includes(item.type) ? renderdescription(item) : item.description
@@ -189,15 +190,15 @@ export default (props: Props) => {
                         <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
                             <View
                                 style={{
-                                    height: 40,
+                                    height: 37,
                                     // padding: 5,
                                     borderWidth: 1,
-                                    borderColor: "#FFF",
+                                    borderColor: "#ffff",
                                     alignItems: "center",
                                     borderRadius: 10,
                                     flexDirection: "row",
                                     width: "100%",
-                                    backgroundColor: "#FFF"
+                                    backgroundColor: "#f7f7f7",
                                 }}>
                                 <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
                                 <View style={{ width: "85%" }}>
@@ -207,6 +208,9 @@ export default (props: Props) => {
                                         style={{
                                             color: "black",
                                             width: "100%",
+                                            paddingBottom: 2,
+                                            paddingTop: 2,
+                                            paddingLeft: 10
 
                                         }}
                                         ref={inputRef}
@@ -218,12 +222,12 @@ export default (props: Props) => {
                     )}
                     rightEL={(
                         <View style={{ width: "90%", alignItems: "center", justifyContent: "center" }}>
-                            <ButtonCustom title="Đóng" styleContain={{ marginTop: 0 }} onPress={() => { setVisible(false) }}></ButtonCustom>
+                            <TouchableOpacity onPress={() => { setVisible(false) }}><Text style={{ color: '#FFFF' }}>Đóng</Text></TouchableOpacity>
                         </View>
                     )}
-                    flexLeft={0}
-                    flexCenter={8}
-                    flexRight={3}
+                    flexLeft={1}
+                    flexCenter={10}
+                    flexRight={2}
                 >
                 </HeaderContainer >
             </View>

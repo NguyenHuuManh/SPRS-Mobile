@@ -10,7 +10,6 @@ export default StyleSheet.create({
         backgroundColor: "#FFF",
     },
     scrollContainer: {
-        height: height,
         width: width,
         alignItems: "center",
         justifyContent: "flex-start",
@@ -33,31 +32,47 @@ export default StyleSheet.create({
     },
     textHeader: {
         fontWeight: "bold",
-        fontSize: 25
+        fontSize: 25,
+        color: AppColor.CORLOR_TEXT
     },
 
     inforView: {
         width: "95%",
-        // backgroundColor: "pink"
+        marginTop: 10,
+        // backgroundColor: 'pink'
     },
     addressView: {
-        // flexDirection: "row",
-        marginTop: 10
+        flexDirection: "row",
+        width: '100%',
+        alignItems: 'center',
+        borderStyle: 'solid',
+        borderBottomWidth: 1,
+        borderColor: '#ececec',
+        paddingTop: 17,
+        paddingBottom: 17,
+        paddingLeft: 10,
+        paddingRight: 10,
+        // backgroundColor: 'blue'
     },
     titleView: {
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: '10%'
     },
     titleText: {
         fontWeight: "bold", marginRight: 5
     },
     textDescription: {
         color: AppColor.CORLOR_TEXT,
+        // backgroundColor: 'red',
+        width: "90%",
+        flexDirection: "row"
     },
 
     underLine: {
-        borderStyle: "solid",
+        // borderStyle: "solid",
         borderWidth: 0,
-        borderBottomWidth: 1,
+        // borderBottomWidth: 1,
         borderColor: AppColor.CORLOR_TEXT
     }
 

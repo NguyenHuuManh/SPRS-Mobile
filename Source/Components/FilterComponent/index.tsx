@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty } from "lodash";
 import React, { useState } from "react";
 import { Modal, Text, TouchableWithoutFeedback, View, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { AppColor } from "../../Helper/propertyCSS";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import ContainerField from "../ContainerField";
@@ -55,7 +56,9 @@ export default (props: Props) => {
                 }}
                 onPress={() => { onSelect({ item: item, key: key }) }}>
                 <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
-                    <View style={[styles.btnRadius, { backgroundColor: item.id == values[key] ? "blue" : "#FFFF" }]} />
+                    <View style={[styles.btnContainRadius, { width: 24, height: 24, borderRadius: 12, justifyContent: "center", alignItems: 'center' }]}>
+                        <View style={[styles.btnRadius, { backgroundColor: item.id == values[key] ? AppColor.BUTTON_MAIN : "#FFFF" }]} />
+                    </View>
                     <Text style={{ borderStyle: "solid", borderBottomWidth: 1, borderColor: "#edf0ee", paddingLeft: 10, paddingRight: 10 }}>{item.name}</Text>
                 </View>
             </TouchableOpacity>
@@ -64,16 +67,17 @@ export default (props: Props) => {
     return (
         <View style={[styles.container]} >
             <View style={{ flexDirection: "row", height: "100%" }}>
-                <TouchableOpacity onPress={() => { setvisible(true) }} style={{ justifyContent: "center", display: "flex", width: "10%" }}><FontAwesomeIcon icon={faFilter} /></TouchableOpacity>
+                <TouchableOpacity onPress={() => { setvisible(true) }} style={{ justifyContent: "center", display: "flex", width: "10%" }}>
+                    <FontAwesomeIcon icon={faFilter} color={AppColor.CORLOR_TEXT} /></TouchableOpacity>
                 <ScrollView style={{ width: "90%", height: "100%", backgroundColor: "#FFF", flexDirection: "row" }} horizontal showsHorizontalScrollIndicator={false}>
                     {listComponents.map((e) => {
                         const item = getItemSelect({ id: values[e.key], key: e.key });
                         if (isEmpty(item)) return <></>
                         return (
-                            <View style={{ marginRight: 5, justifyContent: "center" }} key={e.id}>
-                                <ContainerField styleCustomContainer={{ marginTop: 0 }}>
+                            <View style={{ marginRight: 5, justifyContent: "center", }} key={e.id}>
+                                <ContainerField styleCustomContainer={{ borderWidth: 2, marginTop: 0, borderColor: AppColor.BUTTON_MAIN, paddingLeft: 5, paddingRight: 5 }}>
                                     <View style={{ minWidth: 60, maxWidth: 100, minHeight: 40, justifyContent: "center", display: "flex", alignItems: "center" }}>
-                                        <Text ellipsizeMode="tail" numberOfLines={1}>{item?.name || ""}</Text>
+                                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ color: AppColor.CORLOR_TEXT }}>{item?.name || ""}</Text>
                                     </View>
                                 </ContainerField>
                             </View>
@@ -98,7 +102,7 @@ export default (props: Props) => {
                                             listComponents.map((e, index) => {
                                                 return (
                                                     <View style={[styles.containerColumn, { borderRightWidth: index <= listComponents.length - 2 ? 1 : 0, }]} key={index}>
-                                                        <View style={[styles.headerColumn]}><Text>{e.title}</Text></View>
+                                                        <View style={[styles.headerColumn]}><Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16 }}>{e.title}</Text></View>
                                                         <FlatList
                                                             data={e.data}
                                                             keyExtractor={(item) => item.id + ''}
@@ -116,7 +120,7 @@ export default (props: Props) => {
                                             setvisible(false);
                                             submitForm();
                                         }}>
-                                            <Text>OK</Text>
+                                            <Text style={{ color: "#FFF", fontWeight: 'bold' }}>OK</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             style={[styles.buttonComfirm]}
@@ -124,7 +128,7 @@ export default (props: Props) => {
                                                 setvisible(false);
                                                 resetForm();
                                             }}>
-                                            <Text>Hủy</Text>
+                                            <Text style={{ color: "#FFF", fontWeight: 'bold' }}>Hủy</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             style={[styles.buttonComfirm]}
@@ -133,7 +137,7 @@ export default (props: Props) => {
                                                 clearFilter();
                                                 submitForm();
                                             }}>
-                                            <Text>bỏ lọc</Text>
+                                            <Text style={{ color: "#FFF", fontWeight: 'bold' }}>Bỏ lọc</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>

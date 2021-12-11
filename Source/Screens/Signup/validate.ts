@@ -4,12 +4,12 @@ import * as Yup from "yup";
 
 export const register = Yup.object().shape({
     username: Yup.string().required("Tên tài khoản không được bỏ trống").nullable()
-        .test("test", "Tên tài khoản tối thiểu 4, tối đa 16 kí tự chỉ gồm chữ và số", function () {
+        .test("test", "Tên tài khoản tối thiểu 4, tối đa 16 kí tự chỉ gồm chữ không dấu và số", function () {
             const { parent } = this;
             const { username } = parent;
             const nameStrim = username + ''.trim();
-            var format = /^[0-9\s]{3,16}$/;
-            var format1 = /^[0-9A-Za-z\s\-]{3,16}$/;
+            var format = /^[0-9\s]{4,16}$/;
+            var format1 = /^[0-9A-Za-z\s\-]{4,16}$/;
             return format1.test(nameStrim) && !format.test(nameStrim);
         }),
     phone: Yup.string().required("Số điện thoại không được bỏ trống").nullable().test('checkphone', "Số điện thoại không hợp lệ", function () {
@@ -24,7 +24,7 @@ export const register = Yup.object().shape({
             const { parent } = this;
             const { password } = parent;
             const regex = /\s/;
-            return !regex.test(password)
+            return !regex.test(password);
         })
         .test("test", "Mật khẩu phải có cả chữ, sô, kí tự đặc biệt và tối thiểu 8 kí tự", function () {
             const { parent } = this;
@@ -37,7 +37,6 @@ export const register = Yup.object().shape({
         .test("test", "Họ và tên không chứa kí tự đặc biệt ! #$%^&*()+,-=\[\]{};`:\"\\/?", function () {
             const { parent } = this;
             const { full_name } = parent;
-            // console.log(full_name.replace(/\s\s+/g, ' '), 'nameFull');
             var format = /[\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
             return !format.test(full_name);
         }),

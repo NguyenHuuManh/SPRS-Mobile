@@ -1,56 +1,37 @@
 import ActionTypes from "../../ActionTypes";
 
 export interface IUserReducer {
-    data?: {};
+    data?: any;
     type: string;
     isLoading: boolean;
-    isGuest: boolean;
 }
 
 const initialState: IUserReducer = {
-    data: {},
+    data: [],
     type: '',
     isLoading: false,
-    isGuest: false,
-
 };
 export default (state = initialState, action) => {
     switch (action.type) {
-        case ActionTypes.LOGIN_REQUEST:
+        case ActionTypes.MENU_REQUEST:
             return {
+                data: [],
                 type: action.type,
                 isLoading: true,
-                isGuest: false,
             }
-        case ActionTypes.LOGIN_FAILED:
+        case ActionTypes.MENU_FAILED:
             return {
                 ...state,
-                data: {},
+                data: [],
                 type: action.type,
                 errMessage: action.error,
                 isLoading: false,
-                isGuest: false,
             }
-        case ActionTypes.LOGIN_SUCCESS:
+        case ActionTypes.MENU_SUCCESS:
             return {
                 ...state,
                 type: action.type,
                 data: action.response,
-                isLoading: false,
-                isGuest: false,
-            }
-        case ActionTypes.LOGIN_GUEST:
-            return {
-                ...state,
-                type: action.type,
-                isGuest: true
-            }
-        case ActionTypes.LOGOUT:
-            return {
-                ...state,
-                type: action.type,
-                data: {},
-                isGuest: false,
                 isLoading: false,
             }
         default:

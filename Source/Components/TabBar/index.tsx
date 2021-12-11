@@ -52,7 +52,7 @@ export default ({ state, descriptors, navigation }) => {
     return (
         <SafeAreaView
             style={{
-                height: Platform.OS == 'ios' ? 80 : 50,
+                // height: Platform.OS == 'ios' ? 80 : 50,
                 borderWidth: 1,
                 borderColor: 'transparent',
                 justifyContent: "center"
@@ -69,11 +69,10 @@ export default ({ state, descriptors, navigation }) => {
             },
             {
                 flexDirection: 'row',
-                justifyContent: 'space-around',
-                // alignItems: 'center',
-                paddingBottom: 20,
-                backgroundColor: "#FFFF",
-                height: 80,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#FFF',
+                height: 50,
             }]} >
                 {
                     state.routes.map((route, index) => {
@@ -121,18 +120,20 @@ export default ({ state, descriptors, navigation }) => {
                                     onLongPress={onLongPress}
                                     key={index}
                                     style={{
-                                        justifyContent: 'flex-end',
+                                        justifyContent: 'center',
+                                        // backgroundColor: "red",
                                         alignItems: 'center',
                                         flexDirection: 'column',
                                         width: width / state.routes.length,
                                     }}
                                 >
 
-                                    {IconRender({ name: route.name, color: isFocused ? "#A362EA" : "#A0A6BE" })}
+                                    {IconRender({ name: route.name, color: isFocused ? AppColor.MAIN_COLOR : "#A0A6BE" })}
 
                                     <Text style={{ color: isFocused ? AppColor.GRAY_LIGHT : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
                                         {label}
                                     </Text>
+                                    {/* </View> */}
                                 </TouchableOpacity>
                             );
                         }
@@ -145,7 +146,7 @@ export default ({ state, descriptors, navigation }) => {
                                 onLongPress={onLongPress}
                                 key={index}
                                 style={{
-                                    justifyContent: 'flex-end',
+                                    justifyContent: 'center',
                                     alignItems: 'center',
                                     flexDirection: 'column',
                                     width: width / state.routes.length,
@@ -154,14 +155,13 @@ export default ({ state, descriptors, navigation }) => {
                             >
                                 {
                                     (badgeShow.data.tab == route.name && badgeShow.data.number > 0) && (
-                                        <View style={{ width: 20, height: 20, backgroundColor: "#A0A6BE", borderRadius: 10, position: "absolute", top: 10, right: 25, justifyContent: "center" }} >
+                                        <View style={{ width: 15, height: 15, backgroundColor: "red", borderRadius: 10, position: "absolute", top: -5, right: 28, zIndex: 10, justifyContent: "center" }} >
                                             <Text style={{ color: "#FFF", alignSelf: "center", fontSize: 10, justifyContent: "center" }}>{badgeShow.data.number}</Text>
                                         </View>
                                     )
                                 }
-                                {IconRender({ name: route.name, color: isFocused ? "#A362EA" : "#A0A6BE" })}
-
-                                <Text style={{ color: isFocused ? "#A362EA" : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
+                                {IconRender({ name: route.name, color: isFocused ? AppColor.MAIN_COLOR : "#A0A6BE" })}
+                                <Text style={{ color: isFocused ? AppColor.MAIN_COLOR : AppColor.GRAY_DARK, fontWeight: "500", fontSize: 11 }}>
                                     {label}
                                 </Text>
                             </TouchableOpacity>

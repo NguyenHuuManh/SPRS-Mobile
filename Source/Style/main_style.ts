@@ -24,6 +24,7 @@ export const MainStyle = StyleSheet.create({
         shadowRadius: 1.41,
         elevation: 2,
     },
+
     icon: {
         width: 25,
         height: 25,
@@ -45,6 +46,7 @@ export const MainStyle = StyleSheet.create({
         color: "red",
         marginLeft: 10,
         fontSize: 10,
-    }
+    },
+
 
 });

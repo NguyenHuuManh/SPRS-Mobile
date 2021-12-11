@@ -1,14 +1,15 @@
-import { faChevronLeft, faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faChevronLeft, faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
-import { isNull, isUndefined } from "lodash";
+import { isEmpty, isNull, isUndefined } from "lodash";
 import React, { createRef, useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 import { apiGetReliefPointDetail, apiUpdateReliefPoint, apiUploadImg } from "../../ApiFunction/ReliefPoint";
 import AppCamera from "../../Components/AppCamera";
+import AppImageCrop from "../../Components/AppImageCrop";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
@@ -17,9 +18,12 @@ import Input from "../../Components/Input";
 import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
+import { IMAGE_URL } from "../../Constrants/url";
+import { AppColor } from "../../Helper/propertyCSS";
 import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
+import ImageView from "./components/ImageView";
 import { update } from "./validate";
 
 const UpdateReliefPoint = ({ navigation }) => {
@@ -28,7 +32,8 @@ const UpdateReliefPoint = ({ navigation }) => {
   const [editEnable, setEditEnable] = useState(false);
   const formikRef = createRef<any>();
   const [loadingImg, setLoadingImg] = useState(false);
-  const [imageList, setImageList] = useState<any>([]);
+  const [imageModal, setImageModal] = useState(false);
+  const [viewModal, setViewModal] = useState(false);
 
   const item = useRoute<any>().params;
   const [adressPoint, setAdressPoint] = useState<any>({
@@ -41,6 +46,7 @@ const UpdateReliefPoint = ({ navigation }) => {
 
   const callUpdateReliefPoint = (body) => {
     apiUpdateReliefPoint(body).then((res) => {
+      console.log(res, 'resUpdateRelief')
       if (res.status == 200) {
         if (res.data.code == "200") {
           Toast.show({
@@ -66,20 +72,32 @@ const UpdateReliefPoint = ({ navigation }) => {
       }
     })
   }
-  const updateImg = () => {
-    const dataBody = {
-      imageName: imageList?.[0]?.fileName,
-      encodedImage: imageList?.[0]?.base64,
-      id: data?.id,
+  const updateImg = (image) => {
+    if (isEmpty(image)) {
+      Toast.show({
+        type: "error",
+        text1: 'Bạn chưa chọn ảnh nào',
+        position: "top"
+      })
+      return;
+    }
+    const arr = image.path.split('/');
+    const name = arr[arr.length - 1];
+    const bodyImage = {
+      imageName: name,
+      encodedImage: image.data,
+      id: data.id
     }
 
     setLoadingImg(true);
-    apiUploadImg(dataBody).then((response) => {
+    apiUploadImg(bodyImage).then((response) => {
       console.log("reponseImg", response);
+      callGetReliefPointDetail();
     }).finally(() => { setLoadingImg(false) })
   }
   const callGetReliefPointDetail = () => {
     apiGetReliefPointDetail({ id: item.id }).then((res) => {
+      console.log('res', res)
       if (res.status == 200) {
         if (res.data.code == "200") {
           setData(res.data.obj);
@@ -91,7 +109,6 @@ const UpdateReliefPoint = ({ navigation }) => {
             subDistrict: res.data.obj.address.subDistrict.name || "",
           })
           setItems(res.data.obj.reliefInformations);
-          setImageList([{ uri: res.data.obj.images.img_url }])
           return;
         }
       } else {
@@ -118,14 +135,18 @@ const UpdateReliefPoint = ({ navigation }) => {
           iconLeft={faChevronLeft}
           leftOnpress={() => {
             if (item?.from == 'MapCluser') {
-              navigation.replace('MapCluser');
+              // navigation.replace('MapCluser');
+              navigation.reset({
+                index: 1,
+                routes: [{ name: 'MapCluser' }]
+              })
               return;
             }
             navigation.goBack();
           }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "thông tin điểm cứu trợ"}</Text>
+              <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "Thông tin điểm cứu trợ"}</Text>
             </View>
           )}
           rightEL={
@@ -152,8 +173,47 @@ const UpdateReliefPoint = ({ navigation }) => {
         />
       </View>
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={[{ width: "100%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }, MainStyle.boxShadow]}>
-          <AppCamera imageList={imageList} setImageList={setImageList} buttonSaveAction={updateImg} loading={loadingImg} />
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <View style={{ width: '100%', height: 250, alignItems: 'center', justifyContent: 'center', paddingTop: 30 }}>
+            <TouchableOpacity style={[{
+              position: "absolute",
+              bottom: 22,
+              right: 5,
+              zIndex: 100,
+              backgroundColor: '#A0A6BE',
+              width: 30,
+              height: 30,
+              borderRadius: 15,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }, MainStyle.boxShadow]} onPress={() => { setImageModal(true) }}>
+              <FontAwesomeIcon icon={faCamera} />
+            </TouchableOpacity>
+            {data?.images?.img_url ? (
+              <TouchableOpacity
+                onPress={() => { setViewModal(true) }}
+                style={{ width: '100%', height: '100%', backgroundColor: 'black' }}
+              >
+                <Image
+                  source={{ uri: `${IMAGE_URL}${data?.images?.img_url}` }}
+                  style={{ width: '100%', height: '100%' }}
+                  loadingIndicatorSource={require('../../')}
+                  resizeMethod="resize"
+                  resizeMode="center"
+                />
+              </TouchableOpacity>
+            ) : (
+              <Image
+                source={require('../../Assets/Images/storeDefault.png')}
+                style={{ width: height * 0.25, height: height * 0.25 }}
+                resizeMethod="scale"
+                resizeMode="cover"
+              />
+            )}
+            <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: 10 }}>{data?.full_name}</Text>
+          </View>
+          <ImageView img_url={data?.images?.img_url} visible={viewModal} setVisible={setViewModal} />
+          <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={updateImg} cropperCircleOverlay={false} imageDefault={require('../../Assets/Images/orgAvatar.png')} />
         </View>
         <Formik
           initialValues={{
@@ -283,7 +343,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                   horizontal
                   placeholder="Mô tả"
                   styleTitle={{ width: 110 }}
-                  disabled={!editEnable}
+                  editable={!editEnable}
                 />
               </ContainerField>
               <ContainerField title="Địa điểm">
@@ -302,7 +362,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                 <MultipleAddItem items={items} setItems={setItems} readOnly={!editEnable} />
               </ContainerField>
               {editEnable && (
-                <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, }} onPress={() => { submitForm() }} />
+                <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, }} onPress={() => { submitForm() }} />
               )}
             </View>
           )}

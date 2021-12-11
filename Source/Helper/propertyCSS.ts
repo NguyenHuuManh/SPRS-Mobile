@@ -1,6 +1,7 @@
 // export const FontText="#FFF"
 export const AppColor = {
-    MAIN_COLOR: '#F6BB57',
+    MAIN_COLOR: `#579cfe`,
+    // '#0169ff',
     //  '#A362EA',
     // "#A362EA",
     // ,
@@ -20,5 +21,6 @@ export const AppColor = {
 
     RED: '#C6322C',
     WHITE: '#ffffff',
-    CORLOR_TEXT: "#736e6e"
+    CORLOR_TEXT: "#736e6e",
+    BUTTON_MAIN: '#579cfe'
 };

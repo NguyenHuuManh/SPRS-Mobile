@@ -10,6 +10,7 @@ import { apiPlaceDetailByLongLat } from '../../../../ApiFunction/PlaceAPI';
 import ButtonCustom from '../../../../Components/ButtonCustom';
 import { AppColor } from '../../../../Helper/propertyCSS';
 import { RootState } from '../../../../Redux/Reducers';
+import { MainStyle } from '../../../../Style/main_style';
 
 interface Props {
     visible?: any;
@@ -26,7 +27,7 @@ export default React.memo((props: Props) => {
         dataDirectionStore: { dataDirection },
         markerToStore: { markerTo }
     } = React.useContext(MapStore)
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     // console.log("markerTo", markerTo);
     const renderName = (item) => {
         if (item.type == 'rp') return 'Điểm cứu trợ ' + item.name
@@ -39,7 +40,7 @@ export default React.memo((props: Props) => {
         try {
             apiPlaceDetailByLongLat(long, lat).then((response) => {
                 if (response.status == 200) {
-                    console.log(response, "respone")
+                    // console.log(response, "respone")
                     const place = response?.data?.results[0]?.formatted_address;
                     setdescription(place);
                 }
@@ -68,9 +69,9 @@ export default React.memo((props: Props) => {
                     animationType="slide"
                 >
                     <TouchableOpacity style={{ backgroundColor: 'rgba(0,0,0,0)', height: "100%", justifyContent: "flex-end" }} onPress={() => { setVisible(false) }}>
-                        <View style={{ height: "40%", backgroundColor: "#f7eac6", borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignItems: "center" }}>
-                            <View style={{ width: "95%", height: "98%" }}>
-                                <View style={{ position: "absolute", right: 10 }}>
+                        <View style={[{ height: "40%", backgroundColor: '#f7f7f7', borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignItems: "center" }, MainStyle.boxShadow]}>
+                            <View style={{ width: "90%", height: "98%" }}>
+                                <View style={{ position: "absolute", right: -1, top: 10 }}>
                                     <ButtonCustom onPress={() => {
                                         setStrokerDirection(5)
                                         mapRef.current.getMapRef().animateToRegion({
@@ -80,29 +81,29 @@ export default React.memo((props: Props) => {
                                         }, 1000);
                                         setVisible(false);
                                     }} styleContain={{ alignItems: "center", backgroundColor: AppColor.MAIN_COLOR }}>
-                                        <FontAwesomeIcon icon={faDirections} color="blue" style={{ marginRight: 10 }} />
-                                        <Text style={{ color: "blue" }}>Chỉ đường</Text>
+                                        <FontAwesomeIcon icon={faDirections} color='#FFFF' style={{ marginRight: 5 }} />
+                                        <Text style={{ color: '#FFFF' }}>Chỉ đường</Text>
                                     </ButtonCustom>
                                 </View>
                                 <View style={{ justifyContent: "flex-start", alignItems: "center", paddingBottom: 10, flex: 1 }}>
-                                    <FontAwesomeIcon icon={faWindowMinimize} color="#A0A6BE" size={20} style={{ marginTop: -10 }} />
-                                    <FontAwesomeIcon icon={faWindowMinimize} color="#A0A6BE" size={20} style={{ marginTop: -10 }} />
+                                    <FontAwesomeIcon icon={faWindowMinimize} color={AppColor.MAIN_COLOR} size={20} style={{ marginTop: -10 }} />
+                                    <FontAwesomeIcon icon={faWindowMinimize} color={AppColor.MAIN_COLOR} size={20} style={{ marginTop: -10 }} />
                                 </View>
                                 <View style={{ flex: 8, alignItems: "center", justifyContent: "space-around", paddingTop: 10 }}>
                                     <View style={{ flexDirection: "row" }}>
-                                        {/* <FontAwesomeIcon icon={faMapMarkerAlt} /> */}
                                         <Text style={{ fontWeight: "bold" }}>{renderName(markerTo)}</Text>
                                     </View>
+
                                     <View>
                                         <View style={{ flexDirection: "row" }}>
-                                            <FontAwesomeIcon icon={faMapMarkerAlt} color="blue" />
+                                            <FontAwesomeIcon icon={faMapMarkerAlt} color={AppColor.MAIN_COLOR} />
                                             <Text>{description}</Text>
                                         </View>
                                     </View>
                                     <View style={{ flexDirection: "row" }}>
-                                        <FontAwesomeIcon icon={faMapMarked} style={{ marginRight: 5 }} color="blue" />
+                                        <FontAwesomeIcon icon={faMapMarked} style={{ marginRight: 5 }} color={AppColor.MAIN_COLOR} />
                                         <Text>Khoảng cách: {Math.round(dataDirection?.distance)} km</Text>
-                                        <FontAwesomeIcon icon={faClock} style={{ marginLeft: 10, marginRight: 5 }} color="blue" />
+                                        <FontAwesomeIcon icon={faClock} style={{ marginLeft: 10, marginRight: 5 }} color={AppColor.MAIN_COLOR} />
                                         <Text>Thời gian:{convertTime(dataDirection?.duration)}</Text>
                                     </View>
                                 </View>
@@ -117,8 +118,8 @@ export default React.memo((props: Props) => {
                                                 } else {
                                                     navigation.navigate("DetailPoint", { point: markerTo, from: "MapCluser" });
                                                 }
-                                            }} styleContain={{ alignItems: "center", backgroundColor: AppColor.MAIN_COLOR }}>
-                                                <Text style={{ color: "#FFF" }}>Xem chi tiết</Text>
+                                            }} styleContain={{ alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, marginTop: 20 }}>
+                                                <Text style={{ color: '#FFFF' }}>Xem chi tiết</Text>
                                             </ButtonCustom>
                                         )
                                     }

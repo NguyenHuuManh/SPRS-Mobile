@@ -1,6 +1,7 @@
 import { all, takeLatest } from "redux-saga/effects";
 import ActionTypes from "../ActionTypes";
 import { badgeSaga } from "./BadgeSagas";
+import { getMenu } from "./MenuSagas";
 import { onNetworkChecking } from "./NetworkCheckingSagas";
 import { onChangePending } from "./PendingSagas";
 import * as profileSagas from "./ProfileSagas";
@@ -15,5 +16,6 @@ export default function* watch() {
         takeLatest(ActionTypes.NETWOTK_CHECKING, onNetworkChecking),
         takeLatest(ActionTypes.BADGE_REQUEST, badgeSaga),
         takeLatest(ActionTypes.UPDATE_ADDRESS_DEVICE_REQUEST, requestUpdate),
+        takeLatest(ActionTypes.MENU_REQUEST, getMenu),
     ])
 }

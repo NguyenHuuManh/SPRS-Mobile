@@ -8,9 +8,11 @@ interface Props {
     visible?: boolean;
     setVisible?: any;
     onSave?: any;
+    cropperCircleOverlay: boolean;
+    imageDefault?: any;
 }
 export default (props: Props) => {
-    const { visible, setVisible, onSave } = props;
+    const { visible, setVisible, onSave, cropperCircleOverlay, imageDefault } = props;
     const [image, setImage] = useState<any>({});
     const openLibary = () => {
         ImagePicker.openPicker({
@@ -18,7 +20,7 @@ export default (props: Props) => {
             height: 400,
             cropping: true,
             includeBase64: true,
-            cropperCircleOverlay: true
+            cropperCircleOverlay: cropperCircleOverlay
         }).then(image => {
             console.log(image, 'image');
             setImage(image);
@@ -31,7 +33,7 @@ export default (props: Props) => {
             height: 400,
             cropping: true,
             includeBase64: true,
-            cropperCircleOverlay: true
+            cropperCircleOverlay: cropperCircleOverlay
         }).then(image => {
             setImage(image);
         });
@@ -63,14 +65,14 @@ export default (props: Props) => {
                     {image?.path ? (
                         <Image
                             source={{ uri: `${image.path}` }}
-                            style={{ width: height * 0.4, height: height * 0.4, borderRadius: (height * 0.4) / 2 }}
+                            style={{ width: height * 0.4, height: height * 0.4, borderRadius: cropperCircleOverlay ? (height * 0.4) / 2 : 0 }}
                             loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
-                            resizeMethod="scale"
-                            resizeMode="cover"
+                            resizeMethod={cropperCircleOverlay ? 'scale' : 'resize'}
+                            resizeMode={cropperCircleOverlay ? 'cover' : 'center'}
                         />
                     ) : (
                         <Image
-                            source={require('../../Assets/Images/userAvata.jpeg')}
+                            source={imageDefault ? imageDefault : require('../../Assets/Images/userAvata.jpeg')}
                             style={{ width: height * 0.4, height: height * 0.4 }}
                             loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
                             resizeMethod="scale"

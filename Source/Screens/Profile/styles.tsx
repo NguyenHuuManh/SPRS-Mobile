@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { AppColor } from '../../Helper/propertyCSS';
 import { height, width } from '../../Helper/responsive';
 
 export default StyleSheet.create({
@@ -49,6 +50,19 @@ export default StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "flex-end"
+    },
+    pickerImg: {
+        position: "absolute",
+        bottom: 50,
+        right: 30,
+        zIndex: 100,
+        backgroundColor: '#A0A6BE',
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
+
 
 });

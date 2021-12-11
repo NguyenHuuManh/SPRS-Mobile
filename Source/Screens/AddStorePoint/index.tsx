@@ -3,7 +3,7 @@ import { Field, Formik } from "formik";
 import { isEmpty } from "lodash";
 import React, { useState } from "react";
 import {
-  SafeAreaView, Text, View
+  SafeAreaView, ScrollView, Text, View
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
@@ -17,6 +17,7 @@ import MapPicker from "../../Components/MapPicker";
 import StoreCategory from "../../Components/StoreCategory";
 import TimePicker from "../../Components/TimePicker";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
+import { AppColor } from "../../Helper/propertyCSS";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
@@ -28,7 +29,7 @@ const AddStorePoint = ({ navigation }) => {
   console.log("addressCurrent", addressCurrent.data);
   const [adressPoint, setAdressPoint] = useState<any>({
     GPS_Lati: addressCurrent?.data?.GPS_Lati || "21.00554564179488",
-    GPS_long: addressCurrent?.data.GPS_Lati || "105.51689565181731",
+    GPS_long: addressCurrent?.data.GPS_long || "105.51689565181731",
     city: addressCurrent?.data.city.name || "",
     district: addressCurrent?.data?.district.name || "",
     subDistrict: addressCurrent?.data?.subDistrict.name || "",
@@ -36,6 +37,14 @@ const AddStorePoint = ({ navigation }) => {
   const [items, setItems] = useState<any>([]);
 
   const callCreatePoint = (body) => {
+    if (isEmpty(items)) {
+      Toast.show({
+        type: "error",
+        text1: 'Chọn ít nhật một loại sản phẩm',
+        position: "top"
+      });
+      return;
+    }
     apiCreateStore(body).then((res) => {
       console.log(res, "ressss")
       if (res.status == 200) {
@@ -57,7 +66,7 @@ const AddStorePoint = ({ navigation }) => {
     })
   }
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={{ height: "7%" }}>
         <HeaderContainer
           flexRight={1}
@@ -189,20 +198,20 @@ const AddStorePoint = ({ navigation }) => {
               </ContainerField>
               <ContainerField title="Sản phẩm">
                 <StoreCategory items={items} setItems={setItems} />
-                {isEmpty(items) && (
+                {/* {isEmpty(items) && (
                   <Text style={[MainStyle.texError,]}>chọn mặt hàng cung cấp</Text>
-                )}
+                )} */}
               </ContainerField>
               <ButtonCustom
                 title={"Thêm mới"}
                 styleTitle={{ color: "#FFF" }}
-                styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF" }}
+                styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, color: "#FFFF" }}
                 onPress={() => { submitForm() }} />
             </View>
           )}
         </Formik>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 

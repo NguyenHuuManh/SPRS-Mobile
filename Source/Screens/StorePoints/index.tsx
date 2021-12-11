@@ -50,8 +50,8 @@ export default ({ navigation }) => {
     }
     const ChangeStatusPoint = (item) => {
         Alert.alert(
-            `${item.status == 0 ? "Mở lại cửa hàng" : "Đóng cửa hàng"}`,
-            `${item.status == 0 ? "Hệ thống sẽ tự động cập nhật lại giờ mở cửa của cửa hàng là giờ hiện tại " : "Hệ thống sẽ tự động cập nhật lại giờ đóng cửa của cửa hàng là giờ hiện tại"}`,
+            `${item.status != 2 ? "Mở lại cửa hàng" : "Đóng cửa hàng"}`,
+            `${item.status != 2 ? "Ban có chắc chắn mở lại cửa hàng" : "Bạn có chắc chắn đóng cửa cửa hàng"}`,
             [
                 {
                     text: 'đồng ý',
@@ -117,6 +117,7 @@ export default ({ navigation }) => {
     const deleteStore = (item) => {
         if (!item.id || isEmpty(item.id + '') || isNull(item.id)) return;
         apiDeleteStore({ id: item.id }).then((res) => {
+            console.log('delete', res)
             if (res.status == 200) {
                 if (res.data.code == '200') {
                     UpdatePoints(item, "Delete");
@@ -126,6 +127,12 @@ export default ({ navigation }) => {
                     }
                     setPageSize({ ...pageSize });
                 }
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: 'Hệ thống đang bảo trì',
+                    position: "top"
+                })
             }
         })
     }
@@ -144,10 +151,11 @@ export default ({ navigation }) => {
         return (
             <TouchableWithoutFeedback
                 onPress={(e) => { e.preventDefault() }}
+                style={{ backgroundColor: '#f7f7f7' }}
             >
                 <>
                     <TouchableOpacity
-                        style={{ backgroundColor: "red", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
+                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
                         onPress={(e) => {
                             deleteStore(item);
                         }}>
@@ -157,14 +165,14 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <FontAwesomeIcon icon={faTrashAlt} size={20} color="#FFFF" />
+                            <FontAwesomeIcon icon={faTrashAlt} size={20} color='red' />
                         </Animated.Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center", }}
+                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center", }}
                         onPress={(e: any) => {
                             e.preventDefault();
-                            ChangeStatusPoint({ ...item, status: item.status == 0 ? 1 : 0 });
+                            ChangeStatusPoint({ ...item, status: item.status != 2 ? 2 : 0 });
                         }}>
                         <Animated.Text
                             style={[
@@ -172,19 +180,21 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <Switch thumbColor="blue" value={item.status == 0} disabled
+                            <Switch thumbColor={'#0169ff'} value={item.status != 2}
+                                disabled
                                 trackColor={{
-                                    false: "gray",
-                                    true: "blue"
-                                }}>
+                                    false: AppColor.CORLOR_TEXT,
+                                    true: AppColor.BUTTON_MAIN
+                                }}
+                            >
                             </Switch>
                         </Animated.Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
+                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
                             e.preventDefault();
-                            navigation.navigate("MapCluser",
+                            navigation.replace("MapCluser",
                                 {
                                     toLocation:
                                     {
@@ -195,7 +205,7 @@ export default ({ navigation }) => {
                                         },
                                         type: "st"
                                     },
-                                    screen: "StorePoint"
+                                    screen: "StorePoints"
                                 })
                         }}>
                         <Animated.Text
@@ -204,7 +214,7 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <FontAwesomeIcon icon={faMapMarked} size={20} color="#FFFF" />
+                            <FontAwesomeIcon icon={faMapMarked} size={23} color={AppColor.BUTTON_MAIN} />
                         </Animated.Text>
                     </TouchableOpacity>
                 </>
@@ -305,9 +315,9 @@ export default ({ navigation }) => {
             <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
                 <ButtonCustom
                     onPress={() => { navigation.push("AddStorePoint") }}
-                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: "blue", }}
+                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, }}
                 >
-                    <LinearGradient
+                    {/* <LinearGradient
                         colors={['rgba(228, 230, 216,0)', 'rgba(228, 230, 216,0.2)', 'rgba(244, 245, 240,1)']}
                         style={{
                             height: 50,
@@ -316,13 +326,13 @@ export default ({ navigation }) => {
                             bottom: 0,
                             borderRadius: 50
                         }}
-                    />
+                    /> */}
                     <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
                 </ButtonCustom>
             </View>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
-                    isBackNavigate={"Home"}
+                    isReplace={"DrawScreen"}
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}

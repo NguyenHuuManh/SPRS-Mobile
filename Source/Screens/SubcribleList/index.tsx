@@ -45,7 +45,7 @@ export default ({ navigation }) => {
             >
                 <>
                     <TouchableOpacity
-                        style={{ backgroundColor: "#d3d3db", width: "20%", justifyContent: "center", alignItems: "center" }}
+                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
                             navigation.navigate("MapCluser", {
                                 toLocation: {
@@ -66,7 +66,7 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            <FontAwesomeIcon icon={faMapMarked} size={20} color="#FFFF" />
+                            <FontAwesomeIcon icon={faMapMarked} size={20} color={AppColor.BUTTON_MAIN} />
                         </Animated.Text>
                     </TouchableOpacity>
                 </>
@@ -160,7 +160,7 @@ export default ({ navigation }) => {
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
                             <Text style={{ fontSize: 20, color: "#FFFF" }}>Cửa hàng yêu thích</Text>
-                            <FontAwesomeIcon icon={faStore} style={{ marginLeft: 10 }} color="#f57842" size={26} />
+                            {/* <FontAwesomeIcon icon={faStore} style={{ marginLeft: 10 }} color="#f57842" size={26} /> */}
                         </View>
                     )}
                     flexLeft={1}

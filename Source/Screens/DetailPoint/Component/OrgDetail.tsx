@@ -1,4 +1,4 @@
-import { faChevronLeft, faMapMarked } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faMapMarked, faMapMarkerAlt, faPager } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
 import { isEmpty, isNull, isUndefined } from "lodash";
@@ -10,7 +10,9 @@ import { apiGetORGCommon } from "../../../ApiFunction/PointPublic";
 import { apiGetReliefPointDetail } from "../../../ApiFunction/ReliefPoint";
 import { apiSubcribleStore } from "../../../ApiFunction/StorePoint";
 import HeaderContainer from "../../../Components/HeaderContainer";
+import { IMAGE_URL } from "../../../Constrants/url";
 import { AppColor } from "../../../Helper/propertyCSS";
+import { height } from "../../../Helper/responsive";
 import { RootState } from "../../../Redux/Reducers";
 import { MainStyle } from "../../../Style/main_style";
 import styles from "../styles";
@@ -59,8 +61,12 @@ const OrgDetail = ({ point, from }) => {
                         if (from == 'Notification') {
                             navigation.navigate(from)
                         } else {
-                            navigation.replace(from);
+                            // navigation.replace(from);
                             // navigation.goBack();
+                            navigation.reset({
+                                index: 1,
+                                routes: [{ name: 'MapCluser' }]
+                            })
                         }
                     }}
                     centerEl={(
@@ -73,38 +79,41 @@ const OrgDetail = ({ point, from }) => {
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={[{ width: "100%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20, alignItems: "center" }]}>
-                    <Image source={{ uri: "https://image-bucket-sprs.s3.ap-southeast-1.amazonaws.com/1638187148384-rn_image_picker_lib_temp_b19224ed-86ab-4aaa-b377-f8b90847374c.jpg?fbclid=IwAR3Pa0Yn9playCnXsINBxo3MhFydIRIKTofKPiUruKANd99MjKymFsQxhjI" }}
-                        resizeMethod="scale"
-                        resizeMode="center"
-                        style={{ width: 180, height: 180, borderRadius: 180 }}
-                    />
+                    {data?.images?.img_url ? (
+                        <Image
+                            source={{ uri: `${IMAGE_URL}${data?.images?.img_url}` }}
+                            style={{ width: height * 0.25, height: height * 0.25, borderRadius: (height * 0.25) / 2 }}
+                            loadingIndicatorSource={require('../../../Assets/Icons/Blinking_squares.gif')}
+                            resizeMethod="scale"
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <Image
+                            source={require('../../../Assets/Images/orgAvatar.png')}
+                            style={{ width: height * 0.25, height: height * 0.25 }}
+                            // loadingIndicatorSource={require('../../../Assets/Icons/Blinking_squares.gif')}
+                            resizeMethod="scale"
+                            resizeMode="cover"
+                        />
+                    )}
                 </View>
                 <View style={{ width: "100%", alignItems: "center", marginTop: 50 }}>
                     <View style={{ width: "90%", alignItems: "center", height: 30, justifyContent: "center" }}>
                         <Text style={{ fontWeight: "bold" }}>{data?.name}</Text>
                     </View>
                 </View>
-                <View style={{ width: "100%", alignItems: "center", marginTop: 10 }}>
-                    <View style={{ width: "90%", alignItems: "flex-start", justifyContent: "center" }}>
-                        <Text style={[styles.titleText, { marginTop: 10 }]}>Vị trí:</Text>
+                <View style={[styles.inforView]}>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView]}>
+                            <FontAwesomeIcon icon={faMapMarkerAlt} color={AppColor.BUTTON_MAIN} />
+                        </View>
                         <Text style={[styles.textDescription]}>{data?.address?.subDistrict.name + " - " + data?.address?.district.name + " - " + data?.address?.city.name}</Text>
-                        <Text style={[styles.titleText, { marginTop: 10 }]}>Mô tả:</Text>
-                        <View style={[MainStyle.boxShadow, { width: "100%", backgroundColor: "#FFFF", borderRadius: 10, height: 100, padding: 10, marginTop: 10 }]}>
-                            <Text style={{ color: AppColor.CORLOR_TEXT }}>{data?.description}</Text>
+                    </View>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView]}>
+                            <FontAwesomeIcon icon={faPager} color={AppColor.BUTTON_MAIN} />
                         </View>
-                        {/* <Text style={[styles.titleText, { marginTop: 10 }]}>Thông tin liên hệ:</Text>
-                        <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 10 }}>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Họ và tên: </Text>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{data?.user?.full_name}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 10 }}>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Số điện thoại: </Text>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{data?.user?.phone}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 10 }}>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Ngày phát tín hiểu:</Text>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{data?.user?.create_time}</Text>
-                        </View> */}
+                        <Text style={{ color: AppColor.CORLOR_TEXT }}>Thông tin : {data?.description}</Text>
                     </View>
                 </View>
             </ScrollView>

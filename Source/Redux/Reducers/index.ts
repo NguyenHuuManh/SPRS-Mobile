@@ -8,6 +8,7 @@ import ToastReducer from "./ToastReducer";
 import UserReducer from "./UserReducer";
 import ForcusNotificationReducer from "./ForcusNotificationReducer";
 import UpdateAddressReducer from "./UpdateAddressReducer";
+import MenuReducer from "./MenuReducer";
 
 const rootReducer = combineReducers(
     {
@@ -19,7 +20,8 @@ const rootReducer = combineReducers(
         badgeReducer: BadgeReducer,
         networkCheckingReducer: NetworkCheckingReducer,
         forcusNotificationReducer: ForcusNotificationReducer,
-        updateAddressReducer: UpdateAddressReducer
+        updateAddressReducer: UpdateAddressReducer,
+        menuReducer: MenuReducer
     });
 export type RootState = ReturnType<typeof rootReducer>;
 export default rootReducer;

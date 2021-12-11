@@ -17,6 +17,7 @@ import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
 import Loading from "../../Components/Loading";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
+import { AppColor } from "../../Helper/propertyCSS";
 import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
@@ -132,7 +133,11 @@ const SOS = ({ navigation }) => {
           iconLeft={faChevronLeft}
           leftOnpress={() => {
             if (item?.from == 'MapCluser') {
-              navigation.replace('MapCluser');
+              // navigation.replace('MapCluser');
+              navigation.reset({
+                index: 1,
+                routes: [{ name: 'MapCluser' }]
+              })
               return;
             }
             navigation.navigate('Home');
@@ -193,7 +198,7 @@ const SOS = ({ navigation }) => {
                 },
               }
             }
-            console.log("body", body);
+            // console.log("body", body);
             callCreatePoint(body);
           }}
         >
@@ -201,12 +206,18 @@ const SOS = ({ navigation }) => {
             <View>
               {/* <ContainerField title="Trạng thái SOS"> */}
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}>
-                <Switch onChange={() => {
-                  // setFieldValue('status', values.status == 1 ? 0 : 1)
-                  const body = { ...sosInfor, status: sosInfor?.status == 1 ? 0 : 1 }
-                  setSosInfor(body);
-                  callCreatePoint(body);
-                }}
+                <Switch
+                  thumbColor={sosInfor?.status == 1 ? '#0169ff' : '#FFF'}
+                  trackColor={{
+                    false: AppColor.CORLOR_TEXT,
+                    true: AppColor.BUTTON_MAIN
+                  }}
+                  onChange={() => {
+                    // setFieldValue('status', values.status == 1 ? 0 : 1)
+                    const body = { ...sosInfor, status: sosInfor?.status == 1 ? 0 : 1 }
+                    setSosInfor(body);
+                    callCreatePoint(body);
+                  }}
                   style={{ width: 50, height: 50 }}
                   value={values.status == 1}
                 >
@@ -242,7 +253,7 @@ const SOS = ({ navigation }) => {
               <ButtonCustom
                 title={"Cập nhật"}
                 styleTitle={{ color: "#FFF", }}
-                styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF" }}
+                styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, color: "#FFFF" }}
                 onPress={() => { submitForm() }} />
             </View>
           )}

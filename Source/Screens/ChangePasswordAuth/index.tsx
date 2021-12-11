@@ -8,6 +8,7 @@ import Toast from 'react-native-toast-message';
 import { apiUpdatePass } from '../../ApiFunction/Auth';
 import ButtonCustom from '../../Components/ButtonCustom';
 import Input from '../../Components/Input';
+import { AppColor } from '../../Helper/propertyCSS';
 import { MainStyle } from '../../Style/main_style';
 import styles from './styles';
 import { updatePass } from './validate';
@@ -35,7 +36,7 @@ export default ({ navigation }) => {
             } else {
                 Toast.show({
                     type: "error",
-                    text1: "Chức năng đang được bảo chì",
+                    text1: "Chức năng đang được bảo trì",
                     position: "top"
                 })
             }
@@ -103,7 +104,7 @@ export default ({ navigation }) => {
 
                             />
                             <ButtonCustom
-                                styleContain={{ backgroundColor: "#F6BB57", marginTop: "10%" }}
+                                styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
                                 title="Tiếp tục"
                                 onPress={submitForm}

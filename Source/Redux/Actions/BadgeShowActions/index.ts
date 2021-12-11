@@ -9,7 +9,7 @@ export const badgeResults = (payload) => {
 
 export const badgeFailed = (payload) => {
     return {
-        type: ActionTypes.LOGIN_FAILED,
+        type: ActionTypes.BADGE_FAILED,
         payload: payload
     }
 }

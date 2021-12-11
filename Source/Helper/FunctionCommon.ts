@@ -6,6 +6,7 @@ import { Platform, View } from "react-native"
 import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions"
 import { useDispatch } from "react-redux"
 import { userActions } from "../Redux/Actions"
+import { getCurrentRoute, navigate, navigationRef } from "./RootNavigation"
 
 export const handleLocationPermission = async () => { // 👈
     let permissionCheck = ""
@@ -223,5 +224,27 @@ export const addAnItems = (targetArray, itemForAdd, key) => {
     }
     return arrayAfterFilterItem;
 };
+
+export function compareTime(str1, str2) {
+    if (str1 === str2) {
+        return false;
+    }
+    var time1 = str1.split(':');
+    var time2 = str2.split(':');
+    if (eval(time1[0]) > eval(time2[0])) {
+        return true;
+    } else if (eval(time1[0]) == eval(time2[0]) && eval(time1[1]) > eval(time2[1])) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export function backAction() {
+    // getCurrentRoute();
+    // console.log('backAction', navigationRef.getCurrentRoute());
+    console.log('fsfdsfsd');
+    return true;
+}
 
 

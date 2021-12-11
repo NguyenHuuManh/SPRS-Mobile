@@ -2,20 +2,21 @@ import { faChevronLeft, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Field, Formik } from "formik";
 import React, { useState } from "react";
-import { ImageBackground, TouchableOpacity, View } from "react-native";
+import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import CountDown from 'react-native-countdown-component';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
 import { apiResetPass } from '../../../ApiFunction/Auth';
 import ButtonCustom from '../../../Components/ButtonCustom';
 import Input from '../../../Components/Input';
+import { AppColor } from '../../../Helper/propertyCSS';
 import { MainStyle } from '../../../Style/main_style';
 import styles from '../styles';
 import { SubmitOTP } from '../validate';
 
 export default ({ route, navigation }) => {
     const { to } = route.params;
-    const [count, setCount] = useState(5);
+    const [count, setCount] = useState(10);
 
     const checkOTP = (values) => {
         apiResetPass(values).then((res) => {
@@ -61,6 +62,21 @@ export default ({ route, navigation }) => {
                             </TouchableOpacity>
                         </View>
                         <View style={[MainStyle.boxShadow, styles.containLogin]}>
+                            {count == 0 ? (
+                                <TouchableOpacity onPress={() => { setCount(5) }}>
+                                    <Text>Gửi lại: 0s</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <CountDown
+                                    until={count}
+                                    onFinish={() => setCount(0)}
+                                    timeToShow={['S']}
+                                    size={20}
+                                    timeLabels={{ s: null }}
+                                    timeLabelStyle={{ color: 'red', fontWeight: 'bold' }}
+                                    digitStyle={{ backgroundColor: '#FFF' }}
+                                />
+                            )}
                             <Field
                                 component={Input}
                                 name="otp"
@@ -69,18 +85,9 @@ export default ({ route, navigation }) => {
                                 keyboardType="numeric"
                                 underLine
                             />
-                            {count == 0 ? (
-                                <ButtonCustom onPress={() => { setCount(5) }} title="Restart" />
-                            ) : (
-                                <CountDown
-                                    until={count}
-                                    onFinish={() => setCount(0)}
-                                    timeToShow={['S']}
-                                    size={20}
-                                />
-                            )}
+
                             <ButtonCustom
-                                styleContain={{ backgroundColor: "#F6BB57", width: "80%", marginTop: "10%" }}
+                                styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
                                 title="Tiếp tục"
                                 onPress={submitForm}

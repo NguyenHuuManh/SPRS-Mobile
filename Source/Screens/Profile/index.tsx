@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React, { useState } from "react";
 import { Text, View, ImageBackground, TouchableOpacity, Image } from 'react-native';
 import { ScrollView } from "react-native-gesture-handler";
-import { BackgoundMain } from "../../Helper/propertyCSS";
+import { AppColor, BackgoundMain } from "../../Helper/propertyCSS";
 import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
@@ -81,8 +81,8 @@ export default () => {
                 />
             </View>
             <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <View style={{ width: 200, height: 200, alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity style={{ position: "absolute", bottom: 10, right: 10, zIndex: 100 }} onPress={() => { setImageModal(true) }}>
+                <View style={{ width: 200, height: 250, alignItems: 'center', justifyContent: 'center', paddingTop: 10 }}>
+                    <TouchableOpacity style={[styles.pickerImg, MainStyle.boxShadow]} onPress={() => { setImageModal(true) }}>
                         <FontAwesomeIcon icon={faCamera} />
                     </TouchableOpacity>
                     {profileReducer?.data?.images?.img_url ? (
@@ -96,19 +96,20 @@ export default () => {
                     ) : (
                         <Image
                             source={require('../../Assets/Images/userAvata.jpeg')}
-                            style={{ width: height * 0.25, height: height * 0.25 }}
+                            style={{ width: height * 0.25, height: height * 0.25, borderRadius: (height * 0.25) / 2 }}
                             loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
                             resizeMethod="scale"
                             resizeMode="cover"
                         />
                     )}
+                    <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: 10 }}>{profileReducer.data?.full_name}</Text>
                 </View>
-                <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={uploadImage} />
+                <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={uploadImage} cropperCircleOverlay={true} />
             </View>
             <View style={{ height: "93%", backgroundColor: "#F6F5F5", justifyContent: "space-around", paddingTop: "5%" }}>
                 <View style={{ height: 130, justifyContent: "center", alignItems: "center" }}>
                     <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, justifyContent: "center" }]}>
-                        <Text>{profileReducer.data?.full_name}</Text>
+
                         <Text>Số điện thoại: {profileReducer.data?.phone}</Text>
                         <Text>Địa chỉ: {profileReducer.data?.address?.subDistrict?.name + '-' + profileReducer.data?.address?.district?.name + '-' + profileReducer.data?.address?.city?.name}</Text>
                         <Text>Tài khoản: Người dùng bình thường </Text>
@@ -127,7 +128,7 @@ export default () => {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={[styles.rowItem]}>
+                        {/* <View style={[styles.rowItem]}>
                             <TouchableOpacity style={[styles.touchItem]}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
                                     <FontAwesomeIcon style={{ marginRight: 10 }} size={15} color={"#A0A6BE"} icon={faHistory} />
@@ -137,15 +138,21 @@ export default () => {
                                     <FontAwesomeIcon style={{ flex: 1 }} size={15} color={"#A0A6BE"} icon={faChevronRight} />
                                 </View>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                         <View style={[styles.rowItem]}>
                             <TouchableOpacity style={[styles.touchItem]} onPress={() => { navigation.navigate("ChangePasswordAuth") }}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
-                                    <FontAwesomeIcon style={{ marginRight: 10 }} size={15} color={"#A0A6BE"} icon={faLock} />
+                                    <FontAwesomeIcon style={{ marginRight: 10 }} size={15}
+                                        //  color={"#A0A6BE"}
+                                        color={"#A0A6BE"}
+                                        icon={faLock} />
                                     <Text >Thay đổi mật khẩu</Text>
                                 </View>
                                 <View style={[styles.containerIcon]}>
-                                    <FontAwesomeIcon style={{ flex: 1 }} size={15} color={"#A0A6BE"} icon={faChevronRight} />
+                                    <FontAwesomeIcon style={{ flex: 1 }} size={15}
+                                        // color={"#A0A6BE"}
+                                        color={"#A0A6BE"}
+                                        icon={faChevronRight} />
                                 </View>
                             </TouchableOpacity>
                         </View>

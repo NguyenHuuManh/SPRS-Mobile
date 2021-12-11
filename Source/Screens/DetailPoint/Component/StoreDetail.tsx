@@ -1,4 +1,4 @@
-import { faBell, faBellSlash, faChevronLeft, faMapMarked } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBellSlash, faChevronLeft, faClock, faMapMarked, faMapMarker, faMapMarkerAlt, faMarker, faPhone, faShoppingBasket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
 import { isEmpty, isNull, isUndefined } from "lodash";
@@ -10,16 +10,20 @@ import { apiGetStoreCommon } from "../../../ApiFunction/PointPublic";
 import { apiSubcribleStore, apiUnSubcribleStore } from "../../../ApiFunction/StorePoint";
 import ButtonCustom from "../../../Components/ButtonCustom";
 import HeaderContainer from "../../../Components/HeaderContainer";
+import { IMAGE_URL } from "../../../Constrants/url";
+import { AppColor } from "../../../Helper/propertyCSS";
+import { height } from "../../../Helper/responsive";
 import { RootState } from "../../../Redux/Reducers";
 import { MainStyle } from "../../../Style/main_style";
 import styles from "../styles";
 const StoreDetail = ({ point, from }) => {
     const [data, setData] = useState<any>({});
-    const [items, setItems] = useState<any>([]);
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const userReducer = useSelector((state: RootState) => state.userReducer);
-    console.log("userReducer", userReducer)
+    const menu = useSelector((state: RootState) => state.menuReducer);
+
+
     const getStorePoint = (id) => {
         if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
         apiGetStoreCommon(id).then((res) => {
@@ -27,7 +31,6 @@ const StoreDetail = ({ point, from }) => {
             if (res.status == 200) {
                 if (res.data.code == "200") {
                     setData(res.data.obj);
-                    setItems(res.data.obj.store_category);
                 } else {
                     Toast.show({
                         type: "error",
@@ -97,6 +100,8 @@ const StoreDetail = ({ point, from }) => {
             return;
         })
     }
+    console.log('menu.data?.includes', menu.data.map((e) => e.code)?.includes('PER_MOB_SUBCRIBE'));
+    // console.log('menu', menu.data)
 
     return (
         <SafeAreaView style={styles.container}>
@@ -116,7 +121,10 @@ const StoreDetail = ({ point, from }) => {
                             navigation.goBack();
                             return;
                         }
-                        navigation.replace(from)
+                        navigation.reset({
+                            index: 1,
+                            routes: [{ name: 'MapCluser' }]
+                        })
                     }}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
@@ -128,21 +136,36 @@ const StoreDetail = ({ point, from }) => {
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={[styles.headerPoint]}><Text style={[styles.textHeader]}>{data?.stores?.name}</Text></View>
-                <View style={[{ width: "90%", height: 180, backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 20 }]}>
-                    <Image source={{ uri: data?.stores?.images?.img_url }} style={{ width: "100%", height: "100%" }} resizeMethod="scale" resizeMode="cover" />
+                <View style={[{ width: "90%", backgroundColor: "#FFFF", padding: 1, borderRadius: 10, marginTop: 10, alignItems: "center" }]}>
+                    {data?.stores?.images?.img_url ? (
+                        <Image
+                            source={{ uri: `${IMAGE_URL}${data?.stores?.images?.img_url}` }}
+                            style={{ width: '100%', height: height * 0.25 }}
+                            loadingIndicatorSource={require('../../../Assets/Icons/Blinking_squares.gif')}
+                            resizeMethod="scale"
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <Image
+                            source={require('../../../Assets/Images/orgAvatar.png')}
+                            style={{ width: height * 0.25, height: height * 0.25 }}
+                            resizeMethod="scale"
+                            resizeMode="cover"
+                        />
+                    )}
                 </View>
-                {!userReducer.isGuest && (
-                    <View style={{ width: "90%", flexDirection: "row-reverse" }}>
+                {!userReducer.isGuest && menu.data.map((e) => e.code)?.includes('PER_MOB_SUBCRIBE') && (
+                    <View style={{ width: "90%", flexDirection: "row-reverse", paddingTop: 20 }}>
                         {data?.isSubcribe ? (
-                            <ButtonCustom styleContain={{ backgroundColor: "#F6BB57", flexWrap: "wrap" }} onPress={unsubcribleStore}>
-                                <Text style={{ color: "#FFFF", marginRight: 2 }}> Bỏ theo dõi</Text>
-                                <FontAwesomeIcon icon={faBellSlash} color="#FFF" />
+                            <ButtonCustom noShadow styleContain={[{ backgroundColor: '#ececec', flexWrap: "wrap", textAlign: "center", width: 130 }]} onPress={unsubcribleStore}>
+                                <Text style={{ color: AppColor.CORLOR_TEXT, marginRight: 5, fontWeight: "bold", textAlign: "center" }}> ĐÃ ĐĂNG KÝ</Text>
+                                {/* <FontAwesomeIcon icon={faBellSlash} color="#FFF" size={25} /> */}
                             </ButtonCustom>
                         ) :
                             (
-                                <ButtonCustom styleContain={{ backgroundColor: "#F6BB57", flexWrap: "wrap" }} onPress={subcribleStore}>
-                                    <Text style={{ color: "#FFFF", marginRight: 2 }}>Theo dõi</Text>
-                                    <FontAwesomeIcon icon={faBell} color="#FFF" />
+                                <ButtonCustom noShadow styleContain={[{ backgroundColor: AppColor.BUTTON_MAIN, flexWrap: "wrap", textAlign: "center", width: 130 }, MainStyle.boxShadowItem]} onPress={subcribleStore}>
+                                    <Text style={{ color: "#FFFF", marginRight: 5, fontWeight: "bold" }}>ĐĂNG KÝ</Text>
+                                    {/* <FontAwesomeIcon icon={faBell} size={20} color="#FFF" /> */}
                                 </ButtonCustom>
                             )
                         }
@@ -151,53 +174,47 @@ const StoreDetail = ({ point, from }) => {
                 <View style={[styles.inforView]}>
                     <View style={[styles.addressView]}>
                         <View style={[styles.titleView]}>
-                            <Text style={[styles.titleText]}>Địa điểm</Text>
-                            <FontAwesomeIcon icon={faMapMarked} />
-                            <Text>:</Text>
+                            <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color={AppColor.BUTTON_MAIN} />
                         </View>
                         <Text style={[styles.textDescription]}>{data?.stores?.address?.subDistrict.name + " - " + data?.stores?.address?.district.name + " - " + data?.stores?.address?.city.name}</Text>
                     </View>
                     <View style={[styles.addressView]}>
                         <View style={[styles.titleView]}>
-                            <Text style={[styles.titleText]}>Trạng thái: </Text>
+                            <FontAwesomeIcon icon={faClock} color={AppColor.BUTTON_MAIN} />
                         </View>
-                        <Text style={[styles.textDescription]}>{data?.stores?.status == 0 ? "Mở cửa" : data?.stores?.status == 1 ? "Đang mở cửa" : "Đóng cửa"}</Text>
+                        <View style={styles.textDescription}>
+                            <Text
+                                style={[{ marginRight: 10, color: data?.stores?.status == 0 ? 'green' : data?.stores?.status == 1 ? 'orange' : '#ec948e' }]}>
+                                {data?.stores?.status == 0 ? "Mở cửa" : data?.stores?.status == 1 ? "Đang đóng cửa" : "Tạm dừng hoạt động"}
+                            </Text>
+                            <Text style={[]}>
+                                {data?.stores?.status == 0 ? "Đóng cửa lúc " + data?.stores?.close_time : data?.stores?.status == 1 ? "Mở cửa lúc " + data?.stores?.open_time : ""}
+                            </Text>
+                        </View>
                     </View>
                     <View style={[styles.addressView]}>
                         <View style={[styles.titleView]}>
-                            <Text style={[styles.titleText]}>Mở cửa: </Text>
+                            <FontAwesomeIcon icon={faShoppingBasket} size={18} color={AppColor.BUTTON_MAIN} />
                         </View>
-                        <Text style={[styles.textDescription]}>{`Từ ${data?.stores?.open_time} đến ${data?.stores?.close_time}`}</Text>
+                        <View style={[styles.textDescription]}>
+                            {data?.stores?.store_category?.map((e) => (
+                                <Text style={[]}>{e?.name + ', ' || ''} </Text>
+                            ))}
+                        </View>
                     </View>
                     <View style={[styles.addressView]}>
-                        <View style={[styles.titleView, styles.underLine]}>
-                            <Text style={[styles.titleText]}>Mặt hàng cung cấp: </Text>
+                        <View style={[styles.titleView]}>
+                            <FontAwesomeIcon icon={faPhone} color={AppColor.BUTTON_MAIN} />
                         </View>
-                        {data?.stores?.store_category?.map((e) => (
-                            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                                <Text style={[styles.textDescription, { width: "100%", textAlign: "left" }]}>{e?.name || ''}: </Text>
-                            </View>
-                        ))}
+                        <Text style={[styles.textDescription]}>{`${data?.stores?.user_st?.phone || ''}`}</Text>
                     </View>
                     <View style={[styles.addressView]}>
-                        <View style={[styles.titleView, styles.underLine]}>
-                            <Text style={[styles.titleText]}>Thông tin liên hệ: </Text>
+                        <View style={[styles.titleView]}>
+                            <FontAwesomeIcon icon={faUser} color={AppColor.BUTTON_MAIN} />
                         </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Họ và tên: </Text>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{`${data?.stores?.user_st?.full_name || ''}`}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Số điện thoạt: </Text>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{`${data?.stores?.user_st?.phone || ''}`}</Text>
-                        </View>
-                        {/* <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "left" }]}>Ngày tạo </Text>
-                            <Text style={[styles.textDescription, { width: "50%", textAlign: "right" }]}>{`${data.full_name}`}</Text>
-                        </View> */}
+                        <Text style={[styles.textDescription]}>{`${data?.stores?.user_st?.full_name || ''}`}</Text>
                     </View>
                 </View>
-
             </ScrollView>
         </SafeAreaView>
     )

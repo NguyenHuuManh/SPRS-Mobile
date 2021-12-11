@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { AppColor } from '../../Helper/propertyCSS';
 import { height } from '../../Helper/responsive';
 // import { measure, padding } from '../../Helpers';
 
@@ -26,7 +27,7 @@ export default StyleSheet.create({
     content: {
         width: "90%",
         height: "40%",
-        backgroundColor: "gray",
+        backgroundColor: AppColor.BUTTON_MAIN,
         borderRadius: 10,
         paddingBottom: 10,
         paddingTop: 10,
@@ -59,7 +60,8 @@ export default StyleSheet.create({
     headerColumn: {
         height: "10%",
         alignItems: "center",
-        backgroundColor: "gray"
+        backgroundColor: AppColor.BUTTON_MAIN,
+        // backgroundColor: 'red'
     },
     buttonComfirm: {
         padding: 10, marginRight: 20
@@ -71,10 +73,18 @@ export default StyleSheet.create({
         width: 20,
         height: 20,
         borderRadius: 20,
-        marginRight: 10,
+        // marginRight: 10,
+        borderStyle: "solid",
+        // borderWidth: 1,
+        borderColor: "gray",
+    },
+    btnContainRadius: {
+        width: 20,
+        height: 20,
+        borderRadius: 20,
         borderStyle: "solid",
         borderWidth: 1,
-        borderColor: "gray"
+        borderColor: "gray",
     }
 
 });

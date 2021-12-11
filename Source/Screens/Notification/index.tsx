@@ -101,14 +101,19 @@ export default () => {
     // console.log("data", data)
     const renderItem = ({ item }) => {
         return (
-            <TouchableOpacity style={[styles.item, { backgroundColor: item.status !== 'read' ? "#F6BB55" : "#FFF" }]} onPress={() => {
+            <TouchableOpacity style={[styles.item,
+                // { backgroundColor: item.status !== 'read' ? "#F6BB55" : "#FFF" }
+            ]} onPress={() => {
                 navigate(item);
             }}>
                 <View style={{ flex: 2, alignItems: "flex-start" }}>
                     <Image source={require("../../Assets/Images/logo.png")} style={{ width: 50, height: 50 }} resizeMode="cover" />
                 </View>
                 <View style={{ flex: 8, flexDirection: "column", justifyContent: "space-around" }}>
-                    <Text style={{ fontWeight: "bold" }}
+                    <Text style={{
+                        fontWeight: "bold",
+                        color: item.status !== 'read' ? "black" : 'rgba(173,173,173,1)'
+                    }}
                         ellipsizeMode="tail"
                         numberOfLines={1}
                     >{item.type == 'ad' ? "Thông báo hệ thống" : item?.sender?.name}</Text>
@@ -116,7 +121,8 @@ export default () => {
                         ellipsizeMode="tail"
                         numberOfLines={1}
                         style={{
-                            color: item.status == 'uncheck' ? "#000" : AppColor.CORLOR_TEXT, marginBottom: 10,
+                            color: item.status !== 'read' ? "black" : 'rgba(173,173,173,1)',
+                            marginBottom: 10,
                             fontWeight: item.status == 'uncheck' ? "bold" : "normal",
                         }}>{item?.message}
                     </Text>
@@ -140,7 +146,7 @@ export default () => {
                             )}
                         </View>
                         < Text style={{
-                            color: item.status == 'uncheck' ? "#000" : AppColor.CORLOR_TEXT,
+                            color: item.status !== 'read' ? "black" : 'rgba(173,173,173,1)',
                             fontWeight: item.status == 'uncheck' ? "bold" : "normal"
                         }}>{renderLable(item?.create_time)}</Text>
                     </View>

@@ -19,6 +19,7 @@ import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
+import { AppColor } from "../../Helper/propertyCSS";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import MapView from "./components/MapView";
@@ -180,7 +181,7 @@ const AddReliefPoint = ({ navigation }) => {
                       <Field
                         component={DateTimePicker}
                         name="open_Date_time"
-                        placeholder="Ngày nở cửa"
+                        placeholder="Ngày mở cửa"
                         iconRight={faCalendar}
                         iconSize={20}
                       />
@@ -257,7 +258,7 @@ const AddReliefPoint = ({ navigation }) => {
                 <ButtonCustom
                   title={"Thêm mới"}
                   styleTitle={{ color: "#FFF" }}
-                  styleContain={{ backgroundColor: "#F6BB57", marginTop: 30, color: "#FFFF", }}
+                  styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, color: "#FFFF", }}
                   onPress={() => { submitForm() }} />
               </>
             )}

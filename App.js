@@ -7,25 +7,34 @@
  */
 
 import React, { Node, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { BackHandler } from "react-native";
 import Source from './Source';
 import { handleLocationPermission } from './Source/Helper/FunctionCommon';
-import { loginSuccess } from './Source/Redux/Actions/UserActions';
-import ActionTypes from './Source/Redux/ActionTypes';
-import { networkListener, resetReducerUser } from './Source/Services/notificationService';
-import { store } from './Source/Store';
+import { getCurrentRoute, reset } from './Source/Helper/RootNavigation';
+import { networkListener } from './Source/Services/notificationService';
 const App: () => Node = () => {
-  // const navigation = useNavigation();
-  const userReducer = store.getState().userReducer;
+  // const userReducer = store.getState().userReducer;
+  function handleBackPress() {
+    const route = getCurrentRoute();
+    if ((route.name == 'DetailPoint' || route.name == 'UpdateStorePoint' || route.name == 'UpdateReliefPoint' || route.name == 'SOS') && route.params?.from == "MapCluser") {
+      reset('MapCluser');
+      return true
+    }
+    return false;
+  }
+
+  const onBackPress = (callback) => {
+    BackHandler.addEventListener('hardwareBackPress', callback);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', callback);
+    };
+  };
   useEffect(() => {
     networkListener();
     handleLocationPermission().then((e) => {
       console.log("permission", e);
-
     });
-    // if (userReducer?.type !== ActionTypes.LOGIN_SUCCESS) {
-    //   resetReducerUser();
-    // }
+    onBackPress(handleBackPress);
   }, [])
   return (
     <Source />

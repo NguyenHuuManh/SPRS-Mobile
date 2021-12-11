@@ -24,7 +24,6 @@ export default memo((props: Props) => {
             // key={item?.id | 0}
             coordinate={item.location}
             onPress={(e) => {
-                console.log('item', item);
                 if (item?.id) setMarkerTo(item);
                 setStrokerDirection(0);
                 setVisible(true);

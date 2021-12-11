@@ -1,4 +1,4 @@
-import { faHome, faSearchLocation, faStreetView } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faHome, faSearchLocation, faStreetView } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { debounce, isEmpty } from "lodash";
@@ -12,6 +12,7 @@ import { apiLoadMap } from "../../ApiFunction/PlaceAPI";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { API_KEY } from "../../Constrants/url";
 import { haversineDistance } from "../../Helper/FunctionCommon";
+import { AppColor } from "../../Helper/propertyCSS";
 import { height } from "../../Helper/responsive";
 import { RootState } from "../../Redux/Reducers";
 import BottomModalSheet from "./Components/BottomModalSheet";
@@ -19,6 +20,7 @@ import ClusterMarker from "./Components/CluserMarker";
 import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
 import RenderMarker from "./Components/RenderMarker";
+import MY_LOCATION from "../../Assets/Icons/myLocation.svg";
 interface Store {
     regionStore: { region: any; setRegion: any };
     markerToStore: { markerTo: any, setMarkerTo: any };
@@ -137,11 +139,20 @@ export default () => {
             setSouthWest(e.southWest);
             setMapReady(true);
         });
-
-
+        if (params?.toLocation) {
+            const regionTo = {
+                latitude: params?.toLocation.location.latitude,
+                longitude: params?.toLocation.location.longitude,
+                latitudeDelta: 0.006866,
+                longitudeDelta: 0.006866,
+            }
+            mapRef.current.getMapRef().animateToRegion(regionTo, 1000);
+            setMarkerTo(params.toLocation);
+            setStrokerDirection(5);
+        }
     }
     useEffect(() => {
-        if (params?.toLocation) {
+        if (params?.toLocation && mapRef?.current?.getMapRef()) {
             const regionTo = {
                 latitude: params?.toLocation.location.latitude,
                 longitude: params?.toLocation.location.longitude,
@@ -156,7 +167,7 @@ export default () => {
 
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
-            console.log("e", e);
+            // console.log("e", e);
             if (e.status == 200) {
                 if (e.data.code == 200) {
                     setListMarker(e.data.obj.map((e) => {
@@ -219,7 +230,7 @@ export default () => {
                     onReady={(results) => {
                         setDataDirection({ distance: results.distance, duration: results.duration })
                     }}
-                    strokeColor="blue"
+                    strokeColor={AppColor.MAIN_COLOR}
 
                 />
             </>
@@ -233,11 +244,19 @@ export default () => {
                 <ModalSearch setText={setText} visible={searchVisible} setVisible={setSearchVisible} />
                 <View style={{ height: height * 0.07 }}>
                     <HeaderContainer
-                        isBackNavigate={params?.screen}
+                        // isReplace={params?.screen}
+                        leftView={params?.screen}
+                        leftOnpress={() => {
+                            if (params?.screen == 'DetailPoint') {
+                                navigation.goBack();
+                                return;
+                            }
+                            navigation.replace(params?.screen)
+                        }}
+                        iconLeft={faChevronLeft}
                         centerEl={(
                             <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
                                 <TouchableOpacity onPress={() => {
-                                    console.log("fsdfdfsdfsd");
                                     setSearchVisible(true);
                                 }} style={{
                                     padding: 5,
@@ -247,18 +266,19 @@ export default () => {
                                     borderRadius: 10,
                                     flexDirection: "row",
                                     width: "100%",
-                                    backgroundColor: "#FFF"
+                                    backgroundColor: "#FFF",
+                                    height: 37
                                 }}>
-                                    <View style={{ paddingRight: 5, paddingLeft: 5, width: "10%" }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
-                                    <Text numberOfLines={1} style={{ height: 30, alignSelf: "center", textAlignVertical: "center", width: "90%" }} ellipsizeMode="tail">{text}</Text>
+                                    <View style={{ paddingRight: 5, paddingLeft: 5 }}><FontAwesomeIcon icon={faSearchLocation} color="#A0A6BE" size={20} /></View>
+                                    <Text numberOfLines={1} style={{ height: 30, alignSelf: "center", textAlignVertical: "center", width: "90%", color: AppColor.CORLOR_TEXT, paddingLeft: 10 }} ellipsizeMode="tail">{text}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
-                        flexLeft={params?.screen ? 2 : 1}
-                        flexCenter={11}
-                        flexRight={2}
+                        flexLeft={params?.screen ? 2 : 0}
+                        flexCenter={14}
+                        flexRight={3}
                         rightEL={(
-                            <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingRight: 10 }}>
+                            <View style={{ flexDirection: "row", justifyContent: "center" }}>
                                 <TouchableOpacity onPress={() => {
                                     if (userReducer.isGuest) {
                                         Alert.alert(
@@ -285,7 +305,7 @@ export default () => {
                                         navigation.navigate("DrawScreen")
                                     }
                                 }}>
-                                    <FontAwesomeIcon icon={faHome} color="#A0A6BE" size={24} />
+                                    <FontAwesomeIcon icon={faHome} color="#FFFF" size={24} />
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -304,7 +324,8 @@ export default () => {
                                     longitudeDelta: 0.006866,
                                 }, 1000);
                             }}>
-                            <FontAwesomeIcon icon={faStreetView} size={30} style={{ marginTop: 10 }} color="blue" />
+                            {/* <FontAwesomeIcon icon={faStreetView} size={30} style={{ marginTop: 10 }} color="blue" /> */}
+                            <MY_LOCATION width={35} height={35} fill={AppColor.MAIN_COLOR} />
                         </TouchableOpacity>
                     </View>
                     {

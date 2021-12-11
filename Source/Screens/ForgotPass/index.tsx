@@ -13,6 +13,7 @@ import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import { SubmitPhone } from './validate';
 import CountDown from 'react-native-countdown-component';
+import { AppColor } from '../../Helper/propertyCSS';
 export default () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
@@ -62,7 +63,7 @@ export default () => {
                             />
 
                             <ButtonCustom
-                                styleContain={{ backgroundColor: "#F6BB57", marginTop: "10%" }}
+                                styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
                                 title="Tiếp tục"
                                 onPress={submitForm}

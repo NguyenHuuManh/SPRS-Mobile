@@ -120,7 +120,7 @@ export default () => {
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
             if (e.status == 200) {
-                console.log("resMap", e);
+                // console.log("resMap", e);
                 if (e.data.code == 200) {
                     setListMarker(e.data.obj);
                 }

@@ -16,7 +16,7 @@ export default StyleSheet.create({
         justifyContent: "flex-start",
         paddingLeft: 10,
         paddingRight: 10,
-        paddingBottom: 50,
+        paddingBottom: 10,
     },
     containMap: {
         width: "90%",

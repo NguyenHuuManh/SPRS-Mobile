@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/core";
 import { apiCity } from "../../../ApiFunction/PlaceAPI";
 import { checkCallAPI } from "../../../Helper/FunctionCommon";
 import { apiGetStoreCategory } from "../../../ApiFunction/List";
+import { AppColor } from "../../../Helper/propertyCSS";
 interface Props {
     body: any,
     setBody: any,
@@ -19,27 +20,9 @@ interface Props {
 }
 export default (props: Props) => {
     const { body, setBody, pageSize, setPageSize, setIsRefesh } = props
-    const navigation = useNavigation<any>();
-
-    const [dataKV, setDataKV] = useState([]);
     const [dataType, setDataType] = useState([]);
 
-
-    const callGetGroupList = () => {
-        apiCity()
-            .then((res) => {
-                checkCallAPI(
-                    res,
-                    (response) => {
-                        setDataKV(response.obj);
-                    },
-                    (e) => { }
-                );
-            })
-            .catch((error) => { })
-    }
     useEffect(() => {
-        callGetGroupList();
         callGetItems();
     }, []);
 
@@ -88,7 +71,7 @@ export default (props: Props) => {
                                 formikProps.setFieldValue("sort", !formikProps.values.sort);
                                 formikProps.submitForm();
                             }}>
-                                <FontAwesomeIcon icon={formikProps.values.sort ? faSortAlphaDownAlt : faSortAlphaUp} />
+                                <FontAwesomeIcon color={AppColor.CORLOR_TEXT} icon={formikProps.values.sort ? faSortAlphaDownAlt : faSortAlphaUp} />
                             </TouchableOpacity>
 
                         </View>

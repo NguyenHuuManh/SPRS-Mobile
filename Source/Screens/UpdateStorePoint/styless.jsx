@@ -24,6 +24,18 @@ export default StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         backgroundColor: "#FFF"
+    },
+    pickerImg: {
+        position: "absolute",
+        bottom: 50,
+        right: 30,
+        zIndex: 100,
+        backgroundColor: '#A0A6BE',
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 
 });

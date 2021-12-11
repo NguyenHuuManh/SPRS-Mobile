@@ -13,7 +13,8 @@ export default StyleSheet.create({
         height: 100,
         borderColor: 'rgba(0,0,0,0.2)',
         flexDirection: "row",
-        padding: 10
+        padding: 10,
+        backgroundColor: '#FFFF'
     }
 
 });

@@ -1,4 +1,4 @@
-import { faCalendar, faCity, faEdit, faPhone, faUserAlt, faUserCircle, faUserEdit } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faCity, faEdit, faPhone, faTimesCircle, faUserAlt, faUserCircle, faUserEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
@@ -107,14 +107,24 @@ export default () => {
             >
                 {({ submitForm, resetForm }) => (
                     <View style={{ width: width }}>
-                        <View style={{ flex: 1, alignItems: "center", zIndex: 100, backgroundColor: "#F6BB57" }}>
-                            <HeaderContainer isBack></HeaderContainer>
-                            <View style={[styles.avata, styles.boxShadowAvata]}></View>
+                        <View style={{ height: height * 0.07, alignItems: "center", zIndex: 100, backgroundColor: "#F6BB57" }}>
+                            <HeaderContainer
+                                flexRight={1}
+                                flexCenter={10}
+                                isBack
+                                centerEl={(
+                                    <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+                                        <Text style={{ fontSize: 20, color: "#FFF" }}>Thông tin tài khoản</Text>
+                                    </View>
+                                )}
+                                flexLeft={1}
+                            />
+                            {/* <View style={[styles.avata, styles.boxShadowAvata]}></View> */}
                         </View>
-                        <View style={{ flex: 6, backgroundColor: "#FFFF", padding: "5%", justifyContent: "space-around", paddingBottom: "5%", marginTop: 30 }}>
-                            <View style={{ flexDirection: "row" }}>
+                        <View style={{ flex: 6, backgroundColor: "#FFFF", padding: "5%", justifyContent: "space-around", paddingBottom: "5%", marginTop: 5 }}>
+                            <View style={{ flexDirection: "row", alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                                 <TouchableOpacity
-                                    style={{ flexDirection: "row", padding: 10, borderWidth: 1, borderColor: "#e0dcce", borderRadius: 10 }}
+                                    style={{ flexDirection: "row", padding: 10, borderWidth: 1, borderColor: "#e0dcce", borderRadius: 10, width: 110 }}
                                     onPress={() => {
                                         if (disable) {
                                             setDisable(false);
@@ -125,8 +135,8 @@ export default () => {
                                         }
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faUserEdit} />
-                                    <Text style={{ marginLeft: 10, color: AppColor.CORLOR_TEXT }}>{disable ? "Chỉnh sửa" : "Hủy"}</Text>
+                                    <FontAwesomeIcon icon={disable ? faUserEdit : faTimesCircle} color={disable ? AppColor.MAIN_COLOR : 'red'} style={{ width: '10%' }} />
+                                    <Text style={{ color: AppColor.CORLOR_TEXT, width: '90%', textAlign: 'center', fontWeight: 'bold' }}>{disable ? "Chỉnh sửa" : "Hủy"}</Text>
                                 </TouchableOpacity>
                             </View>
                             <ContainerField title="Loại tài khoản">
@@ -223,7 +233,7 @@ export default () => {
                                 />
                             </ContainerField>
                             {!disable && (
-                                <ButtonCustom title="Lưu" styleContain={{ backgroundColor: "#F6BB57", marginTop: 20 }} onPress={submitForm} />
+                                <ButtonCustom title="Cập nhật" styleContain={{ backgroundColor: "#579cfe", marginTop: 20 }} onPress={submitForm} />
                             )}
                         </View>
                     </View>
