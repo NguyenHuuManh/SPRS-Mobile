@@ -55,7 +55,7 @@ const UpdateReliefPoint = ({ navigation }) => {
             position: "top"
           });
           if (item?.from == 'MapCluser') return;
-          navigation.push('ReliefPoint');
+          navigation.goBack();
           return;
         }
         Toast.show({
@@ -222,7 +222,7 @@ const UpdateReliefPoint = ({ navigation }) => {
             close_Hour_time: (!isNull(data?.close_time) && !isUndefined(data?.close_time)) ? data?.close_time.split(" ")[1] : "",
             open_Date_time: (!isNull(data?.open_time) && !isUndefined(data?.open_time)) ? data?.open_time.split(" ")[0] : "",
             close_Date_time: (!isNull(data?.close_time) && !isUndefined(data?.close_time)) ? data?.close_time.split(" ")[0] : "",
-            status: data?.status || "",
+            // status: data?.status || "",
             name: data?.name || "",
             description: data?.description || "",
           }}
@@ -230,6 +230,14 @@ const UpdateReliefPoint = ({ navigation }) => {
           validationSchema={update}
           enableReinitialize
           onSubmit={(values) => {
+            if (isEmpty(items)) {
+              Toast.show({
+                type: "error",
+                text1: 'Chọn ít nhất một mặt hàng',
+                position: "top"
+              });
+              return;
+            }
             const body = {
               ...values,
               open_time: values.open_Date_time + " " + values.open_Hour_time,

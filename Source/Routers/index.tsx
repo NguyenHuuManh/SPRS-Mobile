@@ -6,9 +6,11 @@ import { useLinkTo } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { isEmpty } from 'lodash';
 import React, { useEffect } from 'react';
+import { BackHandler } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
+import { getCurrentRoute, reset } from '../Helper/RootNavigation';
 import { badgeShowActions, MenuActions, profileActions } from '../Redux/Actions';
 import ActionTypes from '../Redux/ActionTypes';
 import { RootState } from '../Redux/Reducers';
@@ -24,6 +26,7 @@ import MapCluser from '../Screens/MapCluser';
 import MapCluserSupper from '../Screens/MapCluserSupper';
 import Notification from '../Screens/Notification';
 import NotificationDetail from '../Screens/NotificationDetail';
+import OrgPoints from '../Screens/OrgPoints';
 import Profile from '../Screens/Profile';
 import Personal from '../Screens/Profile/Personal';
 import ReliefPoints from '../Screens/ReliefPoints';
@@ -33,7 +36,9 @@ import StorePoints from '../Screens/StorePoints';
 import SubcribleList from '../Screens/SubcribleList';
 import UpdateReliefPoint from '../Screens/UpdateReliefPoint';
 import UpdateStorePoint from '../Screens/UpdateStorePoint';
+import UpdateEventPoint from '../Screens/UpdateEventPoint';
 import { getCurrentLocation, notificationListener } from '../Services/notificationService';
+// import { getCurrentRoute, reset } from '/';
 
 const Tabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -126,7 +131,25 @@ const RootStackScreen = () => {
     //     }
     // }, [profileReducer])
 
+    function handleBackPress() {
+        const route = getCurrentRoute();
+        console.log('route', route);
+        if ((route.name == 'DetailPoint' || route.name == 'UpdateStorePoint' || route.name == 'UpdateReliefPoint' || route.name == 'SOS') && route.params?.from == "MapCluser") {
+            reset('MapCluser');
+            return true
+        }
+        return false;
+    }
 
+    const onBackPress = (callback) => {
+        BackHandler.addEventListener('hardwareBackPress', callback);
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', callback);
+        };
+    };
+    useEffect(() => {
+        onBackPress(handleBackPress);
+    }, [])
 
     return (
         <>
@@ -148,8 +171,10 @@ const RootStackScreen = () => {
                             <RootStack.Screen name="NotificationDetail" component={NotificationDetail} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="AddStorePoint" component={AddStorePoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="UpdateReliefPoint" component={UpdateReliefPoint} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="UpdateEventPoint" component={UpdateEventPoint} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="ReliefPoint" component={ReliefPoints} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="StorePoints" component={StorePoints} options={{ animationEnabled: true }} />
+                            <RootStack.Screen name="OrgPoints" component={OrgPoints} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="SOS" component={SOS} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="SubcribeList" component={SubcribleList} options={{ animationEnabled: true }} />
                             <RootStack.Screen name="DetailPoint" component={DetailPoint} options={{ animationEnabled: true }} />

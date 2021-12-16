@@ -4,98 +4,69 @@ import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
 import { isEmpty, isNull, isUndefined } from "lodash";
 import React, { createRef, useEffect, useState } from "react";
-import {
-  Image,
-  SafeAreaView, ScrollView, Text, TouchableOpacity, View
-} from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
-import { apiGetStoreDetail, apiUpdateStore, apiUploadImg } from "../../ApiFunction/StorePoint";
+import { apiGetEventDetail } from "../../ApiFunction/EventPoint";
+import { apiGetReliefPointDetail, apiUpdateReliefPoint, apiUploadImg } from "../../ApiFunction/ReliefPoint";
 import AppCamera from "../../Components/AppCamera";
 import AppImageCrop from "../../Components/AppImageCrop";
-import AppSelectStoreStatus from "../../Components/AppSelectStoreStatus";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
+import DateTimePicker from "../../Components/DateTimePicker";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
 import MapPicker from "../../Components/MapPicker";
-import StoreCategory from "../../Components/StoreCategory";
+import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
 import { IMAGE_URL } from "../../Constrants/url";
 import { AppColor } from "../../Helper/propertyCSS";
-import { height, width } from "../../Helper/responsive";
+import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
-// import styless from "./styless";
-import { updateStore } from "./validate";
+import styles from "../AddLocation/styles";
+import ImageView from "./components/ImageView";
 
-
-const UpdateStorePoint = ({ navigation }) => {
+const UpdateReliefPoint = ({ navigation }) => {
   const [items, setItems] = useState<any>([]);
-  const item = useRoute<any>().params;
   const [data, setData] = useState<any>({});
-  const [adressPoint, setAdressPoint] = useState<any>({});
   const [editEnable, setEditEnable] = useState(false);
   const formikRef = createRef<any>();
+  const [loadingImg, setLoadingImg] = useState(false);
   const [imageModal, setImageModal] = useState(false);
-  useEffect(() => {
-    getStorePoint(item.id);
-  }, [item])
-  const getStorePoint = (id) => {
-    if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
-    apiGetStoreDetail(id).then((res) => {
-      console.log("res", res);
+  const [viewModal, setViewModal] = useState(false);
+
+  const item = useRoute<any>().params;
+  const [adressPoint, setAdressPoint] = useState<any>({
+    GPS_Lati: item?.address?.GPS_lati || '',
+    GPS_long: item?.address?.GPS_long || '',
+    city: "",
+    district: "",
+    subDistrict: "",
+  })
+
+  const callUpdateReliefPoint = (body) => {
+    apiUpdateReliefPoint(body).then((res) => {
+      console.log(res, 'resUpdateRelief')
       if (res.status == 200) {
         if (res.data.code == "200") {
-          setAdressPoint({
-            GPS_Lati: Number(res?.data.obj?.address?.GPS_lati),
-            GPS_long: Number(res?.data.obj?.address?.GPS_long),
-            city: res?.data.obj?.address.city.name,
-            district: res?.data.obj?.address.district.name,
-            subDistrict: res?.data.obj?.address.subDistrict.name,
-          })
-          setData(res.data.obj);
-          setItems(res.data.obj.store_category);
-        } else {
           Toast.show({
-            type: "error",
-            text1: res.data.message,
+            type: "success",
+            text1: "Cập nhật thành công",
             position: "top"
-          })
+          });
+          if (item?.from == 'MapCluser') return;
+          navigation.goBack();
+          return;
         }
+        Toast.show({
+          type: "error",
+          text1: res.data.message,
+          position: "top"
+        })
       } else {
         Toast.show({
           type: "error",
           text1: "Chức năng đang bảo trì",
-          position: "top"
-        })
-      }
-    })
-  }
-
-  const UpdateStore = (body) => {
-    apiUpdateStore(body).then((res) => {
-      console.log("ressss", res)
-      if (res.status == 200) {
-        if (res.data.code == "200") {
-          Toast.show({
-            type: "success",
-            text1: "Cập nhật cửa hàng thành công",
-            position: "top"
-          })
-          setEditEnable(false);
-          getStorePoint(item.id);
-          navigation.replace('StorePoints');
-        } else {
-          Toast.show({
-            type: "success",
-            text1: "Cập nhật cửa hàng thành công",
-            position: "top"
-          })
-        }
-      } else {
-        Toast.show({
-          type: "error",
-          text1: res.data.message,
           position: "top"
         })
       }
@@ -117,25 +88,49 @@ const UpdateStorePoint = ({ navigation }) => {
       encodedImage: image.data,
       id: data.id
     }
+
+    setLoadingImg(true);
     apiUploadImg(bodyImage).then((response) => {
-      getStorePoint(data.id);
       console.log("reponseImg", response);
-    }).finally(() => { })
+      callGetReliefPointDetail();
+    }).finally(() => { setLoadingImg(false) })
   }
+  const callGetReliefPointDetail = () => {
+    apiGetEventDetail({ id: item.id }).then((res) => {
+      console.log('res', res)
+      if (res.status == 200) {
+        if (res.data.code == "200") {
+          setData(res.data.obj);
+          setAdressPoint({
+            GPS_Lati: res.data.obj.address.GPS_lati,
+            GPS_long: res.data.obj.address.GPS_long,
+            city: res.data.obj.address.city.name || "",
+            district: res.data.obj.address.district.name || "",
+            subDistrict: res.data.obj.address.subDistrict.name || "",
+          })
+          setItems(res.data.obj.reliefInformations);
+          return;
+        }
+      } else {
+        Toast.show({
+          type: "error",
+          text1: res.data.message,
+          position: "top"
+        })
+      }
+    })
+  }
+  useEffect(() => {
+    callGetReliefPointDetail();
+  }, [item])
   return (
-    <ScrollView
-      contentContainerStyle={{
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-      }}
-    >
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={{ height: height * 0.07 }}>
         <HeaderContainer
           flexRight={1}
-          flexLeft={1}
           flexCenter={10}
-          // isBackReLoad="StorePoints"
+          flexLeft={1}
+          // isBack
           leftView
           iconLeft={faChevronLeft}
           leftOnpress={() => {
@@ -151,7 +146,7 @@ const UpdateStorePoint = ({ navigation }) => {
           }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật cửa hàng" : "Thông tin cửa hàng"}</Text>
+              <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "Thông tin điểm cứu trợ"}</Text>
             </View>
           )}
           rightEL={
@@ -159,7 +154,7 @@ const UpdateStorePoint = ({ navigation }) => {
               <TouchableOpacity onPress={() => {
                 setEditEnable(false);
                 formikRef.current.resetForm();
-                setItems(data.store_category);
+                setItems(data.reliefInformations);
                 setAdressPoint({
                   GPS_Lati: Number(data?.address?.GPS_lati),
                   GPS_long: Number(data?.address?.GPS_long),
@@ -177,17 +172,7 @@ const UpdateStorePoint = ({ navigation }) => {
           }
         />
       </View>
-      <KeyboardAwareScrollView
-        contentContainerStyle={{
-          // height: height + (height * 0.1),
-          width: width,
-          justifyContent: "flex-start",
-          paddingLeft: 10,
-          paddingRight: 10,
-          backgroundColor: "#FFFF",
-          paddingBottom: 10
-        }}
-      >
+      <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <View style={{ width: '100%', height: 250, alignItems: 'center', justifyContent: 'center', paddingTop: 30 }}>
             <TouchableOpacity style={[{
@@ -205,13 +190,18 @@ const UpdateStorePoint = ({ navigation }) => {
               <FontAwesomeIcon icon={faCamera} />
             </TouchableOpacity>
             {data?.images?.img_url ? (
-              <Image
-                source={{ uri: `${IMAGE_URL}${data?.images?.img_url}` }}
-                style={{ width: '100%', height: '100%' }}
-                loadingIndicatorSource={require('../../')}
-                resizeMethod="resize"
-                resizeMode="center"
-              />
+              <TouchableOpacity
+                onPress={() => { setViewModal(true) }}
+                style={{ width: '100%', height: '100%', backgroundColor: 'black' }}
+              >
+                <Image
+                  source={{ uri: `${IMAGE_URL}${data?.images?.img_url}` }}
+                  style={{ width: '100%', height: '100%' }}
+                  loadingIndicatorSource={require('../../')}
+                  resizeMethod="resize"
+                  resizeMode="center"
+                />
+              </TouchableOpacity>
             ) : (
               <Image
                 source={require('../../Assets/Images/storeDefault.png')}
@@ -222,35 +212,42 @@ const UpdateStorePoint = ({ navigation }) => {
             )}
             <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: 10 }}>{data?.full_name}</Text>
           </View>
-          <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={updateImg} cropperCircleOverlay={false} imageDefault={require('../../Assets/Images/storeDefault.png')} />
+          <ImageView img_url={data?.images?.img_url} visible={viewModal} setVisible={setViewModal} />
+          <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={updateImg} cropperCircleOverlay={false} imageDefault={require('../../Assets/Images/orgAvatar.png')} />
         </View>
         <Formik
           initialValues={{
             id: data?.id,
-            open_time: data?.open_time || "",
-            close_time: data?.close_time || "",
-            status: data?.status,
+            open_Hour_time: (!isNull(data?.open_time) && !isUndefined(data?.open_time)) ? data?.open_time.split(" ")[1] : "",
+            close_Hour_time: (!isNull(data?.close_time) && !isUndefined(data?.close_time)) ? data?.close_time.split(" ")[1] : "",
+            open_Date_time: (!isNull(data?.open_time) && !isUndefined(data?.open_time)) ? data?.open_time.split(" ")[0] : "",
+            close_Date_time: (!isNull(data?.close_time) && !isUndefined(data?.close_time)) ? data?.close_time.split(" ")[0] : "",
+            // status: data?.status || "",
             name: data?.name || "",
             description: data?.description || "",
           }}
           innerRef={formikRef}
-          validationSchema={updateStore}
           enableReinitialize
           onSubmit={(values) => {
             if (isEmpty(items)) {
               Toast.show({
                 type: "error",
-                text1: 'Chọn ít nhật một loại sản phẩm',
+                text1: 'Chọn ít nhất một mặt hàng',
                 position: "top"
               });
               return;
             }
             const body = {
               ...values,
-              store_category: items.map((e) => {
+              open_time: values.open_Date_time + " " + values.open_Hour_time,
+              close_time: values.close_Date_time + " " + values.close_Hour_time,
+              reliefInformations: items.map((e) => {
                 return {
                   id: e.id,
-                  name: e.name
+                  quantity: e.quantity,
+                  item: {
+                    id: e.item.id
+                  }
                 }
               }),
               address: {
@@ -276,53 +273,76 @@ const UpdateStorePoint = ({ navigation }) => {
                 GPS_long: adressPoint?.GPS_long
               },
             }
+            delete body.close_Date_time;
+            delete body.close_Hour_time;
+            delete body.open_Date_time;
+            delete body.open_Hour_time;
             // console.log("body", body);
-
-            UpdateStore(body);
+            callUpdateReliefPoint(body);
           }}
         >
-          {({ submitForm, errors, values }) => (
+          {({ submitForm }) => (
             <View>
-              <ContainerField title="Tên cửa hàng">
+
+              <ContainerField title="Tên điểm cứu trợ">
                 <Field
                   component={Input}
                   name="name"
                   horizontal
                   placeholder="Tên điểm cứu trợ"
                   styleTitle={{ width: 110 }}
-                  editable={editEnable}
+                  editable={false}
                 />
               </ContainerField>
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ width: "50%", paddingRight: 5 }}>
-                  <ContainerField title="Giờ mở cửa">
+
+              <ContainerField title="Thời gian hoạt động">
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
                     <Field
-                      component={TimePicker}
-                      name="open_time"
-                      // title="Thời gian hoạt động"
-                      mode="time"
+                      component={DateTimePicker}
+                      name="open_Date_time"
                       horizontal
                       placeholder="Mở cửa"
                       styleTitle={{ width: 110 }}
-                      disabled={!editEnable}
+                      disabled={true}
                     />
-                  </ContainerField>
-                </View>
-                <View style={{ width: "50%", paddingLeft: 5 }}>
-                  <ContainerField title="Giờ đóng cửa">
+                  </View>
+                  <View style={{ flex: 2 }}>
                     <Field
                       component={TimePicker}
-                      name="close_time"
-                      // title="Thời gian kết thúc"
-                      mode="time"
+                      name="open_Hour_time"
+                      horizontal
+                      placeholder="Mở cửa"
+                      styleTitle={{ width: 110 }}
+                      disabled={true}
+                    />
+                  </View>
+                </View>
+              </ContainerField>
+              <ContainerField title="Thời gian kết thúc">
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
+                    <Field
+                      component={DateTimePicker}
+                      name="close_Date_time"
                       horizontal
                       placeholder="Đóng cửa"
                       styleTitle={{ width: 110 }}
-                      disabled={!editEnable}
+                      disabled={true}
                     />
-                  </ContainerField>
+                  </View>
+                  <View style={{ flex: 2 }}>
+                    <Field
+                      component={TimePicker}
+                      name="close_Hour_time"
+                      horizontal
+                      placeholder="Mở cửa"
+                      styleTitle={{ width: 110 }}
+                      disabled={true}
+                    />
+                  </View>
                 </View>
-              </View>
+              </ContainerField>
               <ContainerField title="Mô tả">
                 <Field
                   component={Input}
@@ -330,40 +350,23 @@ const UpdateStorePoint = ({ navigation }) => {
                   horizontal
                   placeholder="Mô tả"
                   styleTitle={{ width: 110 }}
-                  editable={editEnable}
+                  editable={true}
                 />
               </ContainerField>
-              <ContainerField title="Trạng thái">
-                <Field
-                  component={AppSelectStoreStatus}
-                  name="status"
-                  horizontal
-                  placeholder="trạng thái"
+              <ContainerField title="Địa điểm">
+                <MapPicker
                   styleTitle={{ width: 110 }}
-                  disabled={!editEnable}
+                  horizontal
+                  iconRight={faMapMarkedAlt}
+                  iconSize={20}
+                  setAdress={setAdressPoint}
+                  adress={adressPoint}
+                  defaultAdress={adressPoint}
+                  disabled={true}
                 />
               </ContainerField>
-              {(!isEmpty(adressPoint) || true) && (
-                <ContainerField title="Địa điểm">
-                  <MapPicker
-                    styleTitle={{ width: 110 }}
-                    horizontal
-                    iconRight={faMapMarkedAlt}
-                    iconSize={20}
-                    setAdress={setAdressPoint}
-                    adress={adressPoint}
-                    defaultAdress={adressPoint}
-                    disabled={!editEnable}
-                  />
-                </ContainerField>
-              )}
-
-
               <ContainerField title="Mặt hàng">
-                <StoreCategory items={items} setItems={setItems} readonly={!editEnable} />
-                {isEmpty(items) && editEnable && (
-                  <Text style={[MainStyle.texError,]}>chọn mặt hàng cung cấp</Text>
-                )}
+                <MultipleAddItem items={items} setItems={setItems} readOnly={!editEnable} />
               </ContainerField>
               {editEnable && (
                 <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, }} onPress={() => { submitForm() }} />
@@ -372,8 +375,8 @@ const UpdateStorePoint = ({ navigation }) => {
           )}
         </Formik>
       </KeyboardAwareScrollView>
-    </ScrollView>
+    </ScrollView >
   );
 }
 
-export default UpdateStorePoint;
+export default UpdateReliefPoint;

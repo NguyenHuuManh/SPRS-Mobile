@@ -167,7 +167,7 @@ export default () => {
 
     const callLoadMap = (obj) => {
         apiLoadMap(obj).then((e) => {
-            // console.log("e", e);
+            console.log("e", e);
             if (e.status == 200) {
                 if (e.data.code == 200) {
                     setListMarker(e.data.obj.map((e) => {

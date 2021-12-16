@@ -6,7 +6,7 @@ import { Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
-import { apiSigup } from "../../ApiFunction/Auth";
+import { apiGetOtpSignup, apiSigup } from "../../ApiFunction/Auth";
 import AppSelectAccount from "../../Components/AppSelectAccount";
 import AppSelectGroupUser from "../../Components/AppSelectGroupUser";
 import AppSelectHuyen from "../../Components/AppSelectHuyen";
@@ -20,6 +20,7 @@ import MapPicker from "../../Components/MapPicker";
 import { AppColor } from "../../Helper/propertyCSS";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
+import OtpModal from "./OtpModal";
 import styles from "./styles";
 import { register } from "./validate";
 export default () => {
@@ -45,30 +46,39 @@ export default () => {
         GPS_Lati: "",
     });
     const [secureTextEntry, setSecureTextEntry] = useState(true);
-    const signup = (body) => {
-        const param = { ...body }
-        try {
-            apiSigup(param)
-                .then((e) => {
-                    console.log("res", e);
-                    if (e.data.code + "" === "200") {
-                        Toast.show({
-                            type: "success",
-                            text1: "Đăng ký tài khoản thành công",
-                            position: "top"
-                        })
-                        navigation.navigate("Signin");
-                    } else {
-                        Toast.show({
-                            type: "error",
-                            text1: e.data.message,
-                            position: "top"
-                        })
-                    }
-                })
-        } catch (error) {
-            console.log(error);
+    const [secureTextEntry1, setSecureTextEntry1] = useState(true);
+    const [otpModal, setOtpModal] = useState(false);
+    const [timeStart, setTimeStart] = useState({});
+    const [disableOTP, setDisableOTP] = useState(true);
+    const [body, setBody] = useState<any>();
+    const getOtp = (values) => {
+        const bodyOTP = {
+            to: '+84' + values.phone.substring(1),
+            username: values.username,
         }
+        // setLoading(true);
+        apiGetOtpSignup(bodyOTP).then((e) => {
+            console.log("GET_OTP", e);
+            if (e?.status == 200) {
+                if (e.data.code == "200") {
+                    setOtpModal(true);
+                    setTimeStart({ value: 1 });
+                    setDisableOTP(false)
+                    return;
+                }
+                Toast.show({
+                    type: "error",
+                    text1: e.data.message,
+                    position: "top"
+                })
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: e.data.message,
+                    position: "top"
+                })
+            }
+        })
     }
     return (
         <KeyboardAwareScrollView style={{ backgroundColor: AppColor.BUTTON_MAIN, flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "5%", paddingBottom: 50 }} showsVerticalScrollIndicator={false}>
@@ -118,7 +128,8 @@ export default () => {
                         },
                         groups_user: [{ id: values.groupsId }],
                     }
-                    signup(user);
+                    getOtp(user);
+                    setBody(user);
                 }
                 }
             >
@@ -220,7 +231,10 @@ export default () => {
                                 component={Input}
                                 horizontal
                                 styleTitle={{ width: 90 }}
-                                secureTextEntry
+                                secureTextEntry={secureTextEntry1}
+                                iconRight={secureTextEntry1 ? faEyeSlash : faEye}
+                                leftIconOnpress={() => { setSecureTextEntry1(!secureTextEntry1) }}
+                                iconSize={20}
                                 name="rePassWord"
                                 placeholder="Nhập lại mật khẩu"
                             />
@@ -230,7 +244,9 @@ export default () => {
                             styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
                             styleTitle={{ color: "#FFFF", fontSize: 25 }}
                             title="Đăng ký"
-                            onPress={submitForm}
+                            onPress={() => {
+                                submitForm();
+                            }}
                         />
                         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: "5%" }}>
                             <Text style={{ textDecorationLine: "underline" }} onPress={() => { navigation.goBack() }}>Đăng nhập</Text>
@@ -239,6 +255,15 @@ export default () => {
                 )
                 }
             </Formik >
+            <OtpModal
+                visible={otpModal}
+                setVisible={setOtpModal}
+                body={body}
+                disableOTP={disableOTP}
+                getOtp={getOtp}
+                setDisableOTP={setDisableOTP}
+                timeStart={timeStart}
+            />
         </KeyboardAwareScrollView>
 
     )

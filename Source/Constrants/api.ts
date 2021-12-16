@@ -4,6 +4,8 @@ export const signupUser = `${URL}/sprs/api/users_v2/user`;
 export const signupStore = `${URL}/sprs/api/users_v2/ownStore`;
 export const singupOrganization = `${URL}/sprs/api/users_v2/organizationlAdmin`
 export const singupStore = `${URL}/sprs/api/users_v2/ownStore`
+export const VERIFY_PHONE = `${URL}/sprs/api/validateOtp-verify`
+export const GET_OTP_SIGNUP = `${URL}/sprs/api/generateOtp-verify`
 //
 export const signin = `${URL}/authenticate-mobile`;
 export const profile = `${URL}/sprs/api/user`;
@@ -48,6 +50,10 @@ export const UPDATE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/update`
 export const UPDATE_STATUS_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/update-status`
 export const DELETE_RELIEF_POINT = `${URL}/sprs/api/reliefPoint-manage/delete`
 export const UPLOAD_IMG_RELIEF = `${URL}/sprs/api/reliefPoint-manage/uploadImg`
+
+//event
+export const GET_EVENTS = `${URL}/sprs/api/reliefPoint-manage/get-event`
+export const GET_EVENTS_DETAIL = `${URL}/sprs/api/reliefPoint-manage/get-org`
 
 
 //api store

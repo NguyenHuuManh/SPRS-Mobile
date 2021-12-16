@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Field, Formik } from "formik";
 import React, { useState } from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
-import CountDown from 'react-native-countdown-component';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
-import { apiResetPass } from '../../../ApiFunction/Auth';
+import { apiOtpPassword, apiResetPass } from '../../../ApiFunction/Auth';
+import CountDown from '../../../Components/AppCountDown';
 import ButtonCustom from '../../../Components/ButtonCustom';
 import Input from '../../../Components/Input';
 import { AppColor } from '../../../Helper/propertyCSS';
@@ -16,23 +16,34 @@ import { SubmitOTP } from '../validate';
 
 export default ({ route, navigation }) => {
     const { to } = route.params;
-    const [count, setCount] = useState(10);
+    const [timeStart, setTimeStart] = useState<any>({ value: 1 });
+    const [disableOTP, setDisableOTP] = useState(false);
+
+    const getOtp = (values) => {
+        apiOtpPassword(values).then((e) => {
+            console.log("e", e);
+            if (e.status == 200 && e.data.code == "200") {
+                setTimeStart({ value: 1 });
+                setDisableOTP(false)
+            }
+        })
+    }
 
     const checkOTP = (values) => {
         apiResetPass(values).then((res) => {
             if (res.status == 200) {
-                navigation.navigate('ChangePassword');
                 if (res.data.code == "200") {
                     Toast.show({
                         type: "success",
-                        text1: "Khôi phục mật khẩu thành",
+                        text1: "Cấp lại mật khẩu thành",
+                        text2: "Mật khẩu mới được gửi vào số điện thoại bạn",
                         position: "top"
                     })
                     navigation.navigate("Signin");
                 } else {
                     Toast.show({
                         type: "error",
-                        text1: res?.data?.descreptions,
+                        text1: res?.data?.description,
                         position: "top"
                     })
                 }
@@ -62,25 +73,31 @@ export default ({ route, navigation }) => {
                             </TouchableOpacity>
                         </View>
                         <View style={[MainStyle.boxShadow, styles.containLogin]}>
-                            {count == 0 ? (
-                                <TouchableOpacity onPress={() => { setCount(5) }}>
-                                    <Text>Gửi lại: 0s</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <CountDown
-                                    until={count}
-                                    onFinish={() => setCount(0)}
-                                    timeToShow={['S']}
-                                    size={20}
-                                    timeLabels={{ s: null }}
-                                    timeLabelStyle={{ color: 'red', fontWeight: 'bold' }}
-                                    digitStyle={{ backgroundColor: '#FFF' }}
-                                />
-                            )}
                             <Field
                                 component={Input}
                                 name="otp"
-                                iconLeft={faMobileAlt}
+                                leftView={() => {
+                                    return (
+                                        <View style={{
+                                            flex: 3,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            borderRightWidth: 1,
+                                            borderStyle: 'solid',
+                                            borderColor: "#e0dcce",
+                                        }}>
+                                            {timeStart && (
+                                                <CountDown
+                                                    minuteStart={timeStart}
+                                                    onClick={() => {
+                                                        getOtp({ to: "+84" + to.substring(1), });
+                                                    }}
+                                                    onStop={() => setDisableOTP(true)}
+                                                />
+                                            )}
+                                        </View>
+                                    )
+                                }}
                                 placeholder="Nhập mã otp"
                                 keyboardType="numeric"
                                 underLine
@@ -90,6 +107,7 @@ export default ({ route, navigation }) => {
                                 styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
                                 styleTitle={{ color: "#FFFF", fontSize: 25 }}
                                 title="Tiếp tục"
+                                disabled={disableOTP}
                                 onPress={submitForm}
                             />
                         </View>

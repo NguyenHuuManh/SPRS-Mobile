@@ -29,6 +29,17 @@ export default () => {
                                 </ButtonCustom>
                             </ImageBackground>
                         )}
+                        {e.code == "PER_MOB_EVENT" && (
+                            <ImageBackground source={require('../../../Assets/Images/reliefBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
+                                <ButtonCustom
+                                    styleContain={[styles.styleButton]}
+                                    noShadow
+                                    onPress={() => { navigation.navigate("OrgPoints") }}
+                                >
+                                    <Text style={styles.text}>{e.name}</Text>
+                                </ButtonCustom>
+                            </ImageBackground>
+                        )}
                         {e.code == 'PER_MOB_STORE' && (
                             <ImageBackground source={require('../../../Assets/Images/storeBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
                                 <ButtonCustom

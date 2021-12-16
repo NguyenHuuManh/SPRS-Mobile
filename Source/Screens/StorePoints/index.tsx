@@ -1,5 +1,6 @@
 import { faMapMarked, faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useFocusEffect } from "@react-navigation/native";
 import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
@@ -34,6 +35,13 @@ export default ({ navigation }) => {
         type: null,
         status_store: 3,
     });
+
+    useEffect(() => {
+        const willFocusSubscription = navigation.addListener('focus', () => {
+            getPoint();
+        });
+        return willFocusSubscription;
+    }, [])
 
     const UpdatePoints = (item, type) => {
         const index = points.findIndex((e) => {
@@ -101,7 +109,7 @@ export default ({ navigation }) => {
             pageIndex: pageSize.pageIndex
         }
         apiGetStore(bodyRequest).then((e) => {
-            console.log("res", e);
+            console.log("resGetStore", e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setPoints(e.data.obj.stores);
@@ -116,25 +124,42 @@ export default ({ navigation }) => {
 
     const deleteStore = (item) => {
         if (!item.id || isEmpty(item.id + '') || isNull(item.id)) return;
-        apiDeleteStore({ id: item.id }).then((res) => {
-            console.log('delete', res)
-            if (res.status == 200) {
-                if (res.data.code == '200') {
-                    UpdatePoints(item, "Delete");
-                    if ((pageSize.pageIndex * pageSize.pageSize) >= totalItem - 1) {
-                        setPageSize({ ...pageSize, pageSize: pageSize.pageSize - size });
-                        return;
+        Alert.alert(
+            `Xóa cửa hàng`,
+            `Ban có chắc chắn xóa cửa hàng ${item.name}`,
+            [
+                {
+                    text: 'đồng ý',
+                    onPress: () => {
+                        apiDeleteStore({ id: item.id }).then((res) => {
+                            console.log('delete', res)
+                            if (res.status == 200) {
+                                if (res.data.code == '200') {
+                                    UpdatePoints(item, "Delete");
+                                    if ((pageSize.pageIndex * pageSize.pageSize) >= totalItem - 1) {
+                                        setPageSize({ ...pageSize, pageSize: pageSize.pageSize - size });
+                                        return;
+                                    }
+                                    setPageSize({ ...pageSize });
+                                }
+                            } else {
+                                Toast.show({
+                                    type: "error",
+                                    text1: 'Hệ thống đang bảo trì',
+                                    position: "top"
+                                })
+                            }
+                        })
                     }
-                    setPageSize({ ...pageSize });
-                }
-            } else {
-                Toast.show({
-                    type: "error",
-                    text1: 'Hệ thống đang bảo trì',
-                    position: "top"
-                })
-            }
-        })
+                },
+                {
+                    text: 'Hủy',
+                    onPress: () => { },
+                },
+            ],
+            { cancelable: true },
+        );
+
     }
 
     const handleLoadMore = () => {

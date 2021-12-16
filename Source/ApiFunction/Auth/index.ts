@@ -1,4 +1,4 @@
-import { MENU_PERMISSON, OTP_CHECKING, OTP_PASSWORD, profile, RESET_PASSWORD, signin, signupUser, singupOrganization, singupStore, UPDATE_PASS, UPDATE_PROFILE, UPLOAD_IMG_USER } from "../../Constrants/api";
+import { GET_OTP_SIGNUP, MENU_PERMISSON, OTP_CHECKING, OTP_PASSWORD, profile, RESET_PASSWORD, signin, signupUser, singupOrganization, singupStore, UPDATE_PASS, UPDATE_PROFILE, UPLOAD_IMG_USER, VERIFY_PHONE } from "../../Constrants/api";
 import httpServices from "../../Services/httpServices";
 
 export const apiSignin = async (body) => {
@@ -18,6 +18,14 @@ export const apiSigup = async (body) => {
             `${singupStore}`, body
         );
     }
+};
+
+export const apiPhoneVerify = async (body) => {
+    return await httpServices.post(`${VERIFY_PHONE}`, body);
+};
+
+export const apiGetOtpSignup = async (body) => {
+    return await httpServices.post(`${GET_OTP_SIGNUP}`, body);
 };
 
 export const apiGetPermission = async () => {

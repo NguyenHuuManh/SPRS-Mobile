@@ -19,6 +19,7 @@ import FilterForm from "./components/FilterForm";
 import { AppColor } from '../../Helper/propertyCSS';
 import styles from "./styles";
 import { useFocusEffect } from "@react-navigation/native";
+import { apiGetEvents } from "../../ApiFunction/EventPoint";
 const AVATA_SIZE = 80;
 const Margin_BT = 5;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
@@ -32,7 +33,6 @@ export default ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current
     const [pageSize, setPageSize] = useState({ pageSize: size, pageIndex: page });
-    const [totalPage, setTotalPage] = useState(3);
     const [isRefesh, setIsRefesh] = useState(false);
     const [onScroll, setOnScroll] = useState(false);
     const [body, setBody] = useState({
@@ -50,103 +50,6 @@ export default ({ navigation }) => {
     }, [])
     useEffect(() => { getPoint() }, [pageSize]);
 
-    const UpdatePoints = (item, type) => {
-        const index = points.findIndex((e) => {
-            return e.id == item.id
-        });
-        if (index >= 0 && type == "Update") {
-            points[index] = item;
-            setPoints([...points]);
-        }
-        if (index >= 0 && type == "Delete") {
-            points.splice(index, 1);
-            setPoints([...points]);
-        }
-    }
-
-    const ChangeStatusPoint = (item) => {
-        Alert.alert(
-            `${item.status ? "Bật điểm cứu trợ" : "Tắt điểm cứu trợ"}`,
-            `${item.status ? "Hệ thống sẽ tự động cập nhật lại ngày giờ mở cửa của điểm cứu trợ là ngày giờ hiện tại " : "Hệ thống sẽ tự động cập nhật lại ngày giờ đóng cửa của điểm cứu trợ là ngày giờ hiện tại"}`,
-            [
-                {
-                    text: 'đồng ý',
-                    onPress: () => {
-                        apiUpdateStatusReliefPoint({ id: item.id, status: item.status }).then((response) => {
-                            if (response.status == 200) {
-                                if (response.data.code == "200") {
-                                    UpdatePoints(item, "Update");
-                                    return
-                                }
-                                Toast.show({
-                                    type: "error",
-                                    text1: response.data.message,
-                                    position: "top"
-                                });
-                                return
-                            }
-                            Toast.show({
-                                type: "error",
-                                text1: "Chức năng đang bảo trì",
-                                position: "top"
-                            });
-
-                        })
-                    }
-                },
-                {
-                    text: 'Hủy',
-                    onPress: () => { },
-                },
-            ],
-            { cancelable: true },
-        );
-
-    }
-
-    const deletePoint = (item) => {
-        Alert.alert(
-            "Xóa điểm cứu trợ",
-            `Bạn có chắc chắn xóa ${item.name}`,
-            [
-                {
-                    text: 'Xóa',
-                    onPress: () => {
-                        apiDeleteReliefPoint({ id: item.id }).then((response) => {
-                            if (response.status == 200) {
-                                if (response.data.code == "200") {
-                                    UpdatePoints(item, "Delete");
-                                    if ((pageSize.pageIndex * pageSize.pageSize) >= totalItem - 1) {
-                                        setPageSize({ ...pageSize, pageSize: pageSize.pageSize - size });
-                                        return;
-                                    }
-                                    setPageSize({ ...pageSize });
-                                    return
-                                }
-                                Toast.show({
-                                    type: "error",
-                                    text1: response.data.message,
-                                    position: "top"
-                                });
-                                return
-                            }
-                            Toast.show({
-                                type: "error",
-                                text1: "Chức năng đang bảo trì",
-                                position: "top"
-                            });
-                        })
-                    }
-                },
-                {
-                    text: 'Hủy',
-                    onPress: () => { },
-                },
-            ],
-            { cancelable: true },
-        );
-
-    }
     const getPoint = () => {
         setLoading(true);
         const bodyRequest = {
@@ -156,8 +59,7 @@ export default ({ navigation }) => {
             pageSize: pageSize.pageSize,
             pageIndex: pageSize.pageIndex
         }
-        apiGetReliefPoint(bodyRequest).then((e) => {
-            console.log('eRelief', e);
+        apiGetEvents(bodyRequest).then((e) => {
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setPoints(e.data.obj);
@@ -200,43 +102,6 @@ export default ({ navigation }) => {
             >
                 <>
                     <TouchableOpacity
-                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center", borderBottomRightRadius: 10, borderTopRightRadius: 10 }}
-                        onPress={(e) => {
-                            e.preventDefault();
-                            deletePoint(item);
-                        }}>
-                        <Animated.Text
-                            style={[
-                                {
-                                    transform: [{ translateX: trans }],
-                                },
-                            ]}>
-                            <FontAwesomeIcon icon={faTrashAlt} size={20} color="red" />
-                        </Animated.Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center", }}
-                        onPress={(e: any) => {
-                            e.preventDefault();
-                            ChangeStatusPoint({ ...item, status: !item.status });
-                        }}>
-                        <Animated.Text
-                            style={[
-                                {
-                                    transform: [{ translateX: trans }],
-                                },
-                            ]}>
-                            {/* <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" /> */}
-                            <Switch value={item.status} disabled
-                                thumbColor={'#0169ff'}
-                                trackColor={{
-                                    false: AppColor.CORLOR_TEXT,
-                                    true: AppColor.BUTTON_MAIN
-                                }}
-                            ></Switch>
-                        </Animated.Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
                         style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
                             // console.log("item", item)
@@ -252,7 +117,7 @@ export default ({ navigation }) => {
                                         },
                                         type: "rp"
                                     },
-                                    screen: "ReliefPoint"
+                                    screen: "OrgPoints"
                                 })
                         }}
                     >
@@ -313,7 +178,7 @@ export default ({ navigation }) => {
             >
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
-                        navigation.navigate("UpdateReliefPoint", item);
+                        navigation.navigate("UpdateEventPoint", item);
                     } else {
                         onchage(false);
                     }
@@ -345,7 +210,6 @@ export default ({ navigation }) => {
             </Animated.View >
         )
     }
-
     const renderFooter = () => {
         if (loading) {
             return (
@@ -358,18 +222,9 @@ export default ({ navigation }) => {
         } else {
             return null
         }
-
     }
     return (
         <View style={[styles.container]}>
-            <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
-                <ButtonCustom
-                    onPress={() => { navigation.push("AddReliefPoint") }}
-                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: AppColor.BUTTON_MAIN, }}
-                >
-                    <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
-                </ButtonCustom>
-            </View>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
                     isReplace={"DrawScreen"}
@@ -378,10 +233,9 @@ export default ({ navigation }) => {
                     flexCenter={10}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <Text style={{ fontSize: 20, color: "#FFFF" }}>Điểm cứu trợ</Text>
+                            <Text style={{ fontSize: 20, color: "#FFFF" }}>Sự kiện</Text>
                         </View>
                     )}
-
                 />
             </View>
             <FilterForm body={body} setBody={setBody} setPageSize={setPageSize} pageSize={pageSize} setIsRefesh={setIsRefesh} />
@@ -396,7 +250,7 @@ export default ({ navigation }) => {
                     }}
                     showsVerticalScrollIndicator={false}
                     data={points}
-                    keyExtractor={(item) => item.id + 'Relef'}
+                    keyExtractor={(item) => item.id + ''}
                     renderItem={renderItem}
                     style={{ paddingBottom: 50 }}
                     refreshing={isRefesh}

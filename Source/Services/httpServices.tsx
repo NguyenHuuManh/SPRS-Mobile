@@ -27,7 +27,8 @@ class Services {
 
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
-        // console.log('error', error?.response);
+        console.log('error', error);
+        console.log('response', response)
         if (isSuccess) {
             if (response?.data?.code == '501') {
                 if (!store.getState().pendingReducer.isPending) {

@@ -7,7 +7,7 @@ export function navigate(name, params) {
     }
 }
 
-export function reset(name, params) {
+export function reset(name, params?: any) {
     console.log('navigationRef', navigationRef.current);
     if (navigationRef.isReady()) {
         console.log('dasdsas ')

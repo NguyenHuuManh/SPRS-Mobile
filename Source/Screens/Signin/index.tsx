@@ -26,7 +26,7 @@ export default () => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: "red" }} >
+        <View style={{ flex: 1, backgroundColor: AppColor.BUTTON_MAIN }} >
 
             <Formik
                 initialValues={{
@@ -39,7 +39,7 @@ export default () => {
                 }}
             >
                 {({ submitForm }) => (
-                    <View style={{ backgroundColor: 'pink', height: '100%' }}>
+                    <View style={{ height: '100%' }}>
                         <Loading isVisible={userReducer.isLoading} />
                         <ImageBackground source={require('../../Assets/Images/backdgroundpng.png')}
                             resizeMode="stretch"

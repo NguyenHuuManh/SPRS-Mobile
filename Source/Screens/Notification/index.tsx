@@ -9,11 +9,10 @@ import Relief from "../../Assets/Images/locationRelief.svg";
 import SOS from "../../Assets/Images/locationSOS.svg";
 import Store from "../../Assets/Images/locationStore.svg";
 import HeaderContainer from "../../Components/HeaderContainer";
-import { AppColor } from "../../Helper/propertyCSS";
 import { badgeShowActions } from "../../Redux/Actions";
-import ActionTypes from "../../Redux/ActionTypes";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
+import { useFocusEffect } from "@react-navigation/native";
 import styles from "./styles";
 
 const page = 1;
@@ -30,17 +29,23 @@ export default () => {
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const [onscroll, setOnscroll] = useState(false);
-    useEffect(() => {
-        if (focusNotificationTab.status && badgeShow.type == ActionTypes.BADGE_REQUEST) {
-            setPageSize({ ...pageSize });
-        }
-    }, [badgeShow]);
+    // useEffect(() => {
+    //     if (focusNotificationTab.status && badgeShow.type == ActionTypes.BADGE_REQUEST) {
+    //         setPageSize({ ...pageSize });
+    //     }
+    // }, [badgeShow]);
 
-    useEffect(() => {
-        if (focusNotificationTab.status && badgeShow.data.number > 0 && badgeShow.type == ActionTypes.BADGE_RESULTS) {
-            setPageSize({ ...pageSize });
-        }
-    }, [focusNotificationTab])
+    // useEffect(() => {
+    //     if (focusNotificationTab.status && badgeShow.data.number > 0 && badgeShow.type == ActionTypes.BADGE_RESULTS) {
+    //         setPageSize({ ...pageSize });
+    //     }
+    // }, [focusNotificationTab])
+
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         return () => getNotification();
+    //     }, [])
+    // )
 
     const getNotification = () => {
         setLoading(true);
@@ -65,6 +70,13 @@ export default () => {
         getNotification();
     }, [pageSize]);
 
+    useEffect(() => {
+        const willFocusSubscription = navigation.addListener('focus', () => {
+            getNotification();
+        });
+
+        return willFocusSubscription;
+    }, [])
 
     const updateNotificationStatus = (item) => {
         apiUpdateStatusNotification({ id: item.id, status: "read" }).then((e) => {

@@ -1,5 +1,6 @@
 import { faBellSlash, faMapMarked, faStore } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
@@ -30,7 +31,14 @@ export default ({ navigation }) => {
         })
     }
 
-    useEffect(() => { getPoint() }, []);
+    useEffect(() => {
+        // getPoint();
+        const willFocusSubscription = navigation.addListener('focus', () => {
+            getPoint();
+        });
+
+        return willFocusSubscription;
+    }, [])
 
 
     const renderLeftActions = (progress, dragX, item, onchage) => {
@@ -169,7 +177,7 @@ export default ({ navigation }) => {
                 >
                 </HeaderContainer >
             </View>
-            <View style={{ height: "55%", marginTop: 10, alignItems: "center" }}>
+            <View style={{ height: "97%", marginTop: 10, alignItems: "center" }}>
                 <Animated.FlatList
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],

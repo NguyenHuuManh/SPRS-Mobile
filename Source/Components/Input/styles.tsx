@@ -6,6 +6,8 @@ export default StyleSheet.create({
     containerInput: {
         width: "100%",
         // backgroundColor: "blue",
+        paddingTop: 0,
+        paddingBottom: 0,
         justifyContent: "space-around",
         // borderBottomWidth: 0.5,
     },
@@ -29,6 +31,7 @@ export default StyleSheet.create({
         flex: 10,
         color: AppColor.CORLOR_TEXT,
         paddingBottom: 0,
+        paddingTop: 0
         // backgroundColor: "red"
     },
 
@@ -44,7 +47,6 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         // backgroundColor:"pink"
-
     },
     text: {
         height: 30,

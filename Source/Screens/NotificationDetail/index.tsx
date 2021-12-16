@@ -57,7 +57,8 @@ export default () => {
                         if (params?.isBack == true) {
                             navigation.goBack();
                         } else {
-                            navigation.navigate("Notification");
+                            // navigation.navigate("Notification");
+                            navigation.goBack();
                         }
                     }}
                     centerEl={(

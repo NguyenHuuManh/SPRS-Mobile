@@ -9,11 +9,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { apiOtpPassword } from '../../ApiFunction/Auth';
 import ButtonCustom from "../../Components/ButtonCustom";
 import Input from "../../Components/Input";
+import { AppColor } from '../../Helper/propertyCSS';
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
 import { SubmitPhone } from './validate';
-import CountDown from 'react-native-countdown-component';
-import { AppColor } from '../../Helper/propertyCSS';
 export default () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
@@ -28,52 +27,52 @@ export default () => {
     }
 
     return (
-        <Formik
-            initialValues={{
-                to: "966048002"
-            }}
-            validationSchema={SubmitPhone}
-            onSubmit={(values) => {
-                getOtp({ to: "+84" + values.to })
-            }}
-        >
-            {({ submitForm }) => (
-                <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "red", }} contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
-                    <AwesomeLoading indicatorId={16} size={50} isActive={loading} text="watting.." />
-                    <ImageBackground source={require('../../Assets/Images/backdgroundpng.png')}
-                        resizeMode="stretch"
-                        style={[styles.BG]}
-                    >
-                        <View style={{ width: 30, height: 30, position: "absolute", top: 10, left: 10 }}>
-                            <TouchableOpacity onPress={() => { navigation.goBack() }}>
-                                <FontAwesomeIcon size={26} color={"#FFF"} icon={faChevronLeft} />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[MainStyle.boxShadow, styles.containLogin]}>
-                            <Field
-                                component={Input}
-                                name="to"
-                                iconLeft={faMobileAlt}
-                                placeholder="Nhập số điện thoại"
-                                keyboardType="phone-pad"
-                                textContentType='telephoneNumber'
-                                dataDetectorTypes='phoneNumber'
-                                maxLength={9}
-                                underLine
-                            />
+        <>
+            <Formik
+                initialValues={{
+                    to: ""
+                }}
+                validationSchema={SubmitPhone}
+                onSubmit={(values) => {
+                    getOtp({ to: "+84" + values.to.substring(1), });
+                }}
+            >
+                {({ submitForm }) => (
+                    <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: AppColor.BUTTON_MAIN }} contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
+                        <AwesomeLoading indicatorId={16} size={50} isActive={loading} text="watting.." />
+                        <ImageBackground source={require('../../Assets/Images/backdgroundpng.png')}
+                            resizeMode="stretch"
+                            style={[styles.BG]}
+                        >
+                            <View style={{ width: 30, height: 30, position: "absolute", top: 10, left: 10 }}>
+                                <TouchableOpacity onPress={() => { navigation.goBack() }}>
+                                    <FontAwesomeIcon size={26} color={"#FFF"} icon={faChevronLeft} />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={[MainStyle.boxShadow, styles.containLogin]}>
+                                <Field
+                                    component={Input}
+                                    name="to"
+                                    iconLeft={faMobileAlt}
+                                    placeholder="Nhập số điện thoại"
+                                    keyboardType="numeric"
+                                    maxLength={10}
+                                    underLine
+                                />
 
-                            <ButtonCustom
-                                styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
-                                styleTitle={{ color: "#FFFF", fontSize: 25 }}
-                                title="Tiếp tục"
-                                onPress={submitForm}
-                            />
-                        </View>
+                                <ButtonCustom
+                                    styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: "10%" }}
+                                    styleTitle={{ color: "#FFFF", fontSize: 25 }}
+                                    title="Tiếp tục"
+                                    onPress={submitForm}
+                                />
+                            </View>
 
-                    </ImageBackground>
-                </KeyboardAwareScrollView>
+                        </ImageBackground>
+                    </KeyboardAwareScrollView>
+                )}
+            </Formik>
+        </>
 
-            )}
-        </Formik>
     )
 }

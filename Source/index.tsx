@@ -22,6 +22,7 @@ const initialState = {
 export const Store = React.createContext<Store>(initialState);
 
 export default (props: Props) => {
+
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>

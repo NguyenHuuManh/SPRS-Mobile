@@ -26,6 +26,7 @@ interface Props {
     underLine?: boolean;
     editable?: boolean;
     customStyle?: propStyle;
+    leftView?: any;
 }
 const Input = (props: Props) => {
     const {
@@ -37,6 +38,7 @@ const Input = (props: Props) => {
         textContentType, underLine,
         editable,
         customStyle,
+        leftView,
         ...remainProps
     } = props
     const { name, value } = field
@@ -57,6 +59,9 @@ const Input = (props: Props) => {
                         <View style={[styles.icon]}>
                             <FontAwesomeIcon size={iconSize || 17} color={iconColor || "#222"} icon={iconLeft} />
                         </View>)
+                }
+                {
+                    leftView && leftView()
                 }
                 <View style={[styles.inputContainer, underLine ? styles.underLine : {}]}>
                     {textContentType == "telephoneNumber" && (

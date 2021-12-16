@@ -16,7 +16,7 @@ function compareTime(str1, str2) {
     }
 }
 
-export const register = Yup.object().shape({
+export const update = Yup.object().shape({
     open_Hour_time: Yup.string().required("không được bỏ trống").nullable().test("test", "Thời gian mở cửa phải nhỏ hơn thời gian đóng cửa", function () {
         const { parent } = this;
         const { open_Hour_time, close_Hour_time, open_Date_time, close_Date_time } = parent;
@@ -29,7 +29,6 @@ export const register = Yup.object().shape({
     open_Date_time: Yup.string().required("không được bỏ trống").nullable().test("test", "Ngày mở cửa phải nhỏ hơn ngày đóng cửa", function () {
         const { parent } = this;
         const { open_Date_time, close_Date_time } = parent;
-
         return moment(open_Date_time, "DD-MM-YYYY").isSameOrBefore(moment(close_Date_time, "DD-MM-YYYY"));
     }),
     close_Date_time: Yup.string().required("không được bỏ trống").nullable(),
