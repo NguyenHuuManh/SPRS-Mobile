@@ -7,9 +7,8 @@ import React, { createRef, useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
-import { apiGetEventDetail } from "../../ApiFunction/EventPoint";
-import { apiGetReliefPointDetail, apiUpdateReliefPoint, apiUploadImg } from "../../ApiFunction/ReliefPoint";
-import AppCamera from "../../Components/AppCamera";
+import { apiGetEventDetail, apiUpdateEventPoint } from "../../ApiFunction/EventPoint";
+import { apiUploadImg } from "../../ApiFunction/ReliefPoint";
 import AppImageCrop from "../../Components/AppImageCrop";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
@@ -45,7 +44,7 @@ const UpdateReliefPoint = ({ navigation }) => {
   })
 
   const callUpdateReliefPoint = (body) => {
-    apiUpdateReliefPoint(body).then((res) => {
+    apiUpdateEventPoint(body).then((res) => {
       console.log(res, 'resUpdateRelief')
       if (res.status == 200) {
         if (res.data.code == "200") {
@@ -130,20 +129,20 @@ const UpdateReliefPoint = ({ navigation }) => {
           flexRight={1}
           flexCenter={10}
           flexLeft={1}
-          // isBack
-          leftView
-          iconLeft={faChevronLeft}
-          leftOnpress={() => {
-            if (item?.from == 'MapCluser') {
-              // navigation.replace('MapCluser');
-              navigation.reset({
-                index: 1,
-                routes: [{ name: 'MapCluser' }]
-              })
-              return;
-            }
-            navigation.goBack();
-          }}
+          isBack
+          // leftView
+          // iconLeft={faChevronLeft}
+          // leftOnpress={() => {
+          //   if (item?.from == 'MapCluser') {
+          //     // navigation.replace('MapCluser');
+          //     navigation.reset({
+          //       index: 1,
+          //       routes: [{ name: 'MapCluser' }]
+          //     })
+          //     return;
+          //   }
+          //   navigation.goBack();
+          // }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "Thông tin điểm cứu trợ"}</Text>
@@ -175,20 +174,6 @@ const UpdateReliefPoint = ({ navigation }) => {
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <View style={{ width: '100%', height: 250, alignItems: 'center', justifyContent: 'center', paddingTop: 30 }}>
-            <TouchableOpacity style={[{
-              position: "absolute",
-              bottom: 22,
-              right: 5,
-              zIndex: 100,
-              backgroundColor: '#A0A6BE',
-              width: 30,
-              height: 30,
-              borderRadius: 15,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }, MainStyle.boxShadow]} onPress={() => { setImageModal(true) }}>
-              <FontAwesomeIcon icon={faCamera} />
-            </TouchableOpacity>
             {data?.images?.img_url ? (
               <TouchableOpacity
                 onPress={() => { setViewModal(true) }}
@@ -213,7 +198,6 @@ const UpdateReliefPoint = ({ navigation }) => {
             <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: 10 }}>{data?.full_name}</Text>
           </View>
           <ImageView img_url={data?.images?.img_url} visible={viewModal} setVisible={setViewModal} />
-          <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={updateImg} cropperCircleOverlay={false} imageDefault={require('../../Assets/Images/orgAvatar.png')} />
         </View>
         <Formik
           initialValues={{
@@ -343,16 +327,6 @@ const UpdateReliefPoint = ({ navigation }) => {
                   </View>
                 </View>
               </ContainerField>
-              <ContainerField title="Mô tả">
-                <Field
-                  component={Input}
-                  name="description"
-                  horizontal
-                  placeholder="Mô tả"
-                  styleTitle={{ width: 110 }}
-                  editable={true}
-                />
-              </ContainerField>
               <ContainerField title="Địa điểm">
                 <MapPicker
                   styleTitle={{ width: 110 }}
@@ -367,6 +341,21 @@ const UpdateReliefPoint = ({ navigation }) => {
               </ContainerField>
               <ContainerField title="Mặt hàng">
                 <MultipleAddItem items={items} setItems={setItems} readOnly={!editEnable} />
+              </ContainerField>
+              <ContainerField title="Mô tả" styleCustomContainer={{ height: 80, paddingTop: 10, paddingBottom: 2 }}>
+                <Field
+                  component={Input}
+                  name="description"
+                  horizontal
+                  placeholder="Mô tả . . . . "
+                  multiline={true}
+                  numberOfLines={10}
+                  customInputStyle={{ height: 68 }}
+                  textAlign="left"
+                  textAlignVertical="top"
+                  maxLength={250}
+                  editable={editEnable}
+                />
               </ContainerField>
               {editEnable && (
                 <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, }} onPress={() => { submitForm() }} />

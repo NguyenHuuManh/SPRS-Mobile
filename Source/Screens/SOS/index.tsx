@@ -235,7 +235,7 @@ const SOS = ({ navigation }) => {
                   header="Mức độ"
                 />
               </ContainerField>
-              <ContainerField title="Mô tả" styleCustomContainer={{ height: 100, }}>
+              <ContainerField title="Mô tả" styleCustomContainer={{ height: 100, paddingTop: 10 }}>
                 <Field
                   component={Input}
                   name="description"
@@ -244,7 +244,7 @@ const SOS = ({ navigation }) => {
                   styleTitle={{ width: 110 }}
                   multiline={true}
                   numberOfLines={10}
-                  customInputStyle={{ height: 100, }}
+                  customInputStyle={{ height: 90, }}
                   textAlign="left"
                   textAlignVertical="top"
                 />

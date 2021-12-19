@@ -17,6 +17,7 @@ import MapPicker from "../../Components/MapPicker";
 import StoreCategory from "../../Components/StoreCategory";
 import TimePicker from "../../Components/TimePicker";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
+import { checkLatLng } from "../../Helper/FunctionCommon";
 import { AppColor } from "../../Helper/propertyCSS";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
@@ -26,13 +27,13 @@ import { createStore } from "./validate";
 
 const AddStorePoint = ({ navigation }) => {
   const addressCurrent = useSelector((state: RootState) => state.updateAddressReducer);
-  console.log("addressCurrent", addressCurrent.data);
-  const [adressPoint, setAdressPoint] = useState<any>({
-    GPS_Lati: addressCurrent?.data?.GPS_Lati || "21.00554564179488",
-    GPS_long: addressCurrent?.data.GPS_long || "105.51689565181731",
-    city: addressCurrent?.data.city.name || "",
-    district: addressCurrent?.data?.district.name || "",
-    subDistrict: addressCurrent?.data?.subDistrict.name || "",
+  // console.log("addressCurrent", addressCurrent.data);
+  const [adressPoint, setAdressPoint] = useState({
+    GPS_Lati: addressCurrent?.data?.GPS_lati,
+    GPS_long: addressCurrent?.data.GPS_long,
+    city: addressCurrent?.data?.city?.name || "",
+    district: addressCurrent?.data?.district?.name || "",
+    subDistrict: addressCurrent?.data?.subDistrict?.name || "",
   })
   const [items, setItems] = useState<any>([]);
 
@@ -103,6 +104,14 @@ const AddStorePoint = ({ navigation }) => {
           validationSchema={createStore}
           // validateOnChange={false}
           onSubmit={(values) => {
+            if (!checkLatLng(adressPoint.GPS_Lati, adressPoint.GPS_long)) {
+              Toast.show({
+                type: "error",
+                text1: 'Bạn chưa chọn địa điểm, hoặc địa điểm chưa hợp lệ',
+                position: "top"
+              });
+              return;
+            }
             const body = {
               ...values,
               store_category: items.map((e) => {
@@ -138,7 +147,7 @@ const AddStorePoint = ({ navigation }) => {
           }}
         >
           {({ submitForm }) => (
-            <View>
+            <View style={{}}>
               <ContainerField title="Tên điểm">
                 <Field
                   component={Input}
@@ -146,6 +155,7 @@ const AddStorePoint = ({ navigation }) => {
                   horizontal
                   placeholder="Tên điểm cứu trợ"
                   styleTitle={{ width: 110 }}
+                  maxLength={100}
                 />
               </ContainerField>
 
@@ -175,14 +185,29 @@ const AddStorePoint = ({ navigation }) => {
                   </ContainerField>
                 </View>
               </View>
-
+              {/* 
               <ContainerField title="Mô tả">
                 <Field
                   component={Input}
                   name="description"
                   horizontal
                   placeholder="Mô tả"
+                  maxLength={250}
                   styleTitle={{ width: 110 }}
+                />
+              </ContainerField> */}
+              <ContainerField title="Mô tả" styleCustomContainer={{ height: 80, paddingTop: 10, paddingBottom: 2 }}>
+                <Field
+                  component={Input}
+                  name="description"
+                  horizontal
+                  placeholder="Mô tả . . . . "
+                  multiline={true}
+                  numberOfLines={10}
+                  customInputStyle={{ height: 68 }}
+                  textAlign="left"
+                  textAlignVertical="top"
+                  maxLength={250}
                 />
               </ContainerField>
 

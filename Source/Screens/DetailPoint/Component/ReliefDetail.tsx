@@ -62,12 +62,7 @@ const StoreDetail = ({ point, from }) => {
                         if (from == 'Notification') {
                             navigation.navigate(from)
                         } else {
-                            // navigation.replace(from);
-                            // navigation.goBack();
-                            navigation.reset({
-                                index: 1,
-                                routes: [{ name: 'MapCluser' }]
-                            })
+                            navigation.goBack();
                         }
                     }}
                     centerEl={(

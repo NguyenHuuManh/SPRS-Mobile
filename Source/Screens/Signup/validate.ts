@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 import moment from "moment";
 import * as Yup from "yup";
+import { removeAscent } from "../../Helper/FunctionCommon";
 
 export const register = Yup.object().shape({
     username: Yup.string().required("Tên tài khoản không được bỏ trống").nullable()
@@ -33,13 +34,14 @@ export const register = Yup.object().shape({
             return regex.test(password);
         }),
     full_name: Yup.string().required("Họ và tên không được bỏ trống").nullable()
-        .test("test", "Họ và tên không chứa kí tự đặc biệt ! #$%^&*()+,-=\[\]{};`:\"\\/?", function () {
+        .test("test", "Họ và tên không chứa số, kí tự đặc biệt, 2 khoảng trắng liên tục và ít nhất 4 ký tự chữ gồm 2 từ trở lên", function () {
             const { parent } = this;
             const { full_name } = parent;
-            const nameStrim = full_name + ''.trim();
-            if (nameStrim.length == 0) return false;
-            var format = /[\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-            return !format.test(full_name);
+            const nameStrim = removeAscent(full_name);
+            if (nameStrim?.length < 4) return false;
+            if (nameStrim?.replace(' ', '').length < 4) return false
+            let regex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/
+            return regex.test(nameStrim?.trim());
         }),
     dob: Yup.string().required("không được bỏ trống").nullable()
         .test("test", "Ngày sinh không được lớn hơn ngày hiện tại", function () {

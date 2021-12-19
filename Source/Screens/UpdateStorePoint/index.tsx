@@ -22,8 +22,10 @@ import MapPicker from "../../Components/MapPicker";
 import StoreCategory from "../../Components/StoreCategory";
 import TimePicker from "../../Components/TimePicker";
 import { IMAGE_URL } from "../../Constrants/url";
+import { checkLatLng } from "../../Helper/FunctionCommon";
 import { AppColor } from "../../Helper/propertyCSS";
 import { height, width } from "../../Helper/responsive";
+import { getCurrentRoute } from "../../Helper/RootNavigation";
 import { MainStyle } from "../../Style/main_style";
 // import styless from "./styless";
 import { updateStore } from "./validate";
@@ -43,7 +45,7 @@ const UpdateStorePoint = ({ navigation }) => {
   const getStorePoint = (id) => {
     if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
     apiGetStoreDetail(id).then((res) => {
-      console.log("res", res);
+      console.log("resStoreid", res);
       if (res.status == 200) {
         if (res.data.code == "200") {
           setAdressPoint({
@@ -135,20 +137,22 @@ const UpdateStorePoint = ({ navigation }) => {
           flexRight={1}
           flexLeft={1}
           flexCenter={10}
-          // isBackReLoad="StorePoints"
-          leftView
-          iconLeft={faChevronLeft}
-          leftOnpress={() => {
-            if (item?.from == 'MapCluser') {
-              // navigation.replace('MapCluser');
-              navigation.reset({
-                index: 1,
-                routes: [{ name: 'MapCluser' }]
-              })
-              return;
-            }
-            navigation.goBack();
-          }}
+          isBack
+          // leftView
+          // iconLeft={faChevronLeft}
+          // leftOnpress={() => {
+          //   if (item?.from == 'MapCluser') {
+          //     // navigation.replace('MapCluser');
+          //     navigation.reset({
+          //       index: 1,
+          //       routes: [{ name: 'MapCluser' }]
+          //     })
+          //     return;
+          //   }
+          //   const route = getCurrentRoute();
+          //   console.log('route', route)
+          //   navigation.goBack();
+          // }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật cửa hàng" : "Thông tin cửa hàng"}</Text>
@@ -229,7 +233,7 @@ const UpdateStorePoint = ({ navigation }) => {
             id: data?.id,
             open_time: data?.open_time || "",
             close_time: data?.close_time || "",
-            status: data?.status,
+            // status: data?.status,
             name: data?.name || "",
             description: data?.description || "",
           }}
@@ -241,6 +245,14 @@ const UpdateStorePoint = ({ navigation }) => {
               Toast.show({
                 type: "error",
                 text1: 'Chọn ít nhật một loại sản phẩm',
+                position: "top"
+              });
+              return;
+            }
+            if (!checkLatLng(adressPoint.GPS_Lati, adressPoint.GPS_long)) {
+              Toast.show({
+                type: "error",
+                text1: 'Bạn chưa chọn địa điểm, hoặc địa điểm chưa hợp lệ',
                 position: "top"
               });
               return;
@@ -288,9 +300,10 @@ const UpdateStorePoint = ({ navigation }) => {
                   component={Input}
                   name="name"
                   horizontal
-                  placeholder="Tên điểm cứu trợ"
+                  placeholder="Tên cửa hàng"
                   styleTitle={{ width: 110 }}
                   editable={editEnable}
+                  maxLength={100}
                 />
               </ContainerField>
               <View style={{ flexDirection: "row" }}>
@@ -323,26 +336,6 @@ const UpdateStorePoint = ({ navigation }) => {
                   </ContainerField>
                 </View>
               </View>
-              <ContainerField title="Mô tả">
-                <Field
-                  component={Input}
-                  name="description"
-                  horizontal
-                  placeholder="Mô tả"
-                  styleTitle={{ width: 110 }}
-                  editable={editEnable}
-                />
-              </ContainerField>
-              <ContainerField title="Trạng thái">
-                <Field
-                  component={AppSelectStoreStatus}
-                  name="status"
-                  horizontal
-                  placeholder="trạng thái"
-                  styleTitle={{ width: 110 }}
-                  disabled={!editEnable}
-                />
-              </ContainerField>
               {(!isEmpty(adressPoint) || true) && (
                 <ContainerField title="Địa điểm">
                   <MapPicker
@@ -361,9 +354,24 @@ const UpdateStorePoint = ({ navigation }) => {
 
               <ContainerField title="Mặt hàng">
                 <StoreCategory items={items} setItems={setItems} readonly={!editEnable} />
-                {isEmpty(items) && editEnable && (
+                {/* {isEmpty(items) && editEnable && (
                   <Text style={[MainStyle.texError,]}>chọn mặt hàng cung cấp</Text>
-                )}
+                )} */}
+              </ContainerField>
+              <ContainerField title="Mô tả" styleCustomContainer={{ height: 80, paddingTop: 10, paddingBottom: 2 }}>
+                <Field
+                  component={Input}
+                  name="description"
+                  horizontal
+                  placeholder="Mô tả . . . . "
+                  multiline={true}
+                  numberOfLines={10}
+                  customInputStyle={{ height: 68 }}
+                  textAlign="left"
+                  textAlignVertical="top"
+                  maxLength={250}
+                  editable={editEnable}
+                />
               </ContainerField>
               {editEnable && (
                 <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, }} onPress={() => { submitForm() }} />

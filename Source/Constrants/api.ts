@@ -54,7 +54,7 @@ export const UPLOAD_IMG_RELIEF = `${URL}/sprs/api/reliefPoint-manage/uploadImg`
 //event
 export const GET_EVENTS = `${URL}/sprs/api/reliefPoint-manage/get-event`
 export const GET_EVENTS_DETAIL = `${URL}/sprs/api/reliefPoint-manage/get-org`
-
+export const UPDATE_EVENT = `${URL}/sprs/api/reliefPoint-manage/update-event`
 
 //api store
 export const CREATE_STORE_POINT = `${URL}/sprs/api/store-manage/create`

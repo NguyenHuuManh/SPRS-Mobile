@@ -108,11 +108,20 @@ export default () => {
             </View>
             <View style={{ height: "93%", backgroundColor: "#F6F5F5", justifyContent: "space-around", paddingTop: "5%" }}>
                 <View style={{ height: 130, justifyContent: "center", alignItems: "center" }}>
-                    <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, justifyContent: "center" }]}>
+                    <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, paddingBottom: 5, paddingTop: 5, justifyContent: "space-around" }]}>
+                        <View style={{ flexDirection: "row", width: "100%", }}>
+                            <Text style={{ flex: 2, fontWeight: "bold" }}>Tài khoản:</Text>
+                            <Text style={{ flex: 7 }}>{profileReducer.data?.username}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", width: "100%", }}>
+                            <Text style={{ flex: 2, fontWeight: "bold" }}>SĐT:</Text>
+                            <Text style={{ flex: 7 }}>{profileReducer.data?.phone}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", width: "100%", }}>
+                            <Text style={{ flex: 2, fontWeight: "bold" }}>Địa chỉ:</Text>
+                            <Text style={{ flex: 7 }}>{profileReducer.data?.address?.subDistrict?.name + ' - ' + profileReducer.data?.address?.district?.name + ' - ' + profileReducer.data?.address?.city?.name}</Text>
+                        </View>
 
-                        <Text>Số điện thoại: {profileReducer.data?.phone}</Text>
-                        <Text>Địa chỉ: {profileReducer.data?.address?.subDistrict?.name + '-' + profileReducer.data?.address?.district?.name + '-' + profileReducer.data?.address?.city?.name}</Text>
-                        <Text>Tài khoản: Người dùng bình thường </Text>
                     </View>
                 </View>
                 <View style={{ flex: 2, backgroundColor: "#FFF" }}>
@@ -157,7 +166,7 @@ export default () => {
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.rowItem]}>
-                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { dispatch(userActions.logout(userReducer)) }}>
+                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { dispatch(userActions.logout({ data: userReducer, isexpired: false })) }}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
                                     <FontAwesomeIcon style={{ marginRight: 10 }} size={15} color={"#A0A6BE"} icon={faSignOutAlt} />
                                     <Text >Đăng xuất</Text>

@@ -6,9 +6,9 @@ import * as profileActions from "./ProfileActions"
 import * as tabBarVisibleActons from "./TabBarVisibleActions"
 import * as toastActions from "./ToastActions"
 import * as userActions from "./UserActions"
-import * as focusNotificationTab from "./FocusNotificationTab"
 import * as UpdateAddressDeviceActions from "./UpdateAddressDeviceActions"
 import * as MenuActions from "./MenuActions"
+import * as NotificationActions from "./NotificationActions"
 export {
     userActions,
     tabBarVisibleActons,
@@ -17,7 +17,7 @@ export {
     pendingActions,
     badgeShowActions,
     networkActions,
-    focusNotificationTab,
     UpdateAddressDeviceActions,
-    MenuActions
+    MenuActions,
+    NotificationActions
 }

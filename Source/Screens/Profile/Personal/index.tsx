@@ -65,7 +65,7 @@ export default () => {
             <Formik
                 initialValues={{
                     username: profile?.data?.username || "",
-                    dob: profile?.data?.dob || "",
+                    dob: moment(profile?.data?.dob).format('DD-MM-YYYY') || "",
                     groupsId: profile?.data?.groups_user?.[0]?.id || "",
                     full_name: profile?.data?.full_name || "",
                     phone: profile?.data?.phone || "",
@@ -139,7 +139,7 @@ export default () => {
                                     <Text style={{ color: AppColor.CORLOR_TEXT, width: '90%', textAlign: 'center', fontWeight: 'bold' }}>{disable ? "Chỉnh sửa" : "Hủy"}</Text>
                                 </TouchableOpacity>
                             </View>
-                            <ContainerField title="Loại tài khoản">
+                            {/* <ContainerField title="Loại tài khoản">
                                 <Field
                                     component={AppSelectGroupUser}
                                     name="groupsId"
@@ -149,7 +149,7 @@ export default () => {
                                     styleTitle={{ width: 90 }}
                                     placeholder="Chọn loại tài khoản"
                                 />
-                            </ContainerField>
+                            </ContainerField> */}
                             <ContainerField title="Tên tài khoản">
                                 <Field
                                     component={Input}

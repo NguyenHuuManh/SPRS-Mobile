@@ -1,89 +1,69 @@
-import { useNavigation, useRoute } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/core";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { apiGetAllNotification, apiUpdateStatusNotification } from "../../ApiFunction/Notification";
+import { apiUpdateStatusNotification } from "../../ApiFunction/Notification";
 import ORG from "../../Assets/Images/locationOrganization.svg";
 import Relief from "../../Assets/Images/locationRelief.svg";
 import SOS from "../../Assets/Images/locationSOS.svg";
 import Store from "../../Assets/Images/locationStore.svg";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { getStateRoute } from "../../Helper/RootNavigation";
 import { badgeShowActions } from "../../Redux/Actions";
+import { notificationRequest } from "../../Redux/Actions/NotificationActions";
+import ActionTypes from "../../Redux/ActionTypes";
 import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
-import { useFocusEffect } from "@react-navigation/native";
 import styles from "./styles";
 
 const page = 1;
 const size = 10;
 export default () => {
-    const [pageSize, setPageSize] = useState({ pageSize: 10, pageIndex: 1 });
-    const [data, setData] = useState<any>([]);
+    const { pageSize, pageIndex, data, isRefesh, loading, type } = useSelector((state: RootState) => state.notificationReducer);
+    const { object, totalRecord } = data
     const navigation = useNavigation<any>();
-    const { params } = useRoute<any>();
-    const [totalItem, setTotalItem] = useState(0);
     const badgeShow = useSelector((state: RootState) => state.badgeReducer)
-    const focusNotificationTab = useSelector((state: RootState) => state.forcusNotificationReducer);
-    const [isRefesh, setIsRefesh] = useState(false);
-    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const [onscroll, setOnscroll] = useState(false);
-    // useEffect(() => {
-    //     if (focusNotificationTab.status && badgeShow.type == ActionTypes.BADGE_REQUEST) {
-    //         setPageSize({ ...pageSize });
-    //     }
-    // }, [badgeShow]);
-
-    // useEffect(() => {
-    //     if (focusNotificationTab.status && badgeShow.data.number > 0 && badgeShow.type == ActionTypes.BADGE_RESULTS) {
-    //         setPageSize({ ...pageSize });
-    //     }
-    // }, [focusNotificationTab])
-
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         return () => getNotification();
-    //     }, [])
-    // )
-
-    const getNotification = () => {
-        setLoading(true);
-        apiGetAllNotification(pageSize).then((res) => {
-            if (res.status == 200) {
-                if (res.data.code == '200') {
-                    setData(res.data.obj.object);
-                    setTotalItem(res.data.obj.totalRecord);
-                    if (badgeShow.data.number > 0) {
-                        dispatch(badgeShowActions.badgeRequest())
-                    }
-                    setOnscroll(false);
-                    console.log("resNotification", res);
+    let flagFirst = true;
+    useEffect(() => {
+        dispatch(notificationRequest({ pageSize: 10, pageIndex: 1, isRefesh: false }));
+        const willFocusSubscription = navigation.addListener('focus', () => {
+            const routes = getStateRoute().routes;
+            let checkReload = routes?.length <= 0 ? false : (routes[routes.length - 1].name == "NotificationDetail" || routes[routes.length - 1].name == "DetailPoint")
+            if (checkReload) {
+                if (routes[routes.length - 1].params?.item?.status !== 'read') {
+                    checkReload = true;
+                } else {
+                    checkReload = false
                 }
             }
-        }).finally(() => {
-            setLoading(false);
-            if (isRefesh) setIsRefesh(false);
-        })
-    }
-    useEffect(() => {
-        getNotification();
-    }, [pageSize]);
+            console.log(flagFirst, 'flagFirst');
+            console.log(badgeShow, 'badgeShow');
 
-    useEffect(() => {
-        const willFocusSubscription = navigation.addListener('focus', () => {
-            getNotification();
+            if (badgeShow.data.number > 0 || checkReload) {
+                if (flagFirst) {
+                    flagFirst = false;
+                    return;
+                }
+                dispatch(notificationRequest({ pageSize: 10, pageIndex: 1, isRefesh: false }));
+            }
         });
-
         return willFocusSubscription;
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (badgeShow.data.number > 0 && type == ActionTypes.NOTIFICATION_SUCCESS) {
+            dispatch(badgeShowActions.badgeRequest());
+        }
+    }, [data]);
 
     const updateNotificationStatus = (item) => {
         apiUpdateStatusNotification({ id: item.id, status: "read" }).then((e) => {
             if (e.status == 200) {
                 if (e.data.code == '200') {
                     console.log("read success");
-                    setPageSize({ ...pageSize });
                 }
             } else {
                 console.log("err");
@@ -96,9 +76,9 @@ export default () => {
             if (item.status !== 'read') {
                 updateNotificationStatus(item);
             }
-            navigation.navigate('DetailPoint', { point: { ...item.sender, type: item.type }, from: 'Notification' });
+            navigation.push('DetailPoint', { point: { ...item.sender, type: item.type }, from: 'Notification' });
         } else {
-            navigation.navigate('NotificationDetail', { item, from: 'Notification' });
+            navigation.push('NotificationDetail', { item, from: 'Notification' });
         }
     }
 
@@ -110,7 +90,6 @@ export default () => {
             return arrTime[0];
         }
     }
-    // console.log("data", data)
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity style={[styles.item,
@@ -183,7 +162,9 @@ export default () => {
     }
     const handleLoadMore = () => {
         if (onscroll) {
-            setPageSize({ ...pageSize, pageSize: pageSize.pageSize + size });
+            if (pageSize >= totalRecord) return;
+            dispatch(notificationRequest({ pageSize: pageSize + size, pageIndex: 1, isRefesh: false }));
+            setOnscroll(false);
         }
     }
 
@@ -202,13 +183,12 @@ export default () => {
                 />
             </View>
             <FlatList
-                data={data}
+                data={object}
                 keyExtractor={(item => item.id + '')}
                 renderItem={renderItem}
                 refreshing={isRefesh}
                 onRefresh={() => {
-                    setIsRefesh(true);
-                    setPageSize({ pageIndex: page, pageSize: size });
+                    dispatch(notificationRequest({ pageSize: 10, pageIndex: 1, isRefesh: true }))
                 }}
                 onEndReached={handleLoadMore}
                 onEndReachedThreshold={0}

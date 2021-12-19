@@ -19,6 +19,7 @@ import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
 import { IMAGE_URL } from "../../Constrants/url";
+import { checkLatLng } from "../../Helper/FunctionCommon";
 import { AppColor } from "../../Helper/propertyCSS";
 import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
@@ -130,20 +131,20 @@ const UpdateReliefPoint = ({ navigation }) => {
           flexRight={1}
           flexCenter={10}
           flexLeft={1}
-          // isBack
-          leftView
-          iconLeft={faChevronLeft}
-          leftOnpress={() => {
-            if (item?.from == 'MapCluser') {
-              // navigation.replace('MapCluser');
-              navigation.reset({
-                index: 1,
-                routes: [{ name: 'MapCluser' }]
-              })
-              return;
-            }
-            navigation.goBack();
-          }}
+          isBack
+          // leftView
+          // iconLeft={faChevronLeft}
+          // leftOnpress={() => {
+          //   if (item?.from == 'MapCluser') {
+          //     // navigation.replace('MapCluser');
+          //     navigation.reset({
+          //       index: 1,
+          //       routes: [{ name: 'MapCluser' }]
+          //     })
+          //     return;
+          //   }
+          //   navigation.goBack();
+          // }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "Thông tin điểm cứu trợ"}</Text>
@@ -234,6 +235,14 @@ const UpdateReliefPoint = ({ navigation }) => {
               Toast.show({
                 type: "error",
                 text1: 'Chọn ít nhất một mặt hàng',
+                position: "top"
+              });
+              return;
+            }
+            if (!checkLatLng(adressPoint.GPS_Lati, adressPoint.GPS_long)) {
+              Toast.show({
+                type: "error",
+                text1: 'Bạn chưa chọn địa điểm, hoặc địa điểm chưa hợp lệ',
                 position: "top"
               });
               return;
@@ -344,7 +353,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                   </View>
                 </View>
               </ContainerField>
-              <ContainerField title="Mô tả">
+              {/* <ContainerField title="Mô tả">
                 <Field
                   component={Input}
                   name="description"
@@ -353,7 +362,7 @@ const UpdateReliefPoint = ({ navigation }) => {
                   styleTitle={{ width: 110 }}
                   editable={!editEnable}
                 />
-              </ContainerField>
+              </ContainerField> */}
               <ContainerField title="Địa điểm">
                 <MapPicker
                   styleTitle={{ width: 110 }}
@@ -368,6 +377,21 @@ const UpdateReliefPoint = ({ navigation }) => {
               </ContainerField>
               <ContainerField title="Mặt hàng">
                 <MultipleAddItem items={items} setItems={setItems} readOnly={!editEnable} />
+              </ContainerField>
+              <ContainerField title="Mô tả" styleCustomContainer={{ height: 80, paddingTop: 10, paddingBottom: 2 }}>
+                <Field
+                  component={Input}
+                  name="description"
+                  horizontal
+                  placeholder="Mô tả . . . . "
+                  multiline={true}
+                  numberOfLines={10}
+                  customInputStyle={{ height: 68 }}
+                  textAlign="left"
+                  textAlignVertical="top"
+                  maxLength={250}
+                  editable={editEnable}
+                />
               </ContainerField>
               {editEnable && (
                 <ButtonCustom title={"Cập nhật"} styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, }} onPress={() => { submitForm() }} />

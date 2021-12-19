@@ -37,6 +37,7 @@ export default () => {
             console.log("readding", e);
             if (e.status == 200) {
                 if (e.data.code == '200') {
+                    if (params?.from == 'Notification') return;
                     dispatch(badgeShowActions.badgeRequest());
                 }
             } else {
@@ -54,12 +55,13 @@ export default () => {
                     leftView
                     iconLeft={faChevronLeft}
                     leftOnpress={() => {
-                        if (params?.isBack == true) {
-                            navigation.goBack();
-                        } else {
-                            // navigation.navigate("Notification");
-                            navigation.goBack();
-                        }
+                        // if (params?.isBack == true) {
+                        //     navigation.goBack();
+                        // } else {
+                        //     // navigation.navigate("Notification");
+                        //     navigation.goBack();
+                        // }
+                        navigation.goBack();
                     }}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>

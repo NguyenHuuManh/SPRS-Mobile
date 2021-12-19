@@ -59,11 +59,7 @@ const SosDetail = ({ point, from }) => {
                         if (from == 'Notification') {
                             navigation.navigate(from)
                         } else {
-                            // navigation.replace(from);
-                            navigation.reset({
-                                index: 1,
-                                routes: [{ name: 'MapCluser' }]
-                            })
+                            navigation.goBack();
                         }
                     }}
                     centerEl={(

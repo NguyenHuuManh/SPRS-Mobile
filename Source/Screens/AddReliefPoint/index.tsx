@@ -8,6 +8,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Marker } from "react-native-maps";
 import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 import { apiCreateReliefPoint } from "../../ApiFunction/ReliefPoint";
 import Relief from "../../Assets/Images/locationRelief.svg";
 import ButtonCustom from "../../Components/ButtonCustom";
@@ -19,18 +20,21 @@ import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../Constrants/DataGlobal";
+import { checkLatLng } from "../../Helper/FunctionCommon";
 import { AppColor } from "../../Helper/propertyCSS";
+import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import MapView from "./components/MapView";
 import { register } from "./validate";
 const AddReliefPoint = ({ navigation }) => {
+  const addressCurrent = useSelector((state: RootState) => state.updateAddressReducer);
   const [adressPoint, setAdressPoint] = useState<any>({
-    GPS_Lati: "21.00554564179488",
-    GPS_long: "105.51689565181731",
-    city: "",
-    district: "",
-    subDistrict: "",
+    GPS_Lati: addressCurrent?.data?.GPS_lati,
+    GPS_long: addressCurrent?.data.GPS_long,
+    city: addressCurrent?.data?.city?.name || "",
+    district: addressCurrent?.data?.district?.name || "",
+    subDistrict: addressCurrent?.data?.subDistrict?.name || "",
   })
   const [items, setItems] = useState<any>([]);
   const formikRef = createRef<any>();
@@ -119,6 +123,15 @@ const AddReliefPoint = ({ navigation }) => {
                 });
                 return;
               }
+              // console.log('adressPoint', adressPoint);
+              if (!checkLatLng(adressPoint.GPS_Lati, adressPoint.GPS_long)) {
+                Toast.show({
+                  type: "error",
+                  text1: 'Bạn chưa chọn địa điểm, hoặc địa điểm chưa hợp lệ',
+                  position: "top"
+                });
+                return;
+              }
               const body = {
                 ...values,
                 open_time: values.open_Date_time + " " + (isEmpty(values.open_Hour_time) ? "00:00:00" : values.open_Hour_time),
@@ -167,11 +180,10 @@ const AddReliefPoint = ({ navigation }) => {
                   <Field
                     component={Input}
                     name="name"
-                    // title="Tên điểm cứu trợ:"
                     horizontal
                     placeholder="Tên điểm cứu trợ"
                     styleTitle={{ width: 110 }}
-                    maxLength={30}
+                    maxLength={100}
                   />
                 </ContainerField>
 
@@ -221,7 +233,7 @@ const AddReliefPoint = ({ navigation }) => {
                   </View>
                 </ContainerField>
 
-                <ContainerField title="Mô tả">
+                {/* <ContainerField title="Mô tả">
                   <Field
                     component={Input}
                     name="description"
@@ -230,7 +242,8 @@ const AddReliefPoint = ({ navigation }) => {
                     styleTitle={{ width: 110 }}
                     maxLength={200}
                   />
-                </ContainerField>
+                </ContainerField> */}
+
 
                 <ContainerField title="Chọn địa điểm">
                   <MapPicker
@@ -254,6 +267,20 @@ const AddReliefPoint = ({ navigation }) => {
                 </ContainerField>
                 <ContainerField title="Sản phẩm">
                   <MultipleAddItem items={items} setItems={setItems} />
+                </ContainerField>
+                <ContainerField title="Mô tả" styleCustomContainer={{ height: 80, paddingTop: 10, paddingBottom: 2 }}>
+                  <Field
+                    component={Input}
+                    name="description"
+                    horizontal
+                    placeholder="Mô tả . . . . "
+                    multiline={true}
+                    numberOfLines={10}
+                    customInputStyle={{ height: 68 }}
+                    textAlign="left"
+                    textAlignVertical="top"
+                    maxLength={250}
+                  />
                 </ContainerField>
                 <ButtonCustom
                   title={"Thêm mới"}

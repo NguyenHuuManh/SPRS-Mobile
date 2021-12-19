@@ -45,18 +45,18 @@ export default (props: Props) => {
     };
 
 
-    const revertDate = (value) => {
-        let dateStr = "";
+    // const revertDate = (value) => {
+    //     let dateStr = "";
 
-        // const dateStr = (isEmpty(value) || isNull(value)) ? moment().format("YYYY-MM-DD") : moment(value).format("YYYY-MM-DD");
-        if (isEmpty(value) || isNull(value)) {
-            dateStr = moment().format("YYYY-MM-DD");
-        } else {
-            const arr = value.split("-");
-            dateStr = arr[2] + arr[1] + arr[0];
-        }
-        return moment(dateStr).valueOf();
-    }
+    //     // const dateStr = (isEmpty(value) || isNull(value)) ? moment().format("YYYY-MM-DD") : moment(value).format("YYYY-MM-DD");
+    //     if (isEmpty(value) || isNull(value)) {
+    //         dateStr = moment().format("YYYY-MM-DD");
+    //     } else {
+    //         const arr = value.split("-");
+    //         dateStr = arr[2] + arr[1] + arr[0];
+    //     }
+    //     return moment(dateStr).valueOf();
+    // }
     return (
         <View pointerEvents={`${disabled ? 'none' : 'auto'}`}>
             <View style={[styles.containerInput]}>
@@ -82,12 +82,22 @@ export default (props: Props) => {
                         iconRight && (<View style={[styles.icon]}><FontAwesomeIcon size={iconSize || 26} color={iconColor || "#222"} icon={iconRight} /></View>)
                     }
                 </View>
-                {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>}
+                {touched[name] && errors[name] && (
+                    <View style={{ flexDirection: "row" }}>
+                        {iconLeft && (
+                            <View style={[styles.icon]}>
+                            </View>
+                        )}
+                        <Text style={[MainStyle.texError, { flex: 9 }]}>{errors[name]}</Text>
+                    </View>
+                )}
+                {/* {touched[name] && errors[name] && <Text style={[MainStyle.texError]}>{errors[name]}</Text>} */}
             </View>
             {
                 show && (
                     <DateTimePicker
-                        value={new Date(revertDate(value))}
+                        // value={new Date(revertDate(value))}
+                        value={moment(value, "DD-MM-YYYY").isValid() ? moment(value, "DD-MM-YYYY").toDate() : moment().toDate()}
                         mode="date"
                         display="spinner"
                         onChange={onChange}

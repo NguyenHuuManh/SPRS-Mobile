@@ -4,12 +4,14 @@ import { debounce, isEmpty } from "lodash";
 import React, { createRef, useCallback, useContext, useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
+import { useSelector } from "react-redux";
 import { MapStore } from "../..";
 import { apiPlaceAutoCompleteMap, apiPlaceDetailById } from "../../../../ApiFunction/PlaceAPI";
-import ButtonCustom from "../../../../Components/ButtonCustom";
 import HeaderContainer from "../../../../Components/HeaderContainer";
+import { checkLatLng } from "../../../../Helper/FunctionCommon";
 import { AppColor } from "../../../../Helper/propertyCSS";
 import { height } from "../../../../Helper/responsive";
+import { RootState } from "../../../../Redux/Reducers";
 
 interface Props {
     setText: any;
@@ -26,19 +28,23 @@ export default (props: Props) => {
 
     } = useContext(MapStore)
     const { setText, setVisible, visible } = props
-    const [itemSelected, setItemSelected] = useState<any>({});
     const inputRef = createRef<any>();
     const [keyWord, setKeyWord] = useState("");
-    // useEffect(() => {
-    //     if (isEmpty(itemSelected)) setText("");
-    //     setText(itemSelected.label);
-    // }, [itemSelected])
+    const addressCurrent = useSelector((state: RootState) => state.updateAddressReducer);
     const [data, setData] = useState([])
     const [location, setLocation] = useState<any>({})
     const getCurrentLocation = () => {
+        // console.log('addressCurrent', addressCurrent);
+        if (checkLatLng(addressCurrent?.data?.GPS_lati, addressCurrent?.data.GPS_long)) {
+            setLocation({
+                latitude: addressCurrent?.data?.GPS_lati,
+                longitude: addressCurrent?.data.GPS_long
+            });
+            return;
+        }
         Geolocation.getCurrentPosition(
             (response) => {
-
+                // console.log('responseCurrentLocation', response);
                 setLocation({
                     latitude: response.coords.latitude,
                     longitude: response.coords.longitude,
@@ -58,19 +64,18 @@ export default (props: Props) => {
                 accuracy: { android: "high" },
             }
         )
-
     }
 
 
-    const getPoint = (text, latitude?, longitude?) => {
+    const getPoint = (text, latitude?: any, longitude?: any) => {
         const params = {
             search: text,
-            lati: latitude | location.latitude,
-            long: longitude | location.longitude,
+            lati: latitude,
+            long: longitude,
             limit: limit,
         }
         apiPlaceAutoCompleteMap(params).then((e) => {
-            // console.log("eeessera", e);
+            console.log("search", e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setData(e.data.obj);

@@ -23,6 +23,10 @@ export function getCurrentRoute() {
     return route;
 }
 
+export function getStateRoute() {
+    const route = navigationRef.getState();
+    return route;
+}
 export function getParentRoute() {
     const route = navigationRef.getParent();
     return route;

@@ -218,7 +218,25 @@ export default ({ navigation }) => {
                         style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center", }}
                         onPress={(e: any) => {
                             e.preventDefault();
-                            ChangeStatusPoint({ ...item, status: !item.status });
+                            if (item.status + '' == '0') {
+                                Alert.alert(
+                                    "Bật điểm cứu trợ",
+                                    `Thời gian kết thúc của điểm đã vượt quá ngày hiện tại, cập nhật lại thời gian nếu bạn muốn bật lại điểm`,
+                                    [],
+                                    { cancelable: true },
+                                );
+                                return;
+                            }
+                            if (item.status + '' == '2') {
+                                Alert.alert(
+                                    "Bật điểm cứu trợ",
+                                    `Thời gian bắt đầu của điểm chưa đến ngày hiện tại, cập nhật lại thời gian nếu bạn muốn bật điểm`,
+                                    [],
+                                    { cancelable: true },
+                                );
+                                return;
+                            }
+                            ChangeStatusPoint({ ...item, status: item.status + '' == '3' ? 1 : 3 });
                         }}>
                         <Animated.Text
                             style={[
@@ -226,9 +244,9 @@ export default ({ navigation }) => {
                                     transform: [{ translateX: trans }],
                                 },
                             ]}>
-                            {/* <FontAwesomeIcon icon={faToggleOn} size={25} color="#FFFF" /> */}
-                            <Switch value={item.status} disabled
-                                thumbColor={'#0169ff'}
+                            <Switch value={item.status + '' == '1'}
+                                disabled
+                                thumbColor={item.status + '' == '3' ? 'gray' : '#0169ff'}
                                 trackColor={{
                                     false: AppColor.CORLOR_TEXT,
                                     true: AppColor.BUTTON_MAIN
@@ -239,9 +257,8 @@ export default ({ navigation }) => {
                     <TouchableOpacity
                         style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
-                            // console.log("item", item)
                             e.preventDefault();
-                            navigation.replace("MapCluser",
+                            navigation.navigate("MapCluser",
                                 {
                                     toLocation:
                                     {
@@ -313,7 +330,7 @@ export default ({ navigation }) => {
             >
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
-                        navigation.navigate("UpdateReliefPoint", item);
+                        navigation.push("UpdateReliefPoint", item);
                     } else {
                         onchage(false);
                     }
@@ -331,7 +348,7 @@ export default ({ navigation }) => {
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text style={{ width: "50%", fontSize: 12, fontWeight: "bold" }}>{item.name}</Text>
                                 <View style={{ width: "50%", alignItems: "flex-end", paddingRight: 5, justifyContent: "center" }}>
-                                    <View style={[styles.statusIcon, { backgroundColor: item.status ? "#32a864" : "red" }]}></View>
+                                    <View style={[styles.statusIcon, { backgroundColor: item.status + '' == '0' ? "orange" : item.status == '1' ? "#32a864" : item.status == '2' ? "gray" : "red" }]}></View>
                                 </View>
                             </View>
                             <Text numberOfLines={1} ellipsizeMode="middle" style={{ color: AppColor.CORLOR_TEXT }}>Địa chỉ: {addressToString(item?.address?.subDistrict.name) + " - " + addressToString(item?.address?.district.name) + " - " + addressToString(item?.address?.city.name)}</Text>

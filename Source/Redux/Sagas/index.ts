@@ -3,6 +3,7 @@ import ActionTypes from "../ActionTypes";
 import { badgeSaga } from "./BadgeSagas";
 import { getMenu } from "./MenuSagas";
 import { onNetworkChecking } from "./NetworkCheckingSagas";
+import { notificationSaga } from "./NotificationSagas";
 import { onChangePending } from "./PendingSagas";
 import * as profileSagas from "./ProfileSagas";
 import { requestUpdate } from "./UpdateAddressSagas";
@@ -17,5 +18,6 @@ export default function* watch() {
         takeLatest(ActionTypes.BADGE_REQUEST, badgeSaga),
         takeLatest(ActionTypes.UPDATE_ADDRESS_DEVICE_REQUEST, requestUpdate),
         takeLatest(ActionTypes.MENU_REQUEST, getMenu),
+        takeLatest(ActionTypes.NOTIFICATION_REQUEST, notificationSaga),
     ])
 }

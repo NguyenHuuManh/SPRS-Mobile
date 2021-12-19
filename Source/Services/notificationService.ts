@@ -3,7 +3,7 @@ import NetInfo from "@react-native-community/netinfo";
 import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
 import { apiUpdateStatusNotification } from '../ApiFunction/Notification';
-import { navigate } from '../Helper/RootNavigation';
+import { getCurrentRoute, navigate } from '../Helper/RootNavigation';
 import { badgeShowActions, UpdateAddressDeviceActions, userActions } from '../Redux/Actions';
 import { badgeRequest } from '../Redux/Actions/BadgeShowActions';
 import { netWorkChecking } from '../Redux/Actions/NetworkActions';
@@ -11,6 +11,7 @@ import Geolocation from 'react-native-geolocation-service';
 import { store } from '../Store';
 import { apiPlaceDetailByLongLat } from '../ApiFunction/PlaceAPI';
 import { findIndex } from 'lodash';
+import { notificationRequest } from '../Redux/Actions/NotificationActions';
 export const getFcmToken = async () => {
     let fcmToken = await AsyncStorage.getItem('fcmToken');
     if (!fcmToken) {
@@ -41,8 +42,13 @@ export const notificationListener = async (callBack?: any) => {
             text1: remoteMessage.notification.title,
             position: "top"
         });
-        store.dispatch(badgeRequest());
-
+        const route = getCurrentRoute();
+        console.log('route', route);
+        if (route.name == 'Notification') {
+            store.dispatch(notificationRequest({ pageSize: 10, pageIndex: 1, isRefesh: false }))
+        } else {
+            store.dispatch(badgeRequest());
+        }
     })
 
     // Check whether an initial notification is available
@@ -61,6 +67,8 @@ export const notificationListener = async (callBack?: any) => {
                     apiUpdateStatusNotification({ id: item.id, status: "read" }).then((e) => {
                         if (e.status == 200) {
                             if (e.data.code == '200') {
+
+                                // if(route.name!=='')
                                 store.dispatch(badgeShowActions.badgeRequest());
                             }
                         } else {
@@ -132,7 +140,8 @@ export const getCurrentLocation = () => {
         (error) => { console.log("errorCurrentLocation", error) },
         {
             distanceFilter: 1000,
-            enableHighAccuracy: true
+            enableHighAccuracy: true,
+            accuracy: { android: "high" },
         }
     );
 }

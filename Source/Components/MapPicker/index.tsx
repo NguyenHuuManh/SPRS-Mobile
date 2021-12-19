@@ -56,6 +56,7 @@ export default (props: Props) => {
     const getDetailPlace = (long: string | number, lat: string | number) => {
         try {
             apiPlaceDetailByLongLat(long, lat).then((response) => {
+                console.log('response', response)
                 if (response.status == 200) {
                     const place = response?.data?.results[0]?.address_components;
                     setAdress({

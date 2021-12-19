@@ -27,7 +27,7 @@ class Services {
 
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
-        console.log('error', error);
+        console.log('error', error.response);
         console.log('response', response)
         if (isSuccess) {
             if (response?.data?.code == '501') {
@@ -39,7 +39,7 @@ class Services {
                         [
                             {
                                 text: 'Đăng nhập',
-                                onPress: () => store.dispatch(userActions.logout(store.getState().userReducer))
+                                onPress: () => store.dispatch(userActions.logout({ data: store.getState().userReducer, isexpired: true }))
                             },
                         ],
                         { cancelable: false },
@@ -61,7 +61,7 @@ class Services {
                         [
                             {
                                 text: 'Đăng nhập',
-                                onPress: () => store.dispatch(userActions.logout(store.getState().userReducer))
+                                onPress: () => store.dispatch(userActions.logout({ data: store.getState().userReducer, isexpired: true }))
                             },
                         ],
                         { cancelable: false },

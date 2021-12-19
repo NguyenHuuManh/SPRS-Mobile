@@ -124,7 +124,7 @@ export default ({ navigation }) => {
             >
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
-                        navigation.navigate("DetailPoint", { point: { id: 565, type: 'st' }, from: "SubcribeList" });
+                        navigation.navigate("DetailPoint", { point: { id: item.id, type: 'st' }, from: "SubcribeList" });
                     } else {
                         onchage(false);
                     }

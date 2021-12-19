@@ -21,6 +21,7 @@ import Filter from "./Components/Filter";
 import ModalSearch from "./Components/ModalSearch";
 import RenderMarker from "./Components/RenderMarker";
 import MY_LOCATION from "../../Assets/Icons/myLocation.svg";
+import { getCurrentRoute } from "../../Helper/RootNavigation";
 interface Store {
     regionStore: { region: any; setRegion: any };
     markerToStore: { markerTo: any, setMarkerTo: any };
@@ -146,6 +147,7 @@ export default () => {
                 latitudeDelta: 0.006866,
                 longitudeDelta: 0.006866,
             }
+            console.log('regionToOnMapReady', mapRef.current.getMapRef())
             mapRef.current.getMapRef().animateToRegion(regionTo, 1000);
             setMarkerTo(params.toLocation);
             setStrokerDirection(5);
@@ -159,6 +161,7 @@ export default () => {
                 latitudeDelta: 0.006866,
                 longitudeDelta: 0.006866,
             }
+            console.log('regionTo', regionTo)
             mapRef.current.getMapRef().animateToRegion(regionTo, 1000);
             setMarkerTo(params.toLocation);
             setStrokerDirection(5);
@@ -244,16 +247,16 @@ export default () => {
                 <ModalSearch setText={setText} visible={searchVisible} setVisible={setSearchVisible} />
                 <View style={{ height: height * 0.07 }}>
                     <HeaderContainer
-                        // isReplace={params?.screen}
-                        leftView={params?.screen}
-                        leftOnpress={() => {
-                            if (params?.screen == 'DetailPoint') {
-                                navigation.goBack();
-                                return;
-                            }
-                            navigation.replace(params?.screen)
-                        }}
-                        iconLeft={faChevronLeft}
+                        // isBack={params?.screen}
+                        // leftView={params?.screen}
+                        // leftOnpress={() => {
+                        //     if (params?.screen == 'DetailPoint') {
+                        //         navigation.goBack();
+                        //         return;
+                        //     }
+                        //     navigation.replace(params?.screen)
+                        // }}
+                        // iconLeft={faChevronLeft}
                         centerEl={(
                             <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
                                 <TouchableOpacity onPress={() => {
@@ -274,7 +277,8 @@ export default () => {
                                 </TouchableOpacity>
                             </View>
                         )}
-                        flexLeft={params?.screen ? 2 : 0}
+                        // flexLeft={params?.screen ? 2 : 0}
+                        flexLeft={0}
                         flexCenter={14}
                         flexRight={3}
                         rightEL={(

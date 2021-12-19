@@ -152,6 +152,7 @@ export default () => {
                                 placeholder="Nhập tên tài khoản"
                                 horizontal
                                 styleTitle={{ width: 90 }}
+                                maxLength={16}
                             />
                         </ContainerField>
                         <ContainerField title="Họ và tên">
@@ -161,6 +162,7 @@ export default () => {
                                 placeholder="Nhập họ và tên"
                                 horizontal
                                 styleTitle={{ width: 90 }}
+                                maxLength={50}
                             />
                         </ContainerField>
                         <ContainerField title="Số điện thoại">
@@ -171,6 +173,7 @@ export default () => {
                                 horizontal
                                 styleTitle={{ width: 90 }}
                                 placeholder="Nhập số điện thoại"
+                                maxLength={10}
                             />
                         </ContainerField>
                         <ContainerField title="Ngày sinh">

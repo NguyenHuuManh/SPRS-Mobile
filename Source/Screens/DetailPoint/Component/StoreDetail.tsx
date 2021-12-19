@@ -100,9 +100,6 @@ const StoreDetail = ({ point, from }) => {
             return;
         })
     }
-    console.log('menu.data?.includes', menu.data.map((e) => e.code)?.includes('PER_MOB_SUBCRIBE'));
-    // console.log('menu', menu.data)
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ height: "7%" }}>
@@ -117,14 +114,9 @@ const StoreDetail = ({ point, from }) => {
                             navigation.replace('Map');
                             return;
                         }
-                        if (from == 'SubcribeList') {
+                        else {
                             navigation.goBack();
-                            return;
                         }
-                        navigation.reset({
-                            index: 1,
-                            routes: [{ name: 'MapCluser' }]
-                        })
                     }}
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>

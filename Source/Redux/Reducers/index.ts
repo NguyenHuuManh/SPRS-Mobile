@@ -1,15 +1,14 @@
 import { combineReducers } from "redux";
 import BadgeReducer from "./BadgeReducer";
+import MenuReducer from "./MenuReducer";
 import NetworkCheckingReducer from "./NetworkCheckingReducer";
 import PendingReducer from "./PendingReducer";
 import ProfileReducer from "./ProfileReducer";
 import TabBarVisibleReducer from "./TabBarVisibleReducer";
 import ToastReducer from "./ToastReducer";
-import UserReducer from "./UserReducer";
-import ForcusNotificationReducer from "./ForcusNotificationReducer";
 import UpdateAddressReducer from "./UpdateAddressReducer";
-import MenuReducer from "./MenuReducer";
-
+import UserReducer from "./UserReducer";
+import NotificationReducer from "./NotificationReducer";
 const rootReducer = combineReducers(
     {
         userReducer: UserReducer,
@@ -19,9 +18,9 @@ const rootReducer = combineReducers(
         pendingReducer: PendingReducer,
         badgeReducer: BadgeReducer,
         networkCheckingReducer: NetworkCheckingReducer,
-        forcusNotificationReducer: ForcusNotificationReducer,
         updateAddressReducer: UpdateAddressReducer,
-        menuReducer: MenuReducer
+        menuReducer: MenuReducer,
+        notificationReducer: NotificationReducer
     });
 export type RootState = ReturnType<typeof rootReducer>;
 export default rootReducer;

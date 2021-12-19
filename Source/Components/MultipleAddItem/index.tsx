@@ -24,14 +24,16 @@ export default (props: Props) => {
                 <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", height: 50, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center" }]}>
                     <Text>{item.quantity + " " + item.item.unit}</Text>
                     <Text> | {item.item.name}</Text>
-                    <TouchableOpacity
-                        onPress={() => {
-                            const arr = items.filter(e => e.item.id !== item.item.id);
-                            setItems(arr);
-                        }}
-                        style={{ position: "absolute", top: 5, right: 5, }}>
-                        <FontAwesomeIcon icon={faTimes} color="red" />
-                    </TouchableOpacity >
+                    {!readOnly && (
+                        <TouchableOpacity
+                            onPress={() => {
+                                const arr = items.filter(e => e.item.id !== item.item.id);
+                                setItems(arr);
+                            }}
+                            style={{ position: "absolute", top: 5, right: 5, }}>
+                            <FontAwesomeIcon icon={faTimes} color="red" />
+                        </TouchableOpacity >
+                    )}
                 </View>
             </View>
         )

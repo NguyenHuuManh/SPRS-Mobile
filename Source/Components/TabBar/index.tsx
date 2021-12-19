@@ -1,18 +1,13 @@
-import { Platform, SafeAreaView, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { faBell, faHome, faIdBadge, faMapMarkedAlt, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faBars, faHome, faIdBadge, faPlusCircle, faMapMarkedAlt, faBell } from '@fortawesome/free-solid-svg-icons'
-import { width } from "../../Helper/responsive";
-import { MainStyle } from "../../Style/main_style";
-import { AppColor, BackgoundMain } from "../../Helper/propertyCSS";
+import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { changeStatus } from "../../Redux/Actions/FocusNotificationTab";
+import { AppColor } from "../../Helper/propertyCSS";
+import { width } from "../../Helper/responsive";
 
 export default ({ state, descriptors, navigation }) => {
-    const badgeShow = useSelector((state) => state.badgeReducer);
-    const focusNotificationTab = useSelector((state) => state.forcusNotificationReducer);
-    const dispatch = useDispatch();
+    const badgeShow = useSelector((state: any) => state.badgeReducer);
     function IconRender({ name, color }) {
         switch (name) {
             case 'Trang chủ':
@@ -85,22 +80,13 @@ export default ({ state, descriptors, navigation }) => {
                                     : route.name;
 
                         const isFocused = state.index === index;
-
                         const onPress = () => {
                             const event = navigation.emit({
                                 type: 'tabPress',
                                 target: route.key,
                             });
-
                             if (!isFocused && !event.defaultPrevented) {
                                 navigation.navigate(route.name);
-                                if (route.name == "Thông báo") {
-                                    dispatch(changeStatus(true));
-                                } else {
-                                    if (focusNotificationTab.status) {
-                                        dispatch(changeStatus(false));
-                                    }
-                                }
                             }
                         };
 

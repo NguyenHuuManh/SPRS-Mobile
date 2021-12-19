@@ -219,7 +219,7 @@ export default ({ navigation }) => {
                         style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
                         onPress={(e) => {
                             e.preventDefault();
-                            navigation.replace("MapCluser",
+                            navigation.navigate("MapCluser",
                                 {
                                     toLocation:
                                     {
@@ -342,16 +342,6 @@ export default ({ navigation }) => {
                     onPress={() => { navigation.push("AddStorePoint") }}
                     styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, }}
                 >
-                    {/* <LinearGradient
-                        colors={['rgba(228, 230, 216,0)', 'rgba(228, 230, 216,0.2)', 'rgba(244, 245, 240,1)']}
-                        style={{
-                            height: 50,
-                            width: 50,
-                            position: 'absolute',
-                            bottom: 0,
-                            borderRadius: 50
-                        }}
-                    /> */}
                     <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
                 </ButtonCustom>
             </View>

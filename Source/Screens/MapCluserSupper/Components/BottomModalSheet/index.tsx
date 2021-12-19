@@ -112,12 +112,13 @@ export default React.memo((props: Props) => {
                                         markerTo?.id && (
                                             <ButtonCustom onPress={() => {
                                                 if (markerTo?.user_id == profileReducer.data.id) {
-                                                    if (markerTo.type == 'rp') navigation.navigate("UpdateReliefPoint", { id: markerTo.id, from: 'MapCluser' });
-                                                    if (markerTo.type == 'st') navigation.navigate("UpdateStorePoint", { id: markerTo.id, from: 'MapCluser' });
+                                                    if (markerTo.type == 'rp') navigation.push("UpdateReliefPoint", { id: markerTo.id, from: 'MapCluser' });
+                                                    if (markerTo.type == 'st') navigation.push("UpdateStorePoint", { id: markerTo.id, from: 'MapCluser' });
                                                     if (markerTo.type == 'sos') navigation.push("SOS", { id: markerTo.id, from: 'MapCluser' });
                                                 } else {
-                                                    navigation.navigate("DetailPoint", { point: markerTo, from: "MapCluser" });
+                                                    navigation.push("DetailPoint", { point: markerTo, from: "MapCluser" });
                                                 }
+                                                setVisible(false);
                                             }} styleContain={{ alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, marginTop: 20 }}>
                                                 <Text style={{ color: '#FFFF' }}>Xem chi tiết</Text>
                                             </ButtonCustom>
