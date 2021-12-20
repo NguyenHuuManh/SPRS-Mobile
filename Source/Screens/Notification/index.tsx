@@ -9,6 +9,7 @@ import Relief from "../../Assets/Images/locationRelief.svg";
 import SOS from "../../Assets/Images/locationSOS.svg";
 import Store from "../../Assets/Images/locationStore.svg";
 import HeaderContainer from "../../Components/HeaderContainer";
+import { timeSince } from "../../Helper/FunctionCommon";
 import { getStateRoute } from "../../Helper/RootNavigation";
 import { badgeShowActions } from "../../Redux/Actions";
 import { notificationRequest } from "../../Redux/Actions/NotificationActions";
@@ -26,7 +27,6 @@ export default () => {
     const badgeShow = useSelector((state: RootState) => state.badgeReducer)
     const dispatch = useDispatch();
     const [onscroll, setOnscroll] = useState(false);
-    let flagFirst = true;
     useEffect(() => {
         dispatch(notificationRequest({ pageSize: 10, pageIndex: 1, isRefesh: false }));
         const willFocusSubscription = navigation.addListener('focus', () => {
@@ -39,14 +39,7 @@ export default () => {
                     checkReload = false
                 }
             }
-            console.log(flagFirst, 'flagFirst');
-            console.log(badgeShow, 'badgeShow');
-
             if (badgeShow.data.number > 0 || checkReload) {
-                if (flagFirst) {
-                    flagFirst = false;
-                    return;
-                }
                 dispatch(notificationRequest({ pageSize: 10, pageIndex: 1, isRefesh: false }));
             }
         });
@@ -91,6 +84,8 @@ export default () => {
         }
     }
     const renderItem = ({ item }) => {
+        // const time = timeSince(item.create_time);
+        // console.log('timemmm', time)
         return (
             <TouchableOpacity style={[styles.item,
                 // { backgroundColor: item.status !== 'read' ? "#F6BB55" : "#FFF" }
@@ -139,7 +134,7 @@ export default () => {
                         < Text style={{
                             color: item.status !== 'read' ? "black" : 'rgba(173,173,173,1)',
                             fontWeight: item.status == 'uncheck' ? "bold" : "normal"
-                        }}>{renderLable(item?.create_time)}</Text>
+                        }}>{timeSince(item?.create_time)}</Text>
                     </View>
                 </View>
             </TouchableOpacity >

@@ -6,6 +6,7 @@ import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { apiPlaceDetailByLongLat } from "../../ApiFunction/PlaceAPI";
 import { checkKeyNull, checkLatLng } from "../../Helper/FunctionCommon";
+import { AppColor } from "../../Helper/propertyCSS";
 import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import AutoCompleteSearchLocation from "../AutoCompleteSearchLocation";
@@ -162,7 +163,7 @@ export default (props: Props) => {
                     }
                     <TouchableOpacity
                         onPress={() => {
-                            if (disabled) return;
+                            // if (disabled) return;
                             setVisible(true);
                         }}
                         style={[styles.inputContainer, underLine ? styles.underLine : {}]}>
@@ -183,21 +184,29 @@ export default (props: Props) => {
                 </View>
             </View>
             <Modal visible={visible} animationType="fade">
-                <View style={{ flex: 1, zIndex: 200 }}>
-                    <AutoCompleteSearchLocation
-                        onPress={(data) => {
-                            setMarker({ ...marker, longitude: data.geometry.location.lng, latitude: data.geometry.location.lat });
-                        }}
-                        mapRef={mapRef}
-                        region={region}
-                        renderRightButton={() => (
-                            <TouchableOpacity onPress={() => { setVisible(false) }} style={{ justifyContent: "center", width: "100%", height: "100%", alignItems: "center" }}>
-                                <Text>Xong</Text>
-                            </TouchableOpacity>
-                        )}
-                    />
+                {disabled ? (
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-end' }}>
+                        <TouchableOpacity onPress={() => { setVisible(false) }} style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
+                            <Text style={{ color: AppColor.BUTTON_MAIN }}>Xong</Text>
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    <View style={{ flex: 1, zIndex: 200 }}>
+                        <AutoCompleteSearchLocation
+                            onPress={(data) => {
+                                setMarker({ ...marker, longitude: data.geometry.location.lng, latitude: data.geometry.location.lat });
+                            }}
+                            mapRef={mapRef}
+                            region={region}
+                            renderRightButton={() => (
+                                <TouchableOpacity onPress={() => { setVisible(false) }} style={{ justifyContent: "center", width: "100%", height: "100%", alignItems: "center" }}>
+                                    <Text style={{ color: AppColor.BUTTON_MAIN }}>Xong</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
 
-                </View>
+                    </View>
+                )}
                 <View style={{ width: width, justifyContent: "center", alignItems: "center", flex: 5, zIndex: 1 }}>
                     <View style={{ alignItems: "center", padding: 10, height: "20%" }}>
                         <Text>Tỉnh/Thanh phố: {adress?.city}</Text>
@@ -219,6 +228,7 @@ export default (props: Props) => {
                                 ref={mapRef}
                                 onMapReady={onMapReady}
                                 onPress={(e) => {
+                                    if (disabled) return;
                                     setMarker({ ...e.nativeEvent.coordinate })
                                 }}
                             >
@@ -233,7 +243,6 @@ export default (props: Props) => {
                                             />
                                         )}
                                     </>
-
                                 )}
                             </MapView>
                         }

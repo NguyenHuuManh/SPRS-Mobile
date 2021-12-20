@@ -8,7 +8,8 @@ import * as toastActions from "./ToastActions"
 import * as userActions from "./UserActions"
 import * as UpdateAddressDeviceActions from "./UpdateAddressDeviceActions"
 import * as MenuActions from "./MenuActions"
-import * as NotificationActions from "./NotificationActions"
+import * as NotificationActions from "./NotificationActions";
+import * as ListenNotifiActions from "./ListenNotifiActions"
 export {
     userActions,
     tabBarVisibleActons,
@@ -19,5 +20,6 @@ export {
     networkActions,
     UpdateAddressDeviceActions,
     MenuActions,
-    NotificationActions
+    NotificationActions,
+    ListenNotifiActions
 }

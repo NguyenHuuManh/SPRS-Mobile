@@ -1,5 +1,5 @@
 import * as Yup from "yup";
 
-export const register = Yup.object().shape({
-    name: Yup.string().required("không được bỏ trống").nullable(),
+export const sosUpdate = Yup.object().shape({
+    level: Yup.string().required("không được bỏ trống").nullable(),
 });

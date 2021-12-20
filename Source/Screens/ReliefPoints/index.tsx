@@ -254,34 +254,36 @@ export default ({ navigation }) => {
                             ></Switch>
                         </Animated.Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
-                        onPress={(e) => {
-                            e.preventDefault();
-                            navigation.navigate("MapCluser",
-                                {
-                                    toLocation:
+                    {item.status + '' == '1' && (
+                        <TouchableOpacity
+                            style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
+                            onPress={(e) => {
+                                e.preventDefault();
+                                navigation.navigate("MapCluser",
                                     {
-                                        id: item.id,
-                                        location: {
-                                            latitude: Number(item.address.GPS_lati),
-                                            longitude: Number(item.address.GPS_long)
+                                        toLocation:
+                                        {
+                                            id: item.id,
+                                            location: {
+                                                latitude: Number(item.address.GPS_lati),
+                                                longitude: Number(item.address.GPS_long)
+                                            },
+                                            type: "rp"
                                         },
-                                        type: "rp"
+                                        screen: "ReliefPoint"
+                                    })
+                            }}
+                        >
+                            <Animated.Text
+                                style={[
+                                    {
+                                        transform: [{ translateX: trans }],
                                     },
-                                    screen: "ReliefPoint"
-                                })
-                        }}
-                    >
-                        <Animated.Text
-                            style={[
-                                {
-                                    transform: [{ translateX: trans }],
-                                },
-                            ]}>
-                            <FontAwesomeIcon icon={faMapMarked} size={20} color={AppColor.BUTTON_MAIN} />
-                        </Animated.Text>
-                    </TouchableOpacity>
+                                ]}>
+                                <FontAwesomeIcon icon={faMapMarked} size={20} color={AppColor.BUTTON_MAIN} />
+                            </Animated.Text>
+                        </TouchableOpacity>
+                    )}
                 </>
 
             </TouchableWithoutFeedback >
@@ -348,7 +350,7 @@ export default ({ navigation }) => {
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text style={{ width: "50%", fontSize: 12, fontWeight: "bold" }}>{item.name}</Text>
                                 <View style={{ width: "50%", alignItems: "flex-end", paddingRight: 5, justifyContent: "center" }}>
-                                    <View style={[styles.statusIcon, { backgroundColor: item.status + '' == '0' ? "orange" : item.status == '1' ? "#32a864" : item.status == '2' ? "gray" : "red" }]}></View>
+                                    <View style={[styles.statusIcon, { backgroundColor: item.status + '' == '0' ? "orange" : item.status + '' == '1' ? "#32a864" : item.status == '2' ? "gray" : "red" }]}></View>
                                 </View>
                             </View>
                             <Text numberOfLines={1} ellipsizeMode="middle" style={{ color: AppColor.CORLOR_TEXT }}>Địa chỉ: {addressToString(item?.address?.subDistrict.name) + " - " + addressToString(item?.address?.district.name) + " - " + addressToString(item?.address?.city.name)}</Text>
@@ -389,7 +391,7 @@ export default ({ navigation }) => {
             </View>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
-                    isReplace={"DrawScreen"}
+                    isBack
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}

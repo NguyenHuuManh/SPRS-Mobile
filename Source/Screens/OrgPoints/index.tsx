@@ -228,7 +228,7 @@ export default ({ navigation }) => {
         <View style={[styles.container]}>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
-                    isReplace={"DrawScreen"}
+                    isBack
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}

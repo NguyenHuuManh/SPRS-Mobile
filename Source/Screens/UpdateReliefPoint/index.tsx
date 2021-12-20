@@ -128,23 +128,10 @@ const UpdateReliefPoint = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ height: height * 0.07 }}>
         <HeaderContainer
-          flexRight={1}
+          flexRight={2}
           flexCenter={10}
           flexLeft={1}
           isBack
-          // leftView
-          // iconLeft={faChevronLeft}
-          // leftOnpress={() => {
-          //   if (item?.from == 'MapCluser') {
-          //     // navigation.replace('MapCluser');
-          //     navigation.reset({
-          //       index: 1,
-          //       routes: [{ name: 'MapCluser' }]
-          //     })
-          //     return;
-          //   }
-          //   navigation.goBack();
-          // }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "Thông tin điểm cứu trợ"}</Text>
@@ -163,11 +150,15 @@ const UpdateReliefPoint = ({ navigation }) => {
                   district: data?.address?.district?.name,
                   subDistrict: data?.address?.subDistrict?.name,
                 })
-              }}>
+              }}
+                style={{ alignItems: 'center' }}
+              >
                 <Text style={{ color: "#FFFF" }}>Hủy</Text>
               </TouchableOpacity>
               :
-              <TouchableOpacity onPress={() => { setEditEnable(true) }}>
+              <TouchableOpacity
+                style={{ alignItems: 'center' }}
+                onPress={() => { setEditEnable(true) }}>
                 <FontAwesomeIcon icon={faEdit} color="#FFFF" />
               </TouchableOpacity>
           }
@@ -353,16 +344,6 @@ const UpdateReliefPoint = ({ navigation }) => {
                   </View>
                 </View>
               </ContainerField>
-              {/* <ContainerField title="Mô tả">
-                <Field
-                  component={Input}
-                  name="description"
-                  horizontal
-                  placeholder="Mô tả"
-                  styleTitle={{ width: 110 }}
-                  editable={!editEnable}
-                />
-              </ContainerField> */}
               <ContainerField title="Địa điểm">
                 <MapPicker
                   styleTitle={{ width: 110 }}

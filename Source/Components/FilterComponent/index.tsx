@@ -1,10 +1,10 @@
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty } from "lodash";
-import React, { useState } from "react";
-import { Modal, Text, TouchableWithoutFeedback, View, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import React, { memo, useEffect, useState } from "react";
+import { FlatList, Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { checkKeyNull } from "../../Helper/FunctionCommon";
 import { AppColor } from "../../Helper/propertyCSS";
-import { width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import ContainerField from "../ContainerField";
 import styles from "./styles";
@@ -13,16 +13,21 @@ interface Props {
     listComponents?: any;
     formikProps?: any;
 }
-export default (props: Props) => {
+export default memo((props: Props) => {
     const { listComponents, formikProps } = props
     const { values, setFieldValue, resetForm, submitForm } = formikProps;
     const [visible, setvisible] = useState(false);
+    const [arrayItems, setArrayItems] = useState<any>([]);
     const onSelect = (itemObj: any) => {
         const index = listComponents.findIndex((e) => {
-            return e.key == itemObj.key
+            return e.key + '' == itemObj.key + ''
         })
         if (index >= 0) {
             const itemSelect = listComponents[index].data.filter((e) => e.id == itemObj.item.id)[0];
+            if (itemSelect.id + '' == values[itemObj.key] + '') {
+                setFieldValue(itemObj.key, null);
+                return;
+            }
             setFieldValue(itemObj.key, itemSelect.id);
         }
     }
@@ -64,20 +69,34 @@ export default (props: Props) => {
             </TouchableOpacity>
         )
     }
+
+
+
+    useEffect(() => {
+        const objClone = checkKeyNull({ ...values });
+        delete objClone.sort;
+        let array = [];
+        Object.entries(objClone).forEach(([key, value]) => {
+            const item = getItemSelect({ id: value, key: key })
+            if (!isEmpty(item)) {
+                array.push(item);
+            }
+        })
+        console.log(array, 'items');
+        setArrayItems([...array]);
+    }, [values])
     return (
         <View style={[styles.container]} >
             <View style={{ flexDirection: "row", height: "100%" }}>
                 <TouchableOpacity onPress={() => { setvisible(true) }} style={{ justifyContent: "center", display: "flex", width: "10%" }}>
                     <FontAwesomeIcon icon={faFilter} color={AppColor.CORLOR_TEXT} /></TouchableOpacity>
                 <ScrollView style={{ width: "90%", height: "100%", backgroundColor: "#FFF", flexDirection: "row" }} horizontal showsHorizontalScrollIndicator={false}>
-                    {listComponents.map((e) => {
-                        const item = getItemSelect({ id: values[e.key], key: e.key });
-                        if (isEmpty(item)) return <></>
+                    {arrayItems.map((e) => {
                         return (
-                            <View style={{ marginRight: 5, justifyContent: "center", }} key={item?.id}>
+                            <View style={{ marginRight: 5, justifyContent: "center", }} key={e?.id}>
                                 <ContainerField styleCustomContainer={{ borderWidth: 2, marginTop: 0, borderColor: AppColor.BUTTON_MAIN, paddingLeft: 5, paddingRight: 5 }}>
                                     <View style={{ minWidth: 60, maxWidth: 100, minHeight: 40, justifyContent: "center", display: "flex", alignItems: "center" }}>
-                                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ color: AppColor.CORLOR_TEXT }}>{item?.name || ""}</Text>
+                                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ color: AppColor.CORLOR_TEXT }}>{e?.name || ""}</Text>
                                     </View>
                                 </ContainerField>
                             </View>
@@ -91,6 +110,7 @@ export default (props: Props) => {
                         <TouchableOpacity
                             onPress={() => {
                                 setvisible(false);
+                                submitForm();
                             }}
                             style={[styles.containerModal]}>
                             <TouchableWithoutFeedback
@@ -148,4 +168,4 @@ export default (props: Props) => {
             }
         </View>
     )
-}
+});

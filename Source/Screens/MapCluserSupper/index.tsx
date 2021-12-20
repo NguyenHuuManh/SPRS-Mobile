@@ -161,7 +161,7 @@ export default () => {
                 latitudeDelta: 0.006866,
                 longitudeDelta: 0.006866,
             }
-            console.log('regionTo', regionTo)
+            setTypePoints([]);
             mapRef.current.getMapRef().animateToRegion(regionTo, 1000);
             setMarkerTo(params.toLocation);
             setStrokerDirection(5);
@@ -247,16 +247,6 @@ export default () => {
                 <ModalSearch setText={setText} visible={searchVisible} setVisible={setSearchVisible} />
                 <View style={{ height: height * 0.07 }}>
                     <HeaderContainer
-                        // isBack={params?.screen}
-                        // leftView={params?.screen}
-                        // leftOnpress={() => {
-                        //     if (params?.screen == 'DetailPoint') {
-                        //         navigation.goBack();
-                        //         return;
-                        //     }
-                        //     navigation.replace(params?.screen)
-                        // }}
-                        // iconLeft={faChevronLeft}
                         centerEl={(
                             <View style={{ flexDirection: "row", width: "100%", justifyContent: "center", alignItems: "center" }}>
                                 <TouchableOpacity onPress={() => {

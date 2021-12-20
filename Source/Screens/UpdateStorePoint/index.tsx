@@ -85,8 +85,7 @@ const UpdateStorePoint = ({ navigation }) => {
             position: "top"
           })
           setEditEnable(false);
-          getStorePoint(item.id);
-          navigation.replace('StorePoints');
+          navigation.goBack();
         } else {
           Toast.show({
             type: "success",
@@ -134,25 +133,10 @@ const UpdateStorePoint = ({ navigation }) => {
     >
       <View style={{ height: height * 0.07 }}>
         <HeaderContainer
-          flexRight={1}
+          flexRight={2}
           flexLeft={1}
           flexCenter={10}
           isBack
-          // leftView
-          // iconLeft={faChevronLeft}
-          // leftOnpress={() => {
-          //   if (item?.from == 'MapCluser') {
-          //     // navigation.replace('MapCluser');
-          //     navigation.reset({
-          //       index: 1,
-          //       routes: [{ name: 'MapCluser' }]
-          //     })
-          //     return;
-          //   }
-          //   const route = getCurrentRoute();
-          //   console.log('route', route)
-          //   navigation.goBack();
-          // }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật cửa hàng" : "Thông tin cửa hàng"}</Text>
@@ -171,11 +155,15 @@ const UpdateStorePoint = ({ navigation }) => {
                   district: data?.address?.district?.name,
                   subDistrict: data?.address?.subDistrict?.name,
                 })
-              }}>
+              }}
+                style={{ alignItems: 'center' }}
+              >
                 <Text style={{ color: "#FFFF" }}>Hủy</Text>
               </TouchableOpacity>
               :
-              <TouchableOpacity onPress={() => { setEditEnable(true) }}>
+              <TouchableOpacity
+                style={{ alignItems: 'center' }}
+                onPress={() => { setEditEnable(true) }}>
                 <FontAwesomeIcon icon={faEdit} color="#FFFF" />
               </TouchableOpacity>
           }
@@ -249,6 +237,7 @@ const UpdateStorePoint = ({ navigation }) => {
               });
               return;
             }
+
             if (!checkLatLng(adressPoint.GPS_Lati, adressPoint.GPS_long)) {
               Toast.show({
                 type: "error",

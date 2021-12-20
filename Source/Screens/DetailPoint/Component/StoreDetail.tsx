@@ -1,4 +1,4 @@
-import { faBell, faBellSlash, faChevronLeft, faClock, faMapMarked, faMapMarker, faMapMarkerAlt, faMarker, faPhone, faShoppingBasket, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBellSlash, faChevronLeft, faClock, faMapMarked, faMapMarker, faMapMarkerAlt, faMarker, faPenAlt, faPhone, faShoppingBasket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
 import { isEmpty, isNull, isUndefined } from "lodash";
@@ -190,8 +190,16 @@ const StoreDetail = ({ point, from }) => {
                         </View>
                         <View style={[styles.textDescription]}>
                             {data?.stores?.store_category?.map((e) => (
-                                <Text style={[]}>{e?.name + ', ' || ''} </Text>
+                                <Text style={[]} key={e?.id}>{e?.name + ', ' || ''} </Text>
                             ))}
+                        </View>
+                    </View>
+                    <View style={[styles.addressView]}>
+                        <View style={[styles.titleView]}>
+                            <FontAwesomeIcon icon={faPenAlt} size={18} color={AppColor.BUTTON_MAIN} />
+                        </View>
+                        <View style={[styles.textDescription]}>
+                            <Text style={[]}>{data.stores?.description + ', ' || ''} </Text>
                         </View>
                     </View>
                     <View style={[styles.addressView]}>

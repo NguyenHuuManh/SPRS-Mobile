@@ -30,8 +30,8 @@ export default () => {
 
             <Formik
                 initialValues={{
-                    username: "manhFB",
-                    password: "password123@A"
+                    username: "",
+                    password: ""
                 }}
                 validationSchema={signinForm}
                 onSubmit={(values) => {

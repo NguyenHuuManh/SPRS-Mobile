@@ -21,8 +21,10 @@ import { AppColor } from "../../Helper/propertyCSS";
 import { height } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
+import ListenOnchage from "./components/ListenOnchage";
 import MapView from "./components/MapView";
-const SOS = ({ navigation }) => {
+import { sosUpdate } from "./validate";
+const SOS = () => {
   const [adressPoint, setAdressPoint] = useState<any>({
     GPS_Lati: "21.00554564179488",
     GPS_long: "105.51689565181731",
@@ -30,11 +32,11 @@ const SOS = ({ navigation }) => {
     district: "",
     subDistrict: "",
   });
-  const item = useRoute<any>().params;
   const [sosInfor, setSosInfor] = useState<any>({});
   const [items, setItems] = useState<any>([]);
   const formikRef = createRef<any>();
   const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(true);
 
   const getDetailPlace = (long: string | number, lat: string | number) => {
     try {
@@ -128,20 +130,7 @@ const SOS = ({ navigation }) => {
         <HeaderContainer
           flexRight={1}
           flexCenter={10}
-          // isBackNavigate={"Home"}
-          leftView
-          iconLeft={faChevronLeft}
-          leftOnpress={() => {
-            if (item?.from == 'MapCluser') {
-              // navigation.replace('MapCluser');
-              navigation.reset({
-                index: 1,
-                routes: [{ name: 'MapCluser' }]
-              })
-              return;
-            }
-            navigation.navigate('Home');
-          }}
+          isBack
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFFF" }}>SOS</Text>
@@ -171,6 +160,7 @@ const SOS = ({ navigation }) => {
             description: sosInfor?.description || "",
             level: sosInfor?.level,
           }}
+          validationSchema={sosUpdate}
           enableReinitialize
           onSubmit={(values) => {
             const body = {
@@ -202,7 +192,7 @@ const SOS = ({ navigation }) => {
             callCreatePoint(body);
           }}
         >
-          {({ submitForm, errors, values, setFieldValue }) => (
+          {({ submitForm, values }) => (
             <View>
               {/* <ContainerField title="Trạng thái SOS"> */}
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}>
@@ -253,8 +243,11 @@ const SOS = ({ navigation }) => {
               <ButtonCustom
                 title={"Cập nhật"}
                 styleTitle={{ color: "#FFF", }}
-                styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, color: "#FFFF" }}
-                onPress={() => { submitForm() }} />
+                styleContain={{ backgroundColor: disable ? AppColor.GRAY_LIGHT : AppColor.BUTTON_MAIN, marginTop: 30, color: "#FFFF" }}
+                onPress={() => { submitForm() }}
+                disabled={disable}
+              />
+              <ListenOnchage setDisable={setDisable} values={values} infor={sosInfor} disable={disable} />
             </View>
           )}
         </Formik>

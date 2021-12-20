@@ -1,6 +1,5 @@
-import { faBellSlash, faMapMarked, faStore } from "@fortawesome/free-solid-svg-icons";
+import { faMapMarked } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
@@ -49,35 +48,38 @@ export default ({ navigation }) => {
         onchage(true);
         return (
             <TouchableWithoutFeedback
-                onPress={(e) => { e.preventDefault() }}
+                onPress={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }}
             >
-                <>
-                    <TouchableOpacity
-                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
-                        onPress={(e) => {
-                            navigation.navigate("MapCluser", {
-                                toLocation: {
-                                    id: item.id,
-                                    location: {
-                                        latitude: Number(item.address.GPS_lati),
-                                        longitude: Number(item.address.GPS_long)
-                                    },
-                                    type: "st"
+                <TouchableOpacity
+                    style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
+                    disabled={item?.status !== 0 && item?.status !== 1}
+                    onPress={(e) => {
+                        // e.preventDefault();
+                        navigation.navigate("MapCluser", {
+                            toLocation: {
+                                id: item.id,
+                                location: {
+                                    latitude: Number(item.address.GPS_lati),
+                                    longitude: Number(item.address.GPS_long)
                                 },
-                                screen: "SubcribeList"
-                            })
-                        }}
-                    >
-                        <Animated.Text
-                            style={[
-                                {
-                                    transform: [{ translateX: trans }],
-                                },
-                            ]}>
-                            <FontAwesomeIcon icon={faMapMarked} size={20} color={AppColor.BUTTON_MAIN} />
-                        </Animated.Text>
-                    </TouchableOpacity>
-                </>
+                                type: "st"
+                            },
+                            screen: "SubcribeList"
+                        })
+                    }}
+                >
+                    <Animated.Text
+                        style={[
+                            {
+                                transform: [{ translateX: trans }],
+                            },
+                        ]}>
+                        <FontAwesomeIcon icon={faMapMarked} size={20} color={(item?.status == 0 || item?.status == 1) ? AppColor.BUTTON_MAIN : AppColor.CORLOR_TEXT} />
+                    </Animated.Text>
+                </TouchableOpacity>
 
             </TouchableWithoutFeedback>
         );
@@ -125,9 +127,10 @@ export default ({ navigation }) => {
                 <TouchableOpacity onPress={() => {
                     if (!isOpen.status) {
                         navigation.navigate("DetailPoint", { point: { id: item.id, type: 'st' }, from: "SubcribeList" });
-                    } else {
-                        onchage(false);
                     }
+                    // else {
+                    //     onchage(false);
+                    // }
                 }} style={{ width: "100%" }}
                     delayPressIn={150}
                 >
@@ -164,11 +167,10 @@ export default ({ navigation }) => {
         <View style={{ flex: 1 }}>
             <View style={{ height: height * 0.07 }}>
                 <HeaderContainer
-                    isBackNavigate={"DrawScreen"}
+                    isBack
                     centerEl={(
                         <View style={{ width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
                             <Text style={{ fontSize: 20, color: "#FFFF" }}>Cửa hàng yêu thích</Text>
-                            {/* <FontAwesomeIcon icon={faStore} style={{ marginLeft: 10 }} color="#f57842" size={26} /> */}
                         </View>
                     )}
                     flexLeft={1}
@@ -185,7 +187,7 @@ export default ({ navigation }) => {
                     )}
                     showsVerticalScrollIndicator={false}
                     data={data?.user_subcribe}
-                    keyExtractor={(item: any) => item.id}
+                    keyExtractor={(item: any) => item?.id + ''}
                     renderItem={renderItem}
                     style={{ paddingBottom: 50 }}
                     refreshing={isRefesh}

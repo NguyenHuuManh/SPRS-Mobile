@@ -10,12 +10,12 @@ export function* requestUpdate(param) {
     const { payload } = param
     try {
         const responseUpdate = yield call(apiUpdateAddressDivice, payload, DeviceInfo.getUniqueId());
-        console.log(responseUpdate, "responseUpdate");
+        // console.log(responseUpdate, "responseUpdate");
         if (responseUpdate.status == 200) {
             if (responseUpdate.data.code == '200') {
                 yield put(UpdateAddressDeviceActions.updateSuccess(responseUpdate?.data.obj.address));
                 if (isNull(payload.id)) {
-                    console.log(responseUpdate?.data.obj.address.id, "e?.data.obj.address.id")
+                    // console.log(responseUpdate?.data.obj.address.id, "e?.data.obj.address.id")
                     AsyncStorage.setItem("AddressId", JSON.stringify(responseUpdate.data.obj.address.id));
                 }
             } else {

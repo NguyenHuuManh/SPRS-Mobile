@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import AwesomeLoading from 'react-native-awesome-loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Toast from 'react-native-toast-message';
 import { apiOtpPassword } from '../../ApiFunction/Auth';
 import ButtonCustom from "../../Components/ButtonCustom";
 import Input from "../../Components/Input";
@@ -19,9 +20,24 @@ export default () => {
     const getOtp = (values) => {
         console.log("values", values);
         apiOtpPassword(values).then((e) => {
-            console.log("e", e);
-            if (e.status == 200 && e.data.code == "200") {
-                navigation.navigate('ComfirmOTP', values);
+            if (e.status == 200) {
+                if (e.data.code == "200") {
+                    navigation.navigate('ComfirmOTP', values);
+                    return;
+                }
+                Toast.show({
+                    type: "error",
+                    text1: e.data.message,
+                    position: "top"
+                });
+                return;
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: 'Chức năng đang bảo trì',
+                    position: "top"
+                });
+                return;
             }
         })
     }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Animated, FlatList, Text, TouchableOpacity, View } from "react-native";
 import Relief from "../../../../Assets/Images/locationRelief.svg";
 import SOS from "../../../../Assets/Images/locationSOS.svg";
@@ -15,7 +15,7 @@ interface Props {
     setTypePoints: any;
 }
 
-export default (props: Props) => {
+export default memo((props: Props) => {
     const { typePoinst, setTypePoints } = props
     const points = [
         { name: "Điểm cứu trợ", id: "rp" }, { name: "SOS", id: "sos" }, { name: "Cửa hàng", id: "st" }, { name: "Tổ chức", id: "org" }
@@ -89,4 +89,4 @@ export default (props: Props) => {
             />
         </View>
     )
-}
+})

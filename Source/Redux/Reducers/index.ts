@@ -9,6 +9,7 @@ import ToastReducer from "./ToastReducer";
 import UpdateAddressReducer from "./UpdateAddressReducer";
 import UserReducer from "./UserReducer";
 import NotificationReducer from "./NotificationReducer";
+import ListenNotifiReducer from "./ListenNotifiReducer";
 const rootReducer = combineReducers(
     {
         userReducer: UserReducer,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers(
         networkCheckingReducer: NetworkCheckingReducer,
         updateAddressReducer: UpdateAddressReducer,
         menuReducer: MenuReducer,
-        notificationReducer: NotificationReducer
+        notificationReducer: NotificationReducer,
+        listenNotifiReducer: ListenNotifiReducer
     });
 export type RootState = ReturnType<typeof rootReducer>;
 export default rootReducer;

@@ -130,19 +130,6 @@ const UpdateReliefPoint = ({ navigation }) => {
           flexCenter={10}
           flexLeft={1}
           isBack
-          // leftView
-          // iconLeft={faChevronLeft}
-          // leftOnpress={() => {
-          //   if (item?.from == 'MapCluser') {
-          //     // navigation.replace('MapCluser');
-          //     navigation.reset({
-          //       index: 1,
-          //       routes: [{ name: 'MapCluser' }]
-          //     })
-          //     return;
-          //   }
-          //   navigation.goBack();
-          // }}
           centerEl={(
             <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={{ fontSize: 20, color: "#FFF" }}>{editEnable ? "Cập nhật điểm cứu trợ" : "Thông tin điểm cứu trợ"}</Text>

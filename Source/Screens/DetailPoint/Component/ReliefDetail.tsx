@@ -75,19 +75,19 @@ const StoreDetail = ({ point, from }) => {
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={[styles.headerPoint]}><Text style={[styles.textHeader]}>{data?.name}</Text></View>
-                <View style={[{ width: "95%", backgroundColor: "black", padding: 1, borderRadius: 10, marginTop: 10, alignItems: 'center' }]}>
+                <View style={[{ width: "95%", backgroundColor: "black", padding: 1, borderRadius: 10, marginTop: 10, alignItems: 'center', height: height * 0.25 }]}>
                     {data?.images?.img_url ? (
                         <Image
                             source={{ uri: `${IMAGE_URL}${data?.images?.img_url}` }}
-                            style={{ width: '100%', height: height * 0.25 }}
-                            loadingIndicatorSource={require('../../../Assets/Icons/Blinking_squares.gif')}
+                            style={{ width: '100%', height: '100%' }}
+                            loadingIndicatorSource={require('../../')}
                             resizeMethod="resize"
                             resizeMode="center"
                         />
                     ) : (
                         <Image
                             source={require('../../../Assets/Images/orgAvatar.png')}
-                            style={{ width: height * 0.25, height: height * 0.25 }}
+                            style={{ width: '100%', height: '100%' }}
                             resizeMethod="scale"
                             resizeMode="cover"
                         />
@@ -135,11 +135,11 @@ const StoreDetail = ({ point, from }) => {
                         <View style={[styles.titleView]}>
                             <FontAwesomeIcon icon={faShoppingBasket} color={AppColor.BUTTON_MAIN} />
                         </View>
-                        <View>
+                        <View style={{ width: '90%' }}>
                             {data?.reliefInformations?.map((e) => (
-                                <View style={[{ flexDirection: "row", justifyContent: "space-around" }]} key={e.id}>
-                                    <Text style={[{ width: "50%", textAlign: "left" }]}>{e.item.name}: </Text>
-                                    <Text style={[{ width: "40%", textAlign: "right" }]}>{`${e.quantity} ${e.item.unit}`}</Text>
+                                <View style={[{ flexDirection: "row", justifyContent: "space-around", width: '100%' }]} key={e.id}>
+                                    <Text style={[{ width: "50%", textAlign: "left", color: AppColor.CORLOR_TEXT }]}>{e.item.name}: </Text>
+                                    <Text style={[{ width: "50%", textAlign: "right", color: AppColor.CORLOR_TEXT }]}>{`${e.quantity} ${e.item.unit}`}</Text>
                                 </View>
                             ))}
                         </View>

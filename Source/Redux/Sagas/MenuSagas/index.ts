@@ -6,7 +6,7 @@ import { MenuActions } from '../../Actions';
 export function* getMenu() {
     try {
         const response = yield call(apiGetPermission);
-        console.log("responseMenu", response)
+        // console.log("responseMenu", response)
         if (STATUS.success.includes(response?.status)) {
             if (response?.data?.code == '200') {
                 yield put(MenuActions.menuSuccess(response.data.lstObj));

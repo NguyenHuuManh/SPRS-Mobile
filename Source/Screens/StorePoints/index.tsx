@@ -1,11 +1,9 @@
 import { faMapMarked, faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useFocusEffect } from "@react-navigation/native";
 import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import LinearGradient from "react-native-linear-gradient";
 import Toast from "react-native-toast-message";
 import { apiDeleteStore, apiGetStore, apiUpdateStatus } from "../../ApiFunction/StorePoint";
 import ButtonCustom from "../../Components/ButtonCustom";
@@ -28,6 +26,7 @@ export default ({ navigation }) => {
     const [isRefesh, setIsRefesh] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current
     const [pageSize, setPageSize] = useState({ pageSize: size, pageIndex: page });
+    const [isFirst, setIsFirst] = useState(true);
     const [loading, setLoading] = useState(false);
     const [totalItem, setTotalItem] = useState(0);
     const [body, setBody] = useState({
@@ -98,7 +97,9 @@ export default ({ navigation }) => {
 
     }
 
-    useEffect(() => { getPoint() }, [pageSize]);
+    useEffect(() => {
+        getPoint();
+    }, [pageSize]);
     const getPoint = () => {
         const bodyRequest = {
             // types: isNull(body.type) ? null : [body.type],
@@ -119,6 +120,7 @@ export default ({ navigation }) => {
         }).finally(() => {
             setLoading(false);
             if (isRefesh) setIsRefesh(false);
+            if (isFirst) setIsFirst(false);
         })
     }
 
@@ -215,33 +217,35 @@ export default ({ navigation }) => {
                             </Switch>
                         </Animated.Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
-                        onPress={(e) => {
-                            e.preventDefault();
-                            navigation.navigate("MapCluser",
-                                {
-                                    toLocation:
+                    {(item?.status == 0 || item?.status == 1) && (
+                        <TouchableOpacity
+                            style={{ backgroundColor: "#f7f7f7", width: "20%", justifyContent: "center", alignItems: "center" }}
+                            onPress={(e) => {
+                                e.preventDefault();
+                                navigation.navigate("MapCluser",
                                     {
-                                        id: item.id,
-                                        location: {
-                                            latitude: Number(item.address.GPS_lati),
-                                            longitude: Number(item.address.GPS_long)
+                                        toLocation:
+                                        {
+                                            id: item.id,
+                                            location: {
+                                                latitude: Number(item.address.GPS_lati),
+                                                longitude: Number(item.address.GPS_long)
+                                            },
+                                            type: "st"
                                         },
-                                        type: "st"
+                                        screen: "StorePoints"
+                                    })
+                            }}>
+                            <Animated.Text
+                                style={[
+                                    {
+                                        transform: [{ translateX: trans }],
                                     },
-                                    screen: "StorePoints"
-                                })
-                        }}>
-                        <Animated.Text
-                            style={[
-                                {
-                                    transform: [{ translateX: trans }],
-                                },
-                            ]}>
-                            <FontAwesomeIcon icon={faMapMarked} size={23} color={AppColor.BUTTON_MAIN} />
-                        </Animated.Text>
-                    </TouchableOpacity>
+                                ]}>
+                                <FontAwesomeIcon icon={faMapMarked} size={23} color={AppColor.BUTTON_MAIN} />
+                            </Animated.Text>
+                        </TouchableOpacity>
+                    )}
                 </>
 
             </TouchableWithoutFeedback>
@@ -347,7 +351,7 @@ export default ({ navigation }) => {
             </View>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
-                    isReplace={"DrawScreen"}
+                    isBack
                     flexLeft={1}
                     flexRight={1}
                     flexCenter={10}
@@ -356,11 +360,6 @@ export default ({ navigation }) => {
                             <Text style={{ fontSize: 20, color: "#FFFF" }}>Cửa hàng của bạn</Text>
                         </View>
                     )}
-                // rightEL={(
-                //     <TouchableOpacity onPress={() => { navigation.navigate("UpdateStorePoint", { id: 586 }); }}>
-                //         <FontAwesomeIcon icon={faEdit} color="#FFFF" />
-                //     </TouchableOpacity>
-                // )}
 
                 />
             </View>

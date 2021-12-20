@@ -27,12 +27,12 @@ class Services {
 
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
-        console.log('error', error.response);
-        console.log('response', response)
+        // console.log('error', error.response);
+        // console.log('response', response)
         if (isSuccess) {
             if (response?.data?.code == '501') {
                 if (!store.getState().pendingReducer.isPending) {
-                    // store.dispatch(pendingActions.pendingLogout(true));
+                    store.dispatch(pendingActions.pendingLogout(true));
                     Alert.alert(
                         'Yêu cầu đăng nhập',
                         'Phiên đăng nhập hết hạn?',
@@ -89,8 +89,7 @@ class Services {
             const response = await this.axios.get(url, config);
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
-            // console.log("url", url);
-            // console.log("errorCatch", error)
+
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
     }
@@ -98,13 +97,10 @@ class Services {
     async post(url: string, data?: any, config?: AxiosRequestConfig) {
         try {
             const response = await this.axios.post(url, data, config);
-            // console.log("responsePost", response);
             return this.handleResponse(response, {} as AxiosError, true, url);
         } catch (error) {
-            console.log('error', error);
             return this.handleResponse({} as AxiosResponse, error, false, url);
         }
-        // return this.axios.post(url, data, config);
     }
 
     async delete(url: string, config?: AxiosRequestConfig) {

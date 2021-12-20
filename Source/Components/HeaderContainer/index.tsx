@@ -66,16 +66,6 @@ export default (props: Props) => {
     }
     return (
         <View style={[styles.container]}>
-            {/* <LinearGradient
-                start={{ x: 0.0, y: 0.25 }} end={{ x: 0.5, y: 1.0 }}
-                colors={['rgba(228, 230, 216,0)', 'rgba(228, 230, 216,0.2)', 'rgba(244, 245, 240,0.4)']}
-                style={{
-                    height: "100%",
-                    width: "100%",
-                    position: 'absolute',
-                    bottom: 0,
-                }}
-            /> */}
             <View style={{ flex: flexLeft ? flexLeft : 1, paddingLeft: isBack ? 5 : 0 }}>
                 {renderIsBack()}
             </View>

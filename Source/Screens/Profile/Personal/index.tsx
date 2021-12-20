@@ -139,17 +139,6 @@ export default () => {
                                     <Text style={{ color: AppColor.CORLOR_TEXT, width: '90%', textAlign: 'center', fontWeight: 'bold' }}>{disable ? "Chỉnh sửa" : "Hủy"}</Text>
                                 </TouchableOpacity>
                             </View>
-                            {/* <ContainerField title="Loại tài khoản">
-                                <Field
-                                    component={AppSelectGroupUser}
-                                    name="groupsId"
-                                    disabled
-                                    iconLeft={faUserAlt}
-                                    horizontal
-                                    styleTitle={{ width: 90 }}
-                                    placeholder="Chọn loại tài khoản"
-                                />
-                            </ContainerField> */}
                             <ContainerField title="Tên tài khoản">
                                 <Field
                                     component={Input}

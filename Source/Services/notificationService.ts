@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
-import messaging from '@react-native-firebase/messaging';
+import messaging, { firebase } from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
 import { apiUpdateStatusNotification } from '../ApiFunction/Notification';
 import { getCurrentRoute, navigate } from '../Helper/RootNavigation';
@@ -12,6 +12,7 @@ import { store } from '../Store';
 import { apiPlaceDetailByLongLat } from '../ApiFunction/PlaceAPI';
 import { findIndex } from 'lodash';
 import { notificationRequest } from '../Redux/Actions/NotificationActions';
+import { listenCheck } from '../Redux/Actions/ListenNotifiActions';
 export const getFcmToken = async () => {
     let fcmToken = await AsyncStorage.getItem('fcmToken');
     if (!fcmToken) {
@@ -26,7 +27,11 @@ export const getFcmToken = async () => {
     }
 }
 
+
 export const notificationListener = async (callBack?: any) => {
+    const reducer = store.getState().listenNotifiReducer;
+    if (reducer.data.status) return;
+    store.dispatch(listenCheck({ status: true }));
     messaging().onNotificationOpenedApp(remoteMessage => {
         console.log(
             'Notification caused app to open from background state:',
@@ -81,7 +86,6 @@ export const notificationListener = async (callBack?: any) => {
                 }
             }
         });
-
 }
 
 export const networkListener = async () => {

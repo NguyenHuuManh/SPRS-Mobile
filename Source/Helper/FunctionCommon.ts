@@ -1,12 +1,9 @@
 
 import { AxiosResponse } from "axios"
 import { isEmpty, isNaN } from "lodash"
-import React from "react"
-import { Platform, View } from "react-native"
-import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions"
-import { useDispatch } from "react-redux"
-import { userActions } from "../Redux/Actions"
-import { getCurrentRoute, navigate, navigationRef } from "./RootNavigation"
+import { Platform } from "react-native"
+import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions"
+import moment from "moment"
 
 export const handleLocationPermission = async () => { // 👈
     let permissionCheck = ""
@@ -133,7 +130,9 @@ export const filterDetailPalce = (res) => {
 }
 
 export function checkLatLng(lat, long) {
-    if (lat == 'NaN' || long == 'NaN' || isEmpty(lat) || isEmpty(long) || isNaN(Number(lat) || isNaN(Number(long)))) return false
+    // console.log(lat, 'adressPoint.GPS_Lati,');
+    // console.log(long, 'adressPoint.GPS_long,');
+    if (lat == 'NaN' || long == 'NaN' || isEmpty(lat + '') || isEmpty(long + '') || isNaN(Number(lat) || isNaN(Number(long)))) return false
     return true;
 }
 
@@ -240,16 +239,12 @@ export function compareTime(str1, str2) {
     }
 }
 
-export function backAction() {
-    // getCurrentRoute();
-    // console.log('backAction', navigationRef.getCurrentRoute());
-    console.log('fsfdsfsd');
-    return true;
-}
 
-function timeSince(date) {
-    const currentDate = new Date();
-    let seconds = Math.floor((currentDate - date) / 1000);
+export function timeSince(date) {
+    const currentDate = moment();
+    const dateTime = moment(date, 'DD-MM-YYYY HH:mm:ss');
+    // console.log(dateTime)
+    let seconds = Math.floor((currentDate.diff(dateTime)) / 1000);
     let interval = seconds / 31536000;
     if (interval > 1) {
         return Math.floor(interval) + " năm trước";

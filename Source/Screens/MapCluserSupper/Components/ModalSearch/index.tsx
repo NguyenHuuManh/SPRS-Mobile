@@ -1,7 +1,7 @@
 import { faMapMarkedAlt, faSearchLocation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { debounce, isEmpty } from "lodash";
-import React, { createRef, useCallback, useContext, useEffect, useState } from "react";
+import React, { createRef, memo, useCallback, useContext, useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ interface Props {
 }
 const limit = 30;
 const types = ['rp', 'st', 'sos', 'org', 'sp']
-export default (props: Props) => {
+export default memo((props: Props) => {
     const {
         mapRefStore: { mapRef },
         markerToStore: { setMarkerTo },
@@ -245,3 +245,4 @@ export default (props: Props) => {
         </Modal>
     )
 }
+)

@@ -2,15 +2,12 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/core';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { useLinkTo } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { isEmpty } from 'lodash';
 import React, { useEffect } from 'react';
-import { BackHandler } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
-import { getCurrentRoute, reset } from '../Helper/RootNavigation';
 import { badgeShowActions, MenuActions, profileActions } from '../Redux/Actions';
 import ActionTypes from '../Redux/ActionTypes';
 import { RootState } from '../Redux/Reducers';
@@ -34,10 +31,11 @@ import Signup from '../Screens/Signup';
 import SOS from '../Screens/SOS';
 import StorePoints from '../Screens/StorePoints';
 import SubcribleList from '../Screens/SubcribleList';
+import UpdateEventPoint from '../Screens/UpdateEventPoint';
 import UpdateReliefPoint from '../Screens/UpdateReliefPoint';
 import UpdateStorePoint from '../Screens/UpdateStorePoint';
-import UpdateEventPoint from '../Screens/UpdateEventPoint';
 import { getCurrentLocation, notificationListener } from '../Services/notificationService';
+
 // import { getCurrentRoute, reset } from '/';
 
 const Tabs = createBottomTabNavigator();
@@ -124,32 +122,6 @@ const RootStackScreen = () => {
             })
         }
     }, [userReducer]);
-
-    // useEffect(() => {
-    //     if (!isEmpty(profileReducer.data) && profileReducer.type == ActionTypes.PROFILE_SUCCESS) {
-    //         getCurrentLocation();
-    //     }
-    // }, [profileReducer])
-
-    // function handleBackPress() {
-    //     const route = getCurrentRoute();
-    //     console.log('route', route);
-    //     if ((route.name == 'DetailPoint' || route.name == 'UpdateStorePoint' || route.name == 'UpdateReliefPoint' || route.name == 'SOS') && route.params?.from == "MapCluser") {
-    //         reset('MapCluser');
-    //         return true
-    //     }
-    //     return false;
-    // }
-
-    // const onBackPress = (callback) => {
-    //     BackHandler.addEventListener('hardwareBackPress', callback);
-    //     return () => {
-    //         BackHandler.removeEventListener('hardwareBackPress', callback);
-    //     };
-    // };
-    // useEffect(() => {
-    //     onBackPress(handleBackPress);
-    // }, [])
 
     return (
         <>

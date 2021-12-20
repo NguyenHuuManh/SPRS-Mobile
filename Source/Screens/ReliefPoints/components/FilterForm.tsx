@@ -48,6 +48,7 @@ export default (props: Props) => {
             }}
             enableReinitialize
             onSubmit={(values) => {
+                if (values.type == body.type && values.status == body.status && values.sort == body.sort) return;
                 setBody(values);
                 setIsRefesh(true);
                 setPageSize({ pageSize: 5, pageIndex: 1 });
