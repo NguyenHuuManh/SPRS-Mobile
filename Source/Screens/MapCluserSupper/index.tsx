@@ -231,6 +231,7 @@ export default () => {
                     }}
                     ref={directionsRef}
                     onReady={(results) => {
+                        console.log(results, 'results');
                         setDataDirection({ distance: results.distance, duration: results.duration })
                     }}
                     strokeColor={AppColor.MAIN_COLOR}

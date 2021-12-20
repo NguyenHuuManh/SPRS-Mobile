@@ -30,7 +30,7 @@ export default () => {
                             </ImageBackground>
                         )}
                         {e.code == "PER_MOB_EVENT" && (
-                            <ImageBackground source={require('../../../Assets/Images/reliefBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
+                            <ImageBackground source={require('../../../Assets/Images/eventBG.png')} style={styles.imageBG} resizeMethod="scale" resizeMode="cover" >
                                 <ButtonCustom
                                     styleContain={[styles.styleButton]}
                                     noShadow

@@ -232,19 +232,6 @@ const AddReliefPoint = ({ navigation }) => {
                     </View>
                   </View>
                 </ContainerField>
-
-                {/* <ContainerField title="Mô tả">
-                  <Field
-                    component={Input}
-                    name="description"
-                    horizontal
-                    placeholder="Mô tả"
-                    styleTitle={{ width: 110 }}
-                    maxLength={200}
-                  />
-                </ContainerField> */}
-
-
                 <ContainerField title="Chọn địa điểm">
                   <MapPicker
                     styleTitle={{ width: 110 }}
@@ -253,6 +240,7 @@ const AddReliefPoint = ({ navigation }) => {
                     iconSize={20}
                     setAdress={setAdressPoint}
                     adress={adressPoint}
+                    defaultAdress={adressPoint}
                     markerRender={(marker) => {
                       return (
                         <Marker
