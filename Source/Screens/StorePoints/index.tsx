@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Animated, Image, Switch, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import Draggable from "react-native-draggable";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Toast from "react-native-toast-message";
 import { apiDeleteStore, apiGetStore, apiUpdateStatus } from "../../ApiFunction/StorePoint";
@@ -10,7 +11,7 @@ import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { addressToString } from "../../Helper/FunctionCommon";
 import { AppColor } from "../../Helper/propertyCSS";
-import { width } from "../../Helper/responsive";
+import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import FilterForm from "./components/FilterForm";
 import styles from "./styles";
@@ -341,14 +342,14 @@ export default ({ navigation }) => {
 
     return (
         <View style={[styles.container]}>
-            <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
+            {/* <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
                 <ButtonCustom
                     onPress={() => { navigation.push("AddStorePoint") }}
                     styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, }}
                 >
                     <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
                 </ButtonCustom>
-            </View>
+            </View> */}
             <View style={{ height: "7%" }}>
                 <HeaderContainer
                     isBack
@@ -384,6 +385,21 @@ export default ({ navigation }) => {
                     onEndReachedThreshold={0}
                     ListFooterComponent={renderFooter}
                 />
+                <Draggable
+                    x={width * 0.75}
+                    y={height * 0.7}
+                    maxX={width * 0.85}
+                    maxY={height * 0.75}
+                    minX={20}
+                    minY={20}
+                    isCircle
+                    onShortPressRelease={() => navigation.push("AddStorePoint")}
+                    z={200}
+                >
+                    <View style={[{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColor.BUTTON_MAIN, borderRadius: 25 }, MainStyle.boxShadow]}>
+                        <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
+                    </View>
+                </Draggable>
             </View>
         </View>
     )

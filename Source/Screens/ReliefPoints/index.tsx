@@ -13,12 +13,13 @@ import { apiDeleteReliefPoint, apiGetReliefPoint, apiUpdateStatusReliefPoint } f
 import ButtonCustom from "../../Components/ButtonCustom";
 import HeaderContainer from "../../Components/HeaderContainer";
 import { addressToString } from "../../Helper/FunctionCommon";
-import { width } from "../../Helper/responsive";
+import { height, width } from "../../Helper/responsive";
 import { MainStyle } from "../../Style/main_style";
 import FilterForm from "./components/FilterForm";
 import { AppColor } from '../../Helper/propertyCSS';
 import styles from "./styles";
 import { useFocusEffect } from "@react-navigation/native";
+import Draggable from "react-native-draggable";
 const AVATA_SIZE = 80;
 const Margin_BT = 5;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
@@ -377,18 +378,9 @@ export default ({ navigation }) => {
         } else {
             return null
         }
-
     }
     return (
         <View style={[styles.container]}>
-            <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
-                <ButtonCustom
-                    onPress={() => { navigation.push("AddReliefPoint") }}
-                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: AppColor.BUTTON_MAIN, }}
-                >
-                    <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
-                </ButtonCustom>
-            </View>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
                     isBack
@@ -427,6 +419,21 @@ export default ({ navigation }) => {
                     onEndReachedThreshold={0}
                     ListFooterComponent={renderFooter}
                 />
+                <Draggable
+                    x={width * 0.75}
+                    y={height * 0.7}
+                    maxX={width * 0.85}
+                    maxY={height * 0.75}
+                    minX={20}
+                    minY={20}
+                    isCircle
+                    onShortPressRelease={() => navigation.push("AddReliefPoint")}
+                    z={200}
+                >
+                    <View style={[{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColor.BUTTON_MAIN, borderRadius: 25 }, MainStyle.boxShadow]}>
+                        <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
+                    </View>
+                </Draggable>
             </View>
         </View>
     )

@@ -27,6 +27,7 @@ import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import MapView from "./components/MapView";
 import { register } from "./validate";
+import Draggable from 'react-native-draggable';
 const AddReliefPoint = ({ navigation }) => {
   const addressCurrent = useSelector((state: RootState) => state.updateAddressReducer);
   const [adressPoint, setAdressPoint] = useState<any>({
@@ -275,6 +276,7 @@ const AddReliefPoint = ({ navigation }) => {
                   styleTitle={{ color: "#FFF" }}
                   styleContain={{ backgroundColor: AppColor.BUTTON_MAIN, marginTop: 30, color: "#FFFF", }}
                   onPress={() => { submitForm() }} />
+
               </>
             )}
           </Formik>
