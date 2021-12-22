@@ -60,6 +60,9 @@ export default React.memo((props: Props) => {
             getDetailPlace(markerTo.location.longitude, markerTo.location.latitude);
         }
     }, [visible]);
+    // console.log('profileReducer.data.id', profileReducer.data.id);
+    // console.log('profileReducer.data.id', markerTo);
+
     return (
         <>
             {visible ? (

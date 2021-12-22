@@ -88,37 +88,42 @@ const StoreDetail = ({ point, from }) => {
                         <Image
                             source={require('../../../Assets/Images/orgAvatar.png')}
                             style={{ width: '100%', height: '100%' }}
-                            resizeMethod="scale"
-                            resizeMode="cover"
+                            resizeMethod="resize"
+                            resizeMode="center"
                         />
                     )}
                 </View>
                 <View style={[styles.inforView]}>
                     <View style={[styles.addressView]}>
                         <View style={[styles.titleView]}>
-                            <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color={AppColor.BUTTON_MAIN} />
                             {
-                                from == 'Notification' && (
+                                from == 'Notification' ? (
                                     <TouchableOpacity onPress={() => {
-                                        navigation.navigate("MapCluser",
-                                            {
-                                                toLocation:
+                                        if (data.status + '' == '1') {
+                                            navigation.navigate("MapCluser",
                                                 {
-                                                    id: data.id,
-                                                    location: {
-                                                        latitude: Number(data.address.GPS_lati),
-                                                        longitude: Number(data.address.GPS_long)
+                                                    toLocation:
+                                                    {
+                                                        id: data.id,
+                                                        location: {
+                                                            latitude: Number(data.address.GPS_lati),
+                                                            longitude: Number(data.address.GPS_long)
+                                                        },
+                                                        type: "rp"
                                                     },
-                                                    type: "rp"
-                                                },
-                                                // screen: "DetailPoint"
-                                            })
+                                                    // screen: "DetailPoint"
+                                                })
+                                        } else {
+                                            alert('Điểm cứu trợ đang không hoạt động');
+                                        }
+
                                     }}>
-                                        <FontAwesomeIcon icon={faMapMarked} color={AppColor.BUTTON_MAIN} />
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} color={AppColor.BUTTON_MAIN} />
                                     </TouchableOpacity>
+                                ) : (
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color={AppColor.BUTTON_MAIN} />
                                 )
                             }
-
                         </View>
                         <Text style={[styles.textDescription]}>{data?.address?.subDistrict.name + " - " + data?.address?.district.name + " - " + data?.address?.city.name}</Text>
                     </View>
@@ -127,7 +132,9 @@ const StoreDetail = ({ point, from }) => {
                             <FontAwesomeIcon icon={faClock} color={AppColor.BUTTON_MAIN} />
                         </View>
                         <View>
-                            <Text style={[styles.textDescription]}>Đang hoạt động </Text>
+                            <Text style={[styles.textDescription, { color: data.status + '' == '0' ? "orange" : data.status + '' == '1' ? "#32a864" : data.status == '2' ? "gray" : "red" }]}>
+                                {data.status + '' == '0' ? "Đã kết thúc" : data.status + '' == '1' ? "Đang hoat động" : data.status == '2' ? "Sắp diễn ra" : "Ngừng hoạt động"}
+                            </Text>
                             <Text style={[styles.textDescription]}>{`Dừng hoạt động lúc ${data.close_time}`}</Text>
                         </View>
                     </View>

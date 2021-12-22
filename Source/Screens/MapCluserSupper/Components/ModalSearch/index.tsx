@@ -126,7 +126,7 @@ export default memo((props: Props) => {
         })
         setText(item.description);
         setVisible(false);
-        modalBottom.setVisible(true);
+        // modalBottom.setVisible(true);
 
     }
 
@@ -147,7 +147,7 @@ export default memo((props: Props) => {
                 // name: item.description,
             });
             setVisible(false);
-            modalBottom.setVisible(true);
+            // modalBottom.setVisible(true);
         })
     }
 

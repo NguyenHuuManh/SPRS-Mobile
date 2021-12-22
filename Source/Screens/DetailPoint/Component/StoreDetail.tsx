@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
 import { isEmpty, isNull, isUndefined } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import { apiGetStoreCommon } from "../../../ApiFunction/PointPublic";
@@ -166,7 +166,29 @@ const StoreDetail = ({ point, from }) => {
                 <View style={[styles.inforView]}>
                     <View style={[styles.addressView]}>
                         <View style={[styles.titleView]}>
-                            <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color={AppColor.BUTTON_MAIN} />
+                            {
+                                from == 'Notification' ? (
+                                    <TouchableOpacity onPress={() => {
+                                        navigation.navigate("MapCluser",
+                                            {
+                                                toLocation:
+                                                {
+                                                    id: data.id,
+                                                    location: {
+                                                        latitude: Number(data.address.GPS_lati),
+                                                        longitude: Number(data.address.GPS_long)
+                                                    },
+                                                    type: "st"
+                                                },
+                                                // screen: "DetailPoint"
+                                            })
+                                    }}>
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} color={AppColor.BUTTON_MAIN} />
+                                    </TouchableOpacity>
+                                ) : (
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color={AppColor.BUTTON_MAIN} />
+                                )
+                            }
                         </View>
                         <Text style={[styles.textDescription]}>{data?.stores?.address?.subDistrict.name + " - " + data?.stores?.address?.district.name + " - " + data?.stores?.address?.city.name}</Text>
                     </View>

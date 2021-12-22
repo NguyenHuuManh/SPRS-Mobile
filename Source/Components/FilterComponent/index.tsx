@@ -82,7 +82,7 @@ export default memo((props: Props) => {
                 array.push(item);
             }
         })
-        console.log(array, 'items');
+        // console.log(array, 'items');
         setArrayItems([...array]);
     }, [values])
     return (

@@ -19,7 +19,8 @@ export default ({ navigation }) => {
     const [totalPage, setTotalPage] = useState(3);
     const [isRefesh, setIsRefesh] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current
-    const getPoint = () => {
+    const getPoint = (ispull?: boolean) => {
+        if (ispull) setIsRefesh(true);
         apiGetSubcribleStore().then((e) => {
             console.log("eSubcrible", e)
             if (e.status == 200) {
@@ -27,6 +28,8 @@ export default ({ navigation }) => {
                     setData(e.data.obj);
                 }
             }
+        }).finally(() => {
+            if (ispull) setIsRefesh(false);
         })
     }
 
@@ -179,7 +182,7 @@ export default ({ navigation }) => {
                 >
                 </HeaderContainer >
             </View>
-            <View style={{ height: "97%", marginTop: 10, alignItems: "center" }}>
+            <View style={{ height: "97%", marginTop: 10, alignItems: "center", paddingBottom: 50 }}>
                 <Animated.FlatList
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -189,11 +192,9 @@ export default ({ navigation }) => {
                     data={data?.user_subcribe}
                     keyExtractor={(item: any) => item?.id + ''}
                     renderItem={renderItem}
-                    style={{ paddingBottom: 50 }}
                     refreshing={isRefesh}
                     onRefresh={() => {
-                        setIsRefesh(true);
-                        setPageSize({ pageIndex: 1, pageSize: 5 });
+                        getPoint(true);
                     }}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}

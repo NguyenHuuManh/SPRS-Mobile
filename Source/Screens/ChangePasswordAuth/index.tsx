@@ -1,7 +1,7 @@
 import { faChevronLeft, faEye, faEyeSlash, faLock, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Field, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
@@ -16,6 +16,7 @@ export default ({ navigation }) => {
     const [newSecureTextEntry, setNewSecureTextEntry] = useState(true);
     const [oldSecureTextEntry, setOldSecureTextEntry] = useState(true);
     const [reSecureTextEntry, setReSecureTextEntry] = useState(true);
+    const ref = useRef<any>()
     const OnchangePass = (values) => {
         apiUpdatePass(values).then((e) => {
             console.log("e update P", e);
@@ -25,7 +26,8 @@ export default ({ navigation }) => {
                         type: "success",
                         text1: "Cập nhật mật khẩu thành công",
                         position: "top"
-                    })
+                    });
+                    ref.current.resetForm();
                 } else {
                     Toast.show({
                         type: "error",
@@ -49,6 +51,7 @@ export default ({ navigation }) => {
                 newPassword: "",
                 reNewPassword: "",
             }}
+            innerRef={ref}
             validationSchema={updatePass}
             onSubmit={(values) => {
                 const { reNewPassword, ...body } = values
@@ -56,7 +59,7 @@ export default ({ navigation }) => {
             }}
         >
             {({ submitForm }) => (
-                <KeyboardAwareScrollView style={{ flex: 1 }} contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
+                <KeyboardAwareScrollView style={{ flex: 1 }} contentContainerStyle={{ alignItems: "center", justifyContent: "center", backgroundColor: AppColor.BUTTON_MAIN }}>
                     <ImageBackground source={require('../../Assets/Images/backdgroundpng.png')}
                         resizeMode="stretch"
                         style={[styles.BG]}

@@ -45,7 +45,26 @@ export const notificationListener = async (callBack?: any) => {
             type: "success",
             text2: remoteMessage.notification.body,
             text1: remoteMessage.notification.title,
-            position: "top"
+            position: "top",
+            onPress: () => {
+                const item = remoteMessage.data;
+                if (['rp', 'st', 'sos', 'org'].includes(item.type)) {
+                    apiUpdateStatusNotification({ id: item.id, status: "read" }).then((e) => {
+                        if (e.status == 200) {
+                            if (e.data.code == '200') {
+
+                                // if(route.name!=='')
+                                store.dispatch(badgeShowActions.badgeRequest());
+                            }
+                        } else {
+                            console.log("err");
+                        }
+                    });
+                    navigate("DetailPoint", { point: { id: item.sender, type: item.type }, from: 'MapCluser' });
+                } else {
+                    navigate('NotificationDetail', { item, isBack: true });
+                }
+            }
         });
         const route = getCurrentRoute();
         console.log('route', route);

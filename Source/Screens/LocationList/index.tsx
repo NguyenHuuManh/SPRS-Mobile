@@ -8,9 +8,7 @@ import styles from "./styles";
 const AVATA_SIZE = 100;
 const Margin_BT = 20;
 const ITEM_SIZE = AVATA_SIZE + Margin_BT
-
 export default ({ navigation }) => {
-    // const navigation = useNavigation()
     return (
         <View style={[styles.container]}>
             <View style={{ height: height * 0.1 }}>

@@ -142,7 +142,7 @@ const AddStorePoint = ({ navigation }) => {
                 GPS_long: adressPoint?.GPS_long
               },
             }
-            console.log("body", body);
+            // console.log("body", body);
             callCreatePoint(body);
           }}
         >
@@ -185,17 +185,22 @@ const AddStorePoint = ({ navigation }) => {
                   </ContainerField>
                 </View>
               </View>
-              {/* 
-              <ContainerField title="Mô tả">
-                <Field
-                  component={Input}
-                  name="description"
-                  horizontal
-                  placeholder="Mô tả"
-                  maxLength={250}
+
+
+              <ContainerField title="Chọn địa điểm">
+                <MapPicker
                   styleTitle={{ width: 110 }}
+                  horizontal
+                  iconRight={faMapMarkedAlt}
+                  iconSize={20}
+                  setAdress={setAdressPoint}
+                  adress={adressPoint}
+                  defaultAdress={adressPoint}
                 />
-              </ContainerField> */}
+              </ContainerField>
+              <ContainerField title="Sản phẩm">
+                <StoreCategory items={items} setItems={setItems} />
+              </ContainerField>
               <ContainerField title="Mô tả" styleCustomContainer={{ height: 80, paddingTop: 10, paddingBottom: 2 }}>
                 <Field
                   component={Input}
@@ -209,23 +214,6 @@ const AddStorePoint = ({ navigation }) => {
                   textAlignVertical="top"
                   maxLength={250}
                 />
-              </ContainerField>
-
-              <ContainerField title="Chọn địa điểm">
-                <MapPicker
-                  styleTitle={{ width: 110 }}
-                  horizontal
-                  iconRight={faMapMarkedAlt}
-                  iconSize={20}
-                  setAdress={setAdressPoint}
-                  adress={adressPoint}
-                />
-              </ContainerField>
-              <ContainerField title="Sản phẩm">
-                <StoreCategory items={items} setItems={setItems} />
-                {/* {isEmpty(items) && (
-                  <Text style={[MainStyle.texError,]}>chọn mặt hàng cung cấp</Text>
-                )} */}
               </ContainerField>
               <ButtonCustom
                 title={"Thêm mới"}
