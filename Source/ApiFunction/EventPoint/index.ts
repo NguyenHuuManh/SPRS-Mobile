@@ -1,4 +1,4 @@
-import { GET_EVENTS, GET_EVENTS_DETAIL, UPDATE_EVENT } from "../../Constrants/api";
+import { GET_EVENTS, GET_EVENTS_DETAIL, UPDATE_EVENT, VERIFY_POINT } from "../../Constrants/api";
 import { convertToQuery } from "../../Helper/FunctionCommon";
 import httpServices from "../../Services/httpServices";
 
@@ -13,5 +13,10 @@ export const apiGetEventDetail = async (param) => {
 export const apiUpdateEventPoint = async (body) => {
     return await httpServices.put(`${UPDATE_EVENT}`, body);
 };
+
+export const apiVerifyPoint = async (params) => {
+    return await httpServices.get(`${VERIFY_POINT}${convertToQuery(params)}`);
+};
+
 
 

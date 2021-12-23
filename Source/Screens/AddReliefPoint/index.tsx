@@ -61,6 +61,10 @@ const AddReliefPoint = ({ navigation }) => {
           navigation.push("ReliefPoint");
           return;
         }
+        if (res.data.code == "403") {
+          alert('Vì để tránh tạo điểm ảo làm ảnh hưởng đến xã hội nên số lượng điểm có thể tạo của mỗi tài khoản sẽ bị giới hạn');
+          return;
+        }
         Toast.show({
           type: "error",
           text1: res.data.message,

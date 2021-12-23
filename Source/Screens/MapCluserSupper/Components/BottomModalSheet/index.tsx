@@ -6,6 +6,7 @@ import * as React from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { MapStore } from '../..';
+import { apiVerifyPoint } from '../../../../ApiFunction/EventPoint';
 import { apiPlaceDetailByLongLat } from '../../../../ApiFunction/PlaceAPI';
 import ButtonCustom from '../../../../Components/ButtonCustom';
 import { AppColor } from '../../../../Helper/propertyCSS';
@@ -18,7 +19,6 @@ interface Props {
 export default React.memo((props: Props) => {
     const { visible } = props;
     const [description, setdescription] = React.useState("");
-    const profileReducer = useSelector((state: RootState) => state.profileReducer);
     const {
         modalBottom: { setVisible },
         strokerDirectionStore: { setStrokerDirection, strokerDirection },
@@ -26,7 +26,8 @@ export default React.memo((props: Props) => {
         mapRefStore: { mapRef },
         dataDirectionStore: { dataDirection },
         markerToStore: { markerTo }
-    } = React.useContext(MapStore)
+    } = React.useContext(MapStore);
+    const [verifyOWN, setVerifyOWN] = React.useState<any>({ disable: false, isOWN: false });
     const navigation = useNavigation<any>();
     // console.log("markerTo", markerTo);
     const renderName = (item) => {
@@ -58,10 +59,24 @@ export default React.memo((props: Props) => {
     React.useEffect(() => {
         if (visible && !isUndefined(markerTo?.location)) {
             getDetailPlace(markerTo.location.longitude, markerTo.location.latitude);
+            if (markerTo?.id) {
+                callVerifyPoint();
+            }
         }
     }, [visible]);
-    // console.log('profileReducer.data.id', profileReducer.data.id);
-    // console.log('profileReducer.data.id', markerTo);
+    const callVerifyPoint = () => {
+        setVerifyOWN({ disable: true, data: false });
+        const params = {
+            p_id: markerTo.id,
+            p_type: markerTo.type
+        }
+        apiVerifyPoint(params).then((e) => {
+            // console.log('isOWN', e);
+            if (e.status == 200 && e.data.code == '200') {
+                setVerifyOWN({ disable: false, isOWN: e.data.obj });
+            }
+        })
+    }
 
     return (
         <>
@@ -113,16 +128,18 @@ export default React.memo((props: Props) => {
                                 <View style={{ flex: 6, alignItems: "center" }}>
                                     {
                                         markerTo?.id && (
-                                            <ButtonCustom onPress={() => {
-                                                if (markerTo?.user_id == profileReducer.data.id) {
-                                                    if (markerTo.type == 'rp') navigation.push("UpdateReliefPoint", { id: markerTo.id, from: 'MapCluser' });
-                                                    if (markerTo.type == 'st') navigation.push("UpdateStorePoint", { id: markerTo.id, from: 'MapCluser' });
-                                                    if (markerTo.type == 'sos') navigation.push("SOS", { id: markerTo.id, from: 'MapCluser' });
-                                                } else {
-                                                    navigation.push("DetailPoint", { point: markerTo, from: "MapCluser" });
-                                                }
-                                                setVisible(false);
-                                            }} styleContain={{ alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, marginTop: 20 }}>
+                                            <ButtonCustom
+                                                disabled={verifyOWN.disable}
+                                                onPress={() => {
+                                                    if (verifyOWN.isOWN) {
+                                                        if (markerTo.type == 'rp') navigation.push("UpdateReliefPoint", { id: markerTo.id, from: 'MapCluser' });
+                                                        if (markerTo.type == 'st') navigation.push("UpdateStorePoint", { id: markerTo.id, from: 'MapCluser' });
+                                                        if (markerTo.type == 'sos') navigation.push("SOS", { id: markerTo.id, from: 'MapCluser' });
+                                                    } else {
+                                                        navigation.push("DetailPoint", { point: markerTo, from: "MapCluser" });
+                                                    }
+                                                    setVisible(false);
+                                                }} styleContain={{ alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, marginTop: 20 }}>
                                                 <Text style={{ color: '#FFFF' }}>Xem chi tiết</Text>
                                             </ButtonCustom>
                                         )

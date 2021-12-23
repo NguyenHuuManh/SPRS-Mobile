@@ -28,7 +28,21 @@ export default StyleSheet.create({
         width: "100%",
         height: 50,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        flexDirection: 'row'
+    },
+    level: {
+        width: "100%",
+        height: 30,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: 'row'
+
+    },
+    textLevel: {
+        fontWeight: "normal",
+        fontSize: 16,
+        color: AppColor.CORLOR_TEXT
     },
     textHeader: {
         fontWeight: "bold",

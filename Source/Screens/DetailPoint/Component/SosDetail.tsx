@@ -1,4 +1,4 @@
-import { faCalendar, faChevronLeft, faMapMarkerAlt, faPager, faPenAlt, faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faChevronLeft, faLevelUpAlt, faMapMarkerAlt, faPager, faPenAlt, faPhone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/core";
 import { isEmpty, isNull, isUndefined } from "lodash";
@@ -89,6 +89,10 @@ const SosDetail = ({ point, from }) => {
                     />
                 )}
                 <View style={[styles.headerPoint]}><Text style={[styles.textHeader]}>{data?.user?.full_name}</Text></View>
+                <View style={[styles.level]}>
+                    <Text style={[styles.textLevel]}>Mức độ:</Text>
+                    <Text style={[styles.textLevel, { color: data?.level == 0 ? 'red' : data?.level == 1 ? 'orange' : '' }]}>{data?.level == 0 ? 'Khẩn câp' : data?.level == 1 ? 'Cần thiết' : data?.level == 2 ? 'Bình thường' : ''}</Text>
+                </View>
             </View>
             <View style={[styles.inforView]}>
                 <View style={[styles.addressView]}>
@@ -124,6 +128,12 @@ const SosDetail = ({ point, from }) => {
                     </View>
                     <Text style={[styles.textDescription]}>{data?.address?.subDistrict.name + " - " + data?.address?.district.name + " - " + data?.address?.city.name}</Text>
                 </View>
+                {/* <View style={[styles.addressView]}>
+                    <View style={[styles.titleView]}>
+                        <FontAwesomeIcon icon={faLevelUpAlt} size={18} color={AppColor.BUTTON_MAIN} />
+                    </View>
+                    <Text style={[styles.textDescription]}>{data?.user?.phone}</Text>
+                </View> */}
                 <View style={[styles.addressView]}>
                     <View style={[styles.titleView]}>
                         <FontAwesomeIcon icon={faPhone} size={18} color={AppColor.BUTTON_MAIN} />

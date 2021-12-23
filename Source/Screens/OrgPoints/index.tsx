@@ -60,6 +60,7 @@ export default ({ navigation }) => {
             pageIndex: pageSize.pageIndex
         }
         apiGetEvents(bodyRequest).then((e) => {
+            // console.log('evnetPoinse', e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setPoints(e.data.obj);

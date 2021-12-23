@@ -67,7 +67,6 @@ export const notificationListener = async (callBack?: any) => {
             }
         });
         const route = getCurrentRoute();
-        console.log('route', route);
         if (route.name == 'Notification') {
             store.dispatch(notificationRequest({ pageSize: 10, pageIndex: 1, isRefesh: false }))
         } else {

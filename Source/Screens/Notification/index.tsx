@@ -84,11 +84,8 @@ export default () => {
         }
     }
     const renderItem = ({ item }) => {
-        // const time = timeSince(item.create_time);
-        // console.log('timemmm', time)
         return (
             <TouchableOpacity style={[styles.item,
-                // { backgroundColor: item.status !== 'read' ? "#F6BB55" : "#FFF" }
             ]} onPress={() => {
                 navigate(item);
             }}>
@@ -102,7 +99,7 @@ export default () => {
                     }}
                         ellipsizeMode="tail"
                         numberOfLines={1}
-                    >{item.type == 'ad' ? "Thông báo hệ thống" : item?.sender?.name}</Text>
+                    >{item.type == 'ad' ? "Thông báo hệ thống" : item?.title}</Text>
                     <Text
                         ellipsizeMode="tail"
                         numberOfLines={1}

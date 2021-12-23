@@ -6,6 +6,7 @@ export const singupOrganization = `${URL}/sprs/api/users_v2/organizationlAdmin`
 export const singupStore = `${URL}/sprs/api/users_v2/ownStore`
 export const VERIFY_PHONE = `${URL}/sprs/api/validateOtp-verify`
 export const GET_OTP_SIGNUP = `${URL}/sprs/api/generateOtp-verify`
+export const VERIFY_POINT = `${URL}/sprs/api/manage-map/isOwnPoint`
 //
 export const signin = `${URL}/authenticate-mobile`;
 export const profile = `${URL}/sprs/api/user`;
