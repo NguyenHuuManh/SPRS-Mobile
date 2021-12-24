@@ -28,6 +28,7 @@ export default ({ navigation }) => {
                         position: "top"
                     });
                     ref.current.resetForm();
+                    navigation.goBack();
                 } else {
                     Toast.show({
                         type: "error",

@@ -419,22 +419,22 @@ export default ({ navigation }) => {
                     onEndReachedThreshold={0}
                     ListFooterComponent={renderFooter}
                 />
-                <Draggable
-                    x={width * 0.75}
-                    y={height * 0.7}
-                    maxX={width * 0.85}
-                    maxY={height * 0.75}
-                    minX={20}
-                    minY={20}
-                    isCircle
-                    onShortPressRelease={() => navigation.push("AddReliefPoint")}
-                    z={200}
-                >
-                    <View style={[{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColor.BUTTON_MAIN, borderRadius: 25 }, MainStyle.boxShadow]}>
-                        <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
-                    </View>
-                </Draggable>
             </View>
+            <Draggable
+                x={width * 0.8}
+                y={height * 0.85}
+                maxX={width * 0.9}
+                maxY={height * 0.95}
+                minX={20}
+                minY={20}
+                isCircle
+                onShortPressRelease={() => navigation.push("AddReliefPoint")}
+                z={200}
+            >
+                <View style={[{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColor.BUTTON_MAIN, borderRadius: 25 }, MainStyle.boxShadow]}>
+                    <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
+                </View>
+            </Draggable>
         </View>
     )
 }

@@ -27,7 +27,6 @@ import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import MapView from "./components/MapView";
 import { register } from "./validate";
-import Draggable from 'react-native-draggable';
 const AddReliefPoint = ({ navigation }) => {
   const addressCurrent = useSelector((state: RootState) => state.updateAddressReducer);
   const [adressPoint, setAdressPoint] = useState<any>({
@@ -62,7 +61,7 @@ const AddReliefPoint = ({ navigation }) => {
           return;
         }
         if (res.data.code == "403") {
-          alert('Vì để tránh tạo điểm ảo làm ảnh hưởng đến xã hội nên số lượng điểm có thể tạo của mỗi tài khoản sẽ bị giới hạn');
+          alert('Vì để tránh tạo điểm ảo làm ảnh hưởng đến xã hội nên số lượng điểm có thể tạo của mỗi tài khoản sẽ bị giới hạn là 2');
           return;
         }
         Toast.show({

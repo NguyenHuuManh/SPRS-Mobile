@@ -31,6 +31,7 @@ export default () => {
     const [idHuyen, setIdHuyen] = useState("");
     const [disable, setDisable] = useState(true);
     const profile = useSelector((state) => state.profileReducer);
+    console.log(profile, 'profile');
     const upateProfile = (values) => {
         apiUpdate(values).then((res) => {
             if (res.status == 200) {
@@ -65,7 +66,7 @@ export default () => {
             <Formik
                 initialValues={{
                     username: profile?.data?.username || "",
-                    dob: moment(profile?.data?.dob).format('DD-MM-YYYY') || "",
+                    dob: moment(profile?.data?.dob, 'DD-MM-YYYY').format('DD-MM-YYYY') || "",
                     groupsId: profile?.data?.groups_user?.[0]?.id || "",
                     full_name: profile?.data?.full_name || "",
                     phone: profile?.data?.phone || "",
@@ -170,7 +171,7 @@ export default () => {
                                     horizontal
                                     styleTitle={{ width: 90 }}
                                     placeholder="Nhập số điện thoại"
-                                    editable={!disable}
+                                    editable={false}
                                 />
                             </ContainerField>
                             <ContainerField title="Ngày sinh" disabled={disable}>

@@ -165,7 +165,6 @@ const SOS = () => {
           onSubmit={(values) => {
             const body = {
               ...values,
-              // status: values.status ? 1 : 0,
               level: Number(values.level),
               address: {
                 id: sosInfor.address?.id | 0,
@@ -188,7 +187,6 @@ const SOS = () => {
                 },
               }
             }
-            // console.log("body", body);
             callCreatePoint(body);
           }}
         >

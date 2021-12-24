@@ -365,7 +365,7 @@ export default ({ navigation }) => {
                 />
             </View>
             <FilterForm body={body} setBody={setBody} setPageSize={setPageSize} pageSize={pageSize} setIsRefesh={setIsRefesh} />
-            <View style={{ height: "78%", marginTop: 10 }}>
+            <View style={{ height: height * 0.78, marginTop: 10 }}>
                 <Animated.FlatList
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -385,22 +385,22 @@ export default ({ navigation }) => {
                     onEndReachedThreshold={0}
                     ListFooterComponent={renderFooter}
                 />
-                <Draggable
-                    x={width * 0.75}
-                    y={height * 0.7}
-                    maxX={width * 0.85}
-                    maxY={height * 0.75}
-                    minX={20}
-                    minY={20}
-                    isCircle
-                    onShortPressRelease={() => navigation.push("AddStorePoint")}
-                    z={200}
-                >
-                    <View style={[{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColor.BUTTON_MAIN, borderRadius: 25 }, MainStyle.boxShadow]}>
-                        <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
-                    </View>
-                </Draggable>
             </View>
+            <Draggable
+                x={width * 0.8}
+                y={height * 0.85}
+                maxX={width * 0.9}
+                maxY={height * 0.95}
+                minX={20}
+                minY={20}
+                isCircle
+                onShortPressRelease={() => navigation.push("AddStorePoint")}
+                z={200}
+            >
+                <View style={[{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColor.BUTTON_MAIN, borderRadius: 25 }, MainStyle.boxShadow]}>
+                    <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
+                </View>
+            </Draggable>
         </View>
     )
 }

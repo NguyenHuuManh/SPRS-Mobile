@@ -71,9 +71,9 @@ export default React.memo((props: Props) => {
             p_type: markerTo.type
         }
         apiVerifyPoint(params).then((e) => {
-            // console.log('isOWN', e);
+            console.log('isOWN', e);
             if (e.status == 200 && e.data.code == '200') {
-                setVerifyOWN({ disable: false, isOWN: e.data.obj });
+                setVerifyOWN({ disable: false, isOWN: e.data.obj.isOwnPoint });
             }
         })
     }

@@ -1,22 +1,22 @@
-import { faArrowRight, faCamera, faChevronLeft, faChevronRight, faHistory, faIdBadge, faLock, faPersonBooth, faSignOutAlt, faUserLock } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faChevronRight, faIdBadge, faLock, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useNavigation } from "@react-navigation/core";
+import { isEmpty } from "lodash";
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, Image } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from "react-native-gesture-handler";
-import { AppColor, BackgoundMain } from "../../Helper/propertyCSS";
+import Toast from "react-native-toast-message";
+import { useDispatch, useSelector } from "react-redux";
+import { apiUploadImg } from "../../ApiFunction/Auth";
+import AppImageCrop from "../../Components/AppImageCrop";
+import HeaderContainer from "../../Components/HeaderContainer";
+import { IMAGE_URL } from "../../Constrants/url";
+import { AppColor } from "../../Helper/propertyCSS";
 import { height, width } from "../../Helper/responsive";
+import { profileActions, userActions } from "../../Redux/Actions";
+import { RootState } from "../../Redux/Reducers";
 import { MainStyle } from "../../Style/main_style";
 import styles from "./styles";
-import { useNavigation } from "@react-navigation/core"
-import { useDispatch, useSelector } from "react-redux";
-import { badgeShowActions, profileActions, userActions } from "../../Redux/Actions";
-import HeaderContainer from "../../Components/HeaderContainer";
-import { RootState } from "../../Redux/Reducers";
-import AppImageCrop from "../../Components/AppImageCrop";
-import { apiUploadImg } from "../../ApiFunction/Auth";
-import Toast from "react-native-toast-message";
-import { isEmpty } from "lodash";
-import { IMAGE_URL } from "../../Constrants/url";
 export default () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -67,7 +67,7 @@ export default () => {
     }
 
     return (
-        <View style={{ width: width, height: height, paddingBottom: 80, backgroundColor: BackgoundMain, }}>
+        <View style={{ width: width, height: height, paddingBottom: 80 }}>
             <View style={{ height: "7%" }}>
                 <HeaderContainer
                     flexRight={1}
@@ -127,7 +127,7 @@ export default () => {
                 <View style={{ flex: 2, backgroundColor: "#FFF" }}>
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[styles.rowItem]}>
-                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { navigation.navigate("Personal", { profile: profileReducer.data }) }}>
+                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { navigation.push("Personal", { profile: profileReducer.data }) }}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
                                     <FontAwesomeIcon style={{ marginRight: 10 }} size={15} color={"#A0A6BE"} icon={faIdBadge} />
                                     <Text >Cập nhật thông tin cá nhân</Text>
@@ -137,19 +137,8 @@ export default () => {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        {/* <View style={[styles.rowItem]}>
-                            <TouchableOpacity style={[styles.touchItem]}>
-                                <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
-                                    <FontAwesomeIcon style={{ marginRight: 10 }} size={15} color={"#A0A6BE"} icon={faHistory} />
-                                    <Text >Lịch sử hoạt động</Text>
-                                </View>
-                                <View style={[styles.containerIcon]}>
-                                    <FontAwesomeIcon style={{ flex: 1 }} size={15} color={"#A0A6BE"} icon={faChevronRight} />
-                                </View>
-                            </TouchableOpacity>
-                        </View> */}
                         <View style={[styles.rowItem]}>
-                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { navigation.navigate("ChangePasswordAuth") }}>
+                            <TouchableOpacity style={[styles.touchItem]} onPress={() => { navigation.push("ChangePasswordAuth") }}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
                                     <FontAwesomeIcon style={{ marginRight: 10 }} size={15}
                                         //  color={"#A0A6BE"}
