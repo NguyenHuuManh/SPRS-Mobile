@@ -5,6 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { isEmpty } from 'lodash';
 import React, { useEffect } from 'react';
+import { AppState } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DrawerCustom from '../Components/DrawerCustom';
 import TabBar from '../Components/TabBar';
@@ -104,8 +105,14 @@ const RootStackScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
+    const callBack = (e) => {
+        console.log(e, 'eeeee');
+    }
+
     React.useEffect(() => {
         notificationListener();
+        AppState.addEventListener('change', callBack);
+        return AppState.removeEventListener('change', callBack);
     }, [])
 
     useEffect(() => {
@@ -115,6 +122,10 @@ const RootStackScreen = () => {
             getCurrentLocation();
             dispatch(MenuActions.MenuRequest());
         }
+        // console.log('!userReducer?.data?.token', !userReducer?.data?.token);
+        // console.log('userReducer?.isGuest == false', userReducer?.isGuest == false);
+        // console.log('userReducer.type == ActionTypes.LOGOUT', userReducer.type == ActionTypes.LOGOUT);
+
         if (!userReducer?.data?.token && userReducer?.isGuest == false && userReducer.type == ActionTypes.LOGOUT) {
             navigation.reset({
                 index: 0,

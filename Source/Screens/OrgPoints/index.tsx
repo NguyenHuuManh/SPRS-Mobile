@@ -54,7 +54,7 @@ export default ({ navigation }) => {
         setLoading(true);
         const bodyRequest = {
             types: isNull(body.type) ? null : [body.type],
-            status: body.status,
+            status: isNull(body.status) ? 4 : body.status,
             sort: body.sort,
             pageSize: pageSize.pageSize,
             pageIndex: pageSize.pageIndex

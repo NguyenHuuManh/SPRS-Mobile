@@ -27,7 +27,7 @@ class Services {
 
 
     handleResponse(response: AxiosResponse, error: AxiosError, isSuccess: boolean, url?: string) {
-        // console.log('error', error.response);
+        console.log('error', error.response);
         // console.log('response', response)
         if (isSuccess) {
             if (response?.data?.code == '501') {
@@ -69,6 +69,21 @@ class Services {
                     );
                     return
                 }
+            }
+
+            if (error?.response?.status == 500 && error.response.data?.details?.includes('Access is denied')) {
+                Alert.alert(
+                    'Không có quyền truy cập',
+                    'Tài khoản của bạn không có quyền chức năng này, đăng nhập lại để cập nhật lại quyền',
+                    [
+                        {
+                            text: 'Đăng xuất',
+                            onPress: () => store.dispatch(userActions.logout({ data: store.getState().userReducer, isexpired: false }))
+                        },
+                    ],
+                    { cancelable: false },
+                );
+                return;
             }
             if (isUndefined(error?.response)) {
                 if (store.getState().networkCheckingReducer.isConnect) {

@@ -19,6 +19,7 @@ interface Props {
 export default React.memo((props: Props) => {
     const { visible } = props;
     const [description, setdescription] = React.useState("");
+    const userReducer = useSelector((state: RootState) => state.userReducer);
     const {
         modalBottom: { setVisible },
         strokerDirectionStore: { setStrokerDirection, strokerDirection },
@@ -65,6 +66,10 @@ export default React.memo((props: Props) => {
         }
     }, [visible]);
     const callVerifyPoint = () => {
+        if (userReducer.isGuest) {
+            setVerifyOWN({ disable: false, data: false });
+            return;
+        }
         setVerifyOWN({ disable: true, data: false });
         const params = {
             p_id: markerTo.id,

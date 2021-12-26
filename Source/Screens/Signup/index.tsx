@@ -2,7 +2,7 @@ import { faEye, faEyeSlash, faMapMarkedAlt } from "@fortawesome/free-solid-svg-i
 import { useNavigation } from "@react-navigation/core";
 import { Field, Formik } from "formik";
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
@@ -66,11 +66,7 @@ export default () => {
                     setDisableOTP(false)
                     return;
                 }
-                Toast.show({
-                    type: "error",
-                    text1: e.data.message,
-                    position: "top"
-                })
+                Alert.alert(e.data.message);
             } else {
                 Toast.show({
                     type: "error",
@@ -84,11 +80,11 @@ export default () => {
         <KeyboardAwareScrollView style={{ backgroundColor: AppColor.BUTTON_MAIN, flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center", paddingTop: "5%", paddingBottom: 50 }} showsVerticalScrollIndicator={false}>
             <Formik
                 initialValues={{
-                    username: "manhhe",
-                    phone: "0966048002",
-                    password: "password",
-                    rePassWord: "password",
-                    full_name: "Nguyễn Hữu Mạnh",
+                    username: "",
+                    phone: "",
+                    password: "",
+                    rePassWord: "",
+                    full_name: "",
                     dob: "",
                     city: "",
                     province: "",

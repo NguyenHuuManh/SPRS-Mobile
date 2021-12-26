@@ -62,7 +62,7 @@ export default ({ route, navigation }) => {
             }}
         >
             {({ submitForm }) => (
-                <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "red", }} contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
+                <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: AppColor.BUTTON_MAIN, }} contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
                     <ImageBackground source={require('../../../Assets/Images/backdgroundpng.png')}
                         resizeMode="stretch"
                         style={[styles.BG]}

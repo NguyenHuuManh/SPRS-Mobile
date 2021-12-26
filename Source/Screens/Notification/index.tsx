@@ -75,14 +75,6 @@ export default () => {
         }
     }
 
-    const renderLable = (timeString) => {
-        const arrTime = timeString.split(' ');
-        if (moment(moment(arrTime[0]).valueOf()).isSame(moment().valueOf())) {
-            return arrTime[1];
-        } else {
-            return arrTime[0];
-        }
-    }
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity style={[styles.item,

@@ -50,7 +50,7 @@ export default () => {
                 }}
                 validationSchema={SubmitPhone}
                 onSubmit={(values) => {
-                    getOtp({ to: "+84" + values.to.substring(1), });
+                    getOtp({ to: "+84" + values.to.substring(1), platform: 2 });
                 }}
             >
                 {({ submitForm }) => (

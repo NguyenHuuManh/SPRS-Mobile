@@ -67,8 +67,8 @@ export default ({ navigation }) => {
 
     const ChangeStatusPoint = (item) => {
         Alert.alert(
-            `${item.status ? "Bật điểm cứu trợ" : "Tắt điểm cứu trợ"}`,
-            `${item.status ? "Hệ thống sẽ tự động cập nhật lại ngày giờ mở cửa của điểm cứu trợ là ngày giờ hiện tại " : "Hệ thống sẽ tự động cập nhật lại ngày giờ đóng cửa của điểm cứu trợ là ngày giờ hiện tại"}`,
+            `${item.status == 1 ? "Bật điểm cứu trợ" : "Tắt điểm cứu trợ"}`,
+            `${item.status == 1 ? "Hệ thống sẽ tự động cập nhật lại ngày giờ mở cửa của điểm cứu trợ là ngày giờ hiện tại " : "Hệ thống sẽ tự động cập nhật lại ngày giờ đóng cửa của điểm cứu trợ là ngày giờ hiện tại"}`,
             [
                 {
                     text: 'đồng ý',
