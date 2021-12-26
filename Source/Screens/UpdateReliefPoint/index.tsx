@@ -15,6 +15,7 @@ import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
+import Loading from "../../Components/Loading";
 import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
@@ -35,6 +36,7 @@ const UpdateReliefPoint = ({ navigation }) => {
   const [loadingImg, setLoadingImg] = useState(false);
   const [imageModal, setImageModal] = useState(false);
   const [viewModal, setViewModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const item = useRoute<any>().params;
   const [adressPoint, setAdressPoint] = useState<any>({
@@ -46,6 +48,7 @@ const UpdateReliefPoint = ({ navigation }) => {
   })
 
   const callUpdateReliefPoint = (body) => {
+    setLoading(true);
     apiUpdateReliefPoint(body).then((res) => {
       console.log(res, 'resUpdateRelief')
       if (res.status == 200) {
@@ -71,7 +74,7 @@ const UpdateReliefPoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => setLoading(false))
   }
   const updateImg = (image) => {
     if (isEmpty(image)) {
@@ -97,6 +100,7 @@ const UpdateReliefPoint = ({ navigation }) => {
     }).finally(() => { setLoadingImg(false) })
   }
   const callGetReliefPointDetail = () => {
+    setLoading(true);
     apiGetReliefPointDetail({ id: item.id }).then((res) => {
       console.log('res', res)
       if (res.status == 200) {
@@ -119,13 +123,14 @@ const UpdateReliefPoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => { setLoading(false) })
   }
   useEffect(() => {
     callGetReliefPointDetail();
   }, [item])
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Loading isVisible={loading} />
       <View style={{ height: height * 0.07 }}>
         <HeaderContainer
           flexRight={2}

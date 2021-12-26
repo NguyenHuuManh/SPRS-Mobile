@@ -16,6 +16,7 @@ import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
+import Loading from "../../Components/Loading";
 import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
@@ -37,6 +38,7 @@ const AddReliefPoint = ({ navigation }) => {
     subDistrict: addressCurrent?.data?.subDistrict?.name || "",
   })
   const [items, setItems] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
   const formikRef = createRef<any>();
 
   useEffect(() => {
@@ -48,6 +50,7 @@ const AddReliefPoint = ({ navigation }) => {
     formikRef.current.setFieldValue("address", adressPoint.city + "-" + adressPoint.district + "-" + adressPoint.subDistrict);
   }, [adressPoint])
   const callCreatePoint = (body) => {
+    setLoading(true);
     apiCreateReliefPoint(body).then((res) => {
       console.log("res", res);
       if (res.status == 200) {
@@ -77,10 +80,11 @@ const AddReliefPoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => { setLoading(false) })
   }
   return (
     <SafeAreaView style={styles.container}>
+      <Loading isVisible={loading} />
       <View style={{ height: "7%" }}>
         <HeaderContainer
           flexRight={0}

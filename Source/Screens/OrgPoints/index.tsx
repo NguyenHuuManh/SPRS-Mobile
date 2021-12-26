@@ -43,7 +43,8 @@ export default ({ navigation }) => {
 
     useEffect(() => {
         const willFocusSubscription = navigation.addListener('focus', (e) => {
-            getPoint();
+            // getPoint();
+            setPageSize({ ...pageSize, pageIndex: page, pageSize: size });
         });
 
         return willFocusSubscription;
@@ -197,8 +198,7 @@ export default ({ navigation }) => {
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text style={{ width: "50%", fontSize: 12, fontWeight: "bold" }}>{item.name}</Text>
                                 <View style={{ width: "50%", alignItems: "flex-end", paddingRight: 5, justifyContent: "center" }}>
-                                    {/* <View style={[styles.statusIcon, { backgroundColor: item.status ? "#32a864" : "red" }]}></View> */}
-                                    <View style={[styles.statusIcon, { backgroundColor: item.status + '' == '0' ? "orange" : item.status == '1' ? "#32a864" : item.status == '2' ? "gray" : "red" }]}></View>
+                                    <View style={[styles.statusIcon, { backgroundColor: item.status + '' == '0' ? "gray" : item.status + '' == '1' ? "#32a864" : item.status == '2' ? "orange" : "red" }]}></View>
                                 </View>
                             </View>
                             <Text numberOfLines={1} ellipsizeMode="middle" style={{ color: AppColor.CORLOR_TEXT }}>Địa chỉ: {addressToString(item?.address?.subDistrict.name) + " - " + addressToString(item?.address?.district.name) + " - " + addressToString(item?.address?.city.name)}</Text>

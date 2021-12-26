@@ -91,7 +91,10 @@ export default () => {
                     }}
                         ellipsizeMode="tail"
                         numberOfLines={1}
-                    >{item.type == 'ad' ? "Thông báo hệ thống" : item?.title}</Text>
+                    >
+                        {/* {item.type == 'ad' ? "Thông báo hệ thống" : item?.title} */}
+                        {item?.title}
+                    </Text>
                     <Text
                         ellipsizeMode="tail"
                         numberOfLines={1}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
+import { AppColor } from '../../Helper/propertyCSS';
 import styles from './styles';
 
 export default ({ isVisible }: { isVisible: boolean }) => {
@@ -12,7 +13,7 @@ export default ({ isVisible }: { isVisible: boolean }) => {
       style={{ zIndex: 99999 }}
       coverScreen={true}
     >
-      <ActivityIndicator size="large" color="violet" />
+      <ActivityIndicator size="large" color={AppColor.BUTTON_MAIN} />
     </Modal>
   );
 };

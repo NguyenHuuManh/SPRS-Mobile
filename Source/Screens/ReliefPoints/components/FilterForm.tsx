@@ -61,7 +61,7 @@ export default (props: Props) => {
                             <FilterComponent
                                 formikProps={formikProps}
                                 listComponents={[
-                                    { key: "status", title: "trạng thái hoạt động", data: [{ id: 1, name: "Đang hoạt động" }, { id: 0, name: "Đã kết thúc" }, { id: 2, name: "Ngừng hoạt động" }, { id: 3, name: "Sắp diễn ra" }] },
+                                    { key: "status", title: "trạng thái hoạt động", data: [{ id: 1, name: "Đang hoạt động" }, { id: 0, name: "Đã kết thúc" }, { id: 2, name: "Sắp diễn ra" }, { id: 3, name: "Ngừng hoạt động" }] },
                                     { key: "type", title: "Loại sản phẩm", data: dataType }
                                 ]}
                             />

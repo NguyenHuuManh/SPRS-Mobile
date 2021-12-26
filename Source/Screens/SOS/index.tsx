@@ -125,7 +125,7 @@ const SOS = () => {
   }, [])
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Loading isVisible={loading} /> */}
+      <Loading isVisible={loading} />
       <View style={{ height: "7%" }}>
         <HeaderContainer
           flexRight={1}

@@ -13,6 +13,7 @@ import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
+import Loading from "../../Components/Loading";
 import MapPicker from "../../Components/MapPicker";
 import StoreCategory from "../../Components/StoreCategory";
 import TimePicker from "../../Components/TimePicker";
@@ -34,7 +35,8 @@ const AddStorePoint = ({ navigation }) => {
     city: addressCurrent?.data?.city?.name || "",
     district: addressCurrent?.data?.district?.name || "",
     subDistrict: addressCurrent?.data?.subDistrict?.name || "",
-  })
+  });
+  const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<any>([]);
 
   const callCreatePoint = (body) => {
@@ -46,6 +48,7 @@ const AddStorePoint = ({ navigation }) => {
       });
       return;
     }
+    setLoading(true);
     apiCreateStore(body).then((res) => {
       console.log(res, "ressss")
       if (res.status == 200) {
@@ -64,10 +67,11 @@ const AddStorePoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => { setLoading(false) });
   }
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Loading isVisible={loading} />
       <View style={{ height: "7%" }}>
         <HeaderContainer
           flexRight={1}

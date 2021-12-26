@@ -13,7 +13,7 @@ interface Props {
     listComponents?: any;
     formikProps?: any;
 }
-export default memo((props: Props) => {
+export default (props: Props) => {
     const { listComponents, formikProps } = props
     const { values, setFieldValue, resetForm, submitForm } = formikProps;
     const [visible, setvisible] = useState(false);
@@ -75,16 +75,18 @@ export default memo((props: Props) => {
     useEffect(() => {
         const objClone = checkKeyNull({ ...values });
         delete objClone.sort;
+        // console.log(objClone, 'values');
         let array = [];
         Object.entries(objClone).forEach(([key, value]) => {
-            const item = getItemSelect({ id: value, key: key })
+            const item = getItemSelect({ id: value, key: key });
             if (!isEmpty(item)) {
                 array.push(item);
             }
-        })
-        // console.log(array, 'items');
+        });
+        // console.log(array, 'array');
         setArrayItems([...array]);
-    }, [values])
+    }, [values]);
+    // console.log(arrayItems, 'arrrayItems')
     return (
         <View style={[styles.container]} >
             <View style={{ flexDirection: "row", height: "100%" }}>
@@ -93,7 +95,7 @@ export default memo((props: Props) => {
                 <ScrollView style={{ width: "90%", height: "100%", backgroundColor: "#FFF", flexDirection: "row" }} horizontal showsHorizontalScrollIndicator={false}>
                     {arrayItems.map((e) => {
                         return (
-                            <View style={{ marginRight: 5, justifyContent: "center", }} key={e?.id}>
+                            <View style={{ marginRight: 5, justifyContent: "center", }} key={e?.id + e.name}>
                                 <ContainerField styleCustomContainer={{ borderWidth: 2, marginTop: 0, borderColor: AppColor.BUTTON_MAIN, paddingLeft: 5, paddingRight: 5 }}>
                                     <View style={{ minWidth: 60, maxWidth: 100, minHeight: 40, justifyContent: "center", display: "flex", alignItems: "center" }}>
                                         <Text ellipsizeMode="tail" numberOfLines={1} style={{ color: AppColor.CORLOR_TEXT }}>{e?.name || ""}</Text>
@@ -168,4 +170,4 @@ export default memo((props: Props) => {
             }
         </View>
     )
-});
+};

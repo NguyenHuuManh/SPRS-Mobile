@@ -21,7 +21,7 @@ import Input from "../../../Components/Input";
 import { AppColor } from "../../../Helper/propertyCSS";
 import { height, width } from "../../../Helper/responsive";
 import { profileActions } from "../../../Redux/Actions";
-import styles from "../styles";
+import Loading from "../../../Components/Loading";
 import { updateForm } from "../validate";
 export default () => {
     const dispatch = useDispatch()
@@ -31,8 +31,10 @@ export default () => {
     const [idHuyen, setIdHuyen] = useState("");
     const [disable, setDisable] = useState(true);
     const profile = useSelector((state) => state.profileReducer);
+    const [loading, setLoading] = useState(false);
     console.log(profile, 'profile');
     const upateProfile = (values) => {
+        setLoading(true);
         apiUpdate(values).then((res) => {
             if (res.status == 200) {
                 if (res.data.code == "200") {
@@ -57,12 +59,13 @@ export default () => {
                 text1: "Chức năng đang bảo trì",
                 position: "top"
             })
-        })
+        }).finally(() => { setLoading(false) })
     }
     // console.log("res", moment(profile?.data?.dob).format("DD-MM-YYYY"))
 
     return (
         <KeyboardAwareScrollView style={{ backgroundColor: "#FFF", flex: 1 }} contentContainerStyle={{ justifyContent: "flex-end", alignItems: "center" }} showsVerticalScrollIndicator={false}>
+            <Loading isVisible={loading} />
             <Formik
                 initialValues={{
                     username: profile?.data?.username || "",

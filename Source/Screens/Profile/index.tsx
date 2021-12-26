@@ -80,52 +80,52 @@ export default () => {
                     flexLeft={1}
                 />
             </View>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <View style={{ width: 200, height: 250, alignItems: 'center', justifyContent: 'center', paddingTop: 10 }}>
-                    <TouchableOpacity style={[styles.pickerImg, MainStyle.boxShadow]} onPress={() => { setImageModal(true) }}>
-                        <FontAwesomeIcon icon={faCamera} />
-                    </TouchableOpacity>
-                    {profileReducer?.data?.images?.img_url ? (
-                        <Image
-                            source={{ uri: `${IMAGE_URL}${profileReducer?.data?.images?.img_url}` }}
-                            style={{ width: height * 0.25, height: height * 0.25, borderRadius: (height * 0.25) / 2 }}
-                            loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
-                            resizeMethod="scale"
-                            resizeMode="cover"
-                        />
-                    ) : (
-                        <Image
-                            source={require('../../Assets/Images/userAvata.jpeg')}
-                            style={{ width: height * 0.25, height: height * 0.25, borderRadius: (height * 0.25) / 2 }}
-                            loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
-                            resizeMethod="scale"
-                            resizeMode="cover"
-                        />
-                    )}
-                    <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: 10 }}>{profileReducer.data?.full_name}</Text>
-                </View>
-                <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={uploadImage} cropperCircleOverlay={true} />
-            </View>
-            <View style={{ height: "93%", backgroundColor: "#F6F5F5", justifyContent: "space-around", paddingTop: "5%" }}>
-                <View style={{ height: 130, justifyContent: "center", alignItems: "center" }}>
-                    <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, paddingBottom: 5, paddingTop: 5, justifyContent: "space-around" }]}>
-                        <View style={{ flexDirection: "row", width: "100%", }}>
-                            <Text style={{ flex: 2, fontWeight: "bold" }}>Tài khoản:</Text>
-                            <Text style={{ flex: 7 }}>{profileReducer.data?.username}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", width: "100%", }}>
-                            <Text style={{ flex: 2, fontWeight: "bold" }}>SĐT:</Text>
-                            <Text style={{ flex: 7 }}>{profileReducer.data?.phone}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", width: "100%", }}>
-                            <Text style={{ flex: 2, fontWeight: "bold" }}>Địa chỉ:</Text>
-                            <Text style={{ flex: 7 }}>{profileReducer.data?.address?.subDistrict?.name + ' - ' + profileReducer.data?.address?.district?.name + ' - ' + profileReducer.data?.address?.city?.name}</Text>
-                        </View>
-
+            <ScrollView>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                    <View style={{ width: 200, height: 250, alignItems: 'center', justifyContent: 'center', paddingTop: 10 }}>
+                        <TouchableOpacity style={[styles.pickerImg, MainStyle.boxShadow]} onPress={() => { setImageModal(true) }}>
+                            <FontAwesomeIcon icon={faCamera} />
+                        </TouchableOpacity>
+                        {profileReducer?.data?.images?.img_url ? (
+                            <Image
+                                source={{ uri: `${IMAGE_URL}${profileReducer?.data?.images?.img_url}` }}
+                                style={{ width: height * 0.25, height: height * 0.25, borderRadius: (height * 0.25) / 2 }}
+                                loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
+                                resizeMethod="scale"
+                                resizeMode="cover"
+                            />
+                        ) : (
+                            <Image
+                                source={require('../../Assets/Images/userAvata.jpeg')}
+                                style={{ width: height * 0.25, height: height * 0.25, borderRadius: (height * 0.25) / 2 }}
+                                loadingIndicatorSource={require('../../Assets/Icons/Blinking_squares.gif')}
+                                resizeMethod="scale"
+                                resizeMode="cover"
+                            />
+                        )}
+                        <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: 10 }}>{profileReducer.data?.full_name}</Text>
                     </View>
+                    <AppImageCrop visible={imageModal} setVisible={setImageModal} onSave={uploadImage} cropperCircleOverlay={true} />
                 </View>
-                <View style={{ flex: 2, backgroundColor: "#FFF" }}>
-                    <ScrollView style={{ flex: 1 }}>
+                <View style={{ height: "100%", backgroundColor: "#F6F5F5", justifyContent: "space-around", paddingTop: "5%" }}>
+                    <View style={{ height: 130, justifyContent: "center", alignItems: "center" }}>
+                        <View style={[MainStyle.boxShadow, { backgroundColor: "#FFF", width: "90%", height: "85%", borderRadius: 10, padding: 10, paddingBottom: 5, paddingTop: 5, justifyContent: "space-around" }]}>
+                            <View style={{ flexDirection: "row", width: "100%", }}>
+                                <Text style={{ flex: 2, fontWeight: "bold" }}>Tài khoản:</Text>
+                                <Text style={{ flex: 7 }}>{profileReducer.data?.username}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", width: "100%", }}>
+                                <Text style={{ flex: 2, fontWeight: "bold" }}>SĐT:</Text>
+                                <Text style={{ flex: 7 }}>{profileReducer.data?.phone}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", width: "100%", }}>
+                                <Text style={{ flex: 2, fontWeight: "bold" }}>Địa chỉ:</Text>
+                                <Text style={{ flex: 7 }}>{profileReducer.data?.address?.subDistrict?.name + ' - ' + profileReducer.data?.address?.district?.name + ' - ' + profileReducer.data?.address?.city?.name}</Text>
+                            </View>
+
+                        </View>
+                    </View>
+                    <View style={{ flex: 2, backgroundColor: "#FFFF" }}>
                         <View style={[styles.rowItem]}>
                             <TouchableOpacity style={[styles.touchItem]} onPress={() => { navigation.push("Personal", { profile: profileReducer.data }) }}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
@@ -162,9 +162,9 @@ export default () => {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                    </ScrollView>
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         </View>
     );
 

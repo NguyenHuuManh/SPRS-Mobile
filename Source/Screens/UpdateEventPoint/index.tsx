@@ -1,4 +1,4 @@
-import { faCamera, faChevronLeft, faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRoute } from "@react-navigation/core";
 import { Field, Formik } from "formik";
@@ -9,19 +9,18 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Toast from "react-native-toast-message";
 import { apiGetEventDetail, apiUpdateEventPoint } from "../../ApiFunction/EventPoint";
 import { apiUploadImg } from "../../ApiFunction/ReliefPoint";
-import AppImageCrop from "../../Components/AppImageCrop";
 import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import DateTimePicker from "../../Components/DateTimePicker";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
+import Loading from "../../Components/Loading";
 import MapPicker from "../../Components/MapPicker";
 import MultipleAddItem from "../../Components/MultipleAddItem";
 import TimePicker from "../../Components/TimePicker";
 import { IMAGE_URL } from "../../Constrants/url";
 import { AppColor } from "../../Helper/propertyCSS";
 import { height } from "../../Helper/responsive";
-import { MainStyle } from "../../Style/main_style";
 import styles from "../AddLocation/styles";
 import ImageView from "./components/ImageView";
 
@@ -33,7 +32,7 @@ const UpdateReliefPoint = ({ navigation }) => {
   const [loadingImg, setLoadingImg] = useState(false);
   const [imageModal, setImageModal] = useState(false);
   const [viewModal, setViewModal] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const item = useRoute<any>().params;
   const [adressPoint, setAdressPoint] = useState<any>({
     GPS_Lati: item?.address?.GPS_lati || '',
@@ -44,6 +43,7 @@ const UpdateReliefPoint = ({ navigation }) => {
   })
 
   const callUpdateReliefPoint = (body) => {
+    setLoading(true);
     apiUpdateEventPoint(body).then((res) => {
       console.log(res, 'resUpdateRelief')
       if (res.status == 200) {
@@ -69,7 +69,7 @@ const UpdateReliefPoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => { setLoading(false) });
   }
   const updateImg = (image) => {
     if (isEmpty(image)) {
@@ -95,6 +95,7 @@ const UpdateReliefPoint = ({ navigation }) => {
     }).finally(() => { setLoadingImg(false) })
   }
   const callGetReliefPointDetail = () => {
+    setLoading(true);
     apiGetEventDetail({ id: item.id }).then((res) => {
       console.log('res', res)
       if (res.status == 200) {
@@ -117,13 +118,14 @@ const UpdateReliefPoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => { setLoading(false) });
   }
   useEffect(() => {
     callGetReliefPointDetail();
-  }, [item])
+  }, [item]);
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Loading isVisible={loading} />
       <View style={{ height: height * 0.07 }}>
         <HeaderContainer
           flexRight={1}

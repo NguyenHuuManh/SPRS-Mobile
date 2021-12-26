@@ -18,6 +18,7 @@ import ButtonCustom from "../../Components/ButtonCustom";
 import ContainerField from "../../Components/ContainerField";
 import HeaderContainer from "../../Components/HeaderContainer";
 import Input from "../../Components/Input";
+import Loading from "../../Components/Loading";
 import MapPicker from "../../Components/MapPicker";
 import StoreCategory from "../../Components/StoreCategory";
 import TimePicker from "../../Components/TimePicker";
@@ -39,11 +40,13 @@ const UpdateStorePoint = ({ navigation }) => {
   const [editEnable, setEditEnable] = useState(false);
   const formikRef = createRef<any>();
   const [imageModal, setImageModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     getStorePoint(item.id);
   }, [item])
   const getStorePoint = (id) => {
     if (isEmpty(id + "") || isUndefined(id) || isNull(id)) return;
+    setLoading(true);
     apiGetStoreDetail(id).then((res) => {
       console.log("resStoreid", res);
       if (res.status == 200) {
@@ -71,10 +74,11 @@ const UpdateStorePoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => { setLoading(false) })
   }
 
   const UpdateStore = (body) => {
+    setLoading(true);
     apiUpdateStore(body).then((res) => {
       console.log("ressss", res)
       if (res.status == 200) {
@@ -100,7 +104,7 @@ const UpdateStorePoint = ({ navigation }) => {
           position: "top"
         })
       }
-    })
+    }).finally(() => { setLoading(false) })
   }
   const updateImg = (image) => {
     if (isEmpty(image)) {
@@ -120,7 +124,7 @@ const UpdateStorePoint = ({ navigation }) => {
     }
     apiUploadImg(bodyImage).then((response) => {
       getStorePoint(data.id);
-      console.log("reponseImg", response);
+      // console.log("reponseImg", response);
     }).finally(() => { })
   }
   return (
@@ -131,6 +135,7 @@ const UpdateStorePoint = ({ navigation }) => {
         alignItems: 'center',
       }}
     >
+      <Loading isVisible={loading} />
       <View style={{ height: height * 0.07 }}>
         <HeaderContainer
           flexRight={2}

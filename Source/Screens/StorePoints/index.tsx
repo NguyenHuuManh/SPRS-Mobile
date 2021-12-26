@@ -38,7 +38,8 @@ export default ({ navigation }) => {
 
     useEffect(() => {
         const willFocusSubscription = navigation.addListener('focus', () => {
-            getPoint();
+            // getPoint();
+            setPageSize({ ...pageSize, pageIndex: page, pageSize: size });
         });
         return willFocusSubscription;
     }, [])
@@ -342,14 +343,6 @@ export default ({ navigation }) => {
 
     return (
         <View style={[styles.container]}>
-            {/* <View style={{ position: "absolute", right: "5%", bottom: "10%", zIndex: 100 }}>
-                <ButtonCustom
-                    onPress={() => { navigation.push("AddStorePoint") }}
-                    styleContain={{ borderRadius: 50, width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: AppColor.MAIN_COLOR, }}
-                >
-                    <FontAwesomeIcon icon={faPlus} size={26} color="#FFFF" />
-                </ButtonCustom>
-            </View> */}
             <View style={{ height: "7%" }}>
                 <HeaderContainer
                     isBack
