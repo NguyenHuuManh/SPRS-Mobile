@@ -94,7 +94,7 @@ const Input = (props: Props) => {
             </View>
             {touched[name] && errors[name] && (
                 <View style={{ flexDirection: "row" }}>
-                    {iconLeft && (
+                    {(iconLeft || leftView) && (
                         <View style={[styles.icon]}>
                         </View>
                     )}

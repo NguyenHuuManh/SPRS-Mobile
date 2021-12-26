@@ -173,15 +173,16 @@ const StoreDetail = ({ point, from }) => {
                                             {
                                                 toLocation:
                                                 {
-                                                    id: data.id,
+                                                    id: data.stores.id,
                                                     location: {
-                                                        latitude: Number(data.address.GPS_lati),
-                                                        longitude: Number(data.address.GPS_long)
+                                                        latitude: Number(data.stores.address.GPS_lati),
+                                                        longitude: Number(data.stores.address.GPS_long)
                                                     },
                                                     type: "st"
                                                 },
                                                 // screen: "DetailPoint"
-                                            })
+                                            });
+                                        // console.log(data, 'dataStore');
                                     }}>
                                         <FontAwesomeIcon icon={faMapMarkerAlt} color={AppColor.BUTTON_MAIN} />
                                     </TouchableOpacity>

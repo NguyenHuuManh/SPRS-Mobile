@@ -90,7 +90,7 @@ export default ({ route, navigation }) => {
                                                 <CountDown
                                                     minuteStart={timeStart}
                                                     onClick={() => {
-                                                        getOtp({ to: "+84" + to.substring(1), platform: 2 });
+                                                        getOtp({ to: to, platform: 2 });
                                                     }}
                                                     onStop={() => setDisableOTP(true)}
                                                 />

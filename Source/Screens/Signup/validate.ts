@@ -19,7 +19,7 @@ export const register = Yup.object().shape({
         var checkNumber = /^[0-9]+$/
         return vnf_regex.test(phone) && checkNumber.test(phone);
     }),
-    password: Yup.string().required("không được bỏ trống").nullable()
+    password: Yup.string().required("Không được bỏ trống").nullable()
         .test('checkSpace', "Mật khẩu không chứa khoảng trắng", function () {
             const { parent } = this;
             const { password } = parent;
@@ -43,7 +43,7 @@ export const register = Yup.object().shape({
             let regex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/
             return regex.test(nameStrim?.trim());
         }),
-    dob: Yup.string().required("không được bỏ trống").nullable()
+    dob: Yup.string().required("Không được bỏ trống").nullable()
         .test("test", "Ngày sinh không được lớn hơn ngày hiện tại", function () {
             const { parent } = this;
             const { dob } = parent;
@@ -55,10 +55,10 @@ export const register = Yup.object().shape({
             }
             return false
         }),
-    city: Yup.number().required("không được bỏ trống").nullable(),
-    district: Yup.number().required("không được bỏ trống").nullable(),
-    subDistrict: Yup.number().required("không được bỏ trống").nullable(),
-    groupsId: Yup.string().required("không được bỏ trống").nullable(),
+    city: Yup.number().required("Không được bỏ trống").nullable(),
+    district: Yup.number().required("Không được bỏ trống").nullable(),
+    subDistrict: Yup.number().required("Không được bỏ trống").nullable(),
+    groupsId: Yup.string().required("Không được bỏ trống").nullable(),
     rePassWord: Yup.mixed().required("Xác minh mật khẩu").test("test", "Mật khẩu không khớp", function () {
         const { parent } = this;
         const { rePassWord, password } = parent;

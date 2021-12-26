@@ -100,6 +100,7 @@ const StoreDetail = ({ point, from }) => {
                                 from == 'Notification' ? (
                                     <TouchableOpacity onPress={() => {
                                         if (data.status + '' == '1') {
+                                            // console.log('data', data);
                                             navigation.navigate("MapCluser",
                                                 {
                                                     toLocation:

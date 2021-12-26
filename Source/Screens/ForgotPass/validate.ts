@@ -12,5 +12,5 @@ export const SubmitPhone = Yup.object().shape({
 });
 
 export const SubmitOTP = Yup.object().shape({
-    otp: Yup.string().required("không được bỏ trống").nullable(),
+    otp: Yup.string().required("Không được bỏ trống").nullable(),
 });

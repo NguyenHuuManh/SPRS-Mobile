@@ -58,7 +58,7 @@ const AddStorePoint = ({ navigation }) => {
             text1: "Tạo điểm cửa hàng thành công",
             position: "top"
           });
-          navigation.push('StorePoints');
+          navigation.goBack();
         }
       } else {
         Toast.show({

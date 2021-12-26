@@ -60,7 +60,7 @@ const AddReliefPoint = ({ navigation }) => {
             text1: "Tạo điểm cứu trợ thành công",
             position: "top"
           });
-          navigation.push("ReliefPoint");
+          navigation.goBack();
           return;
         }
         if (res.data.code == "403") {

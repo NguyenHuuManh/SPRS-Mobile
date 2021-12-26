@@ -202,13 +202,13 @@ export default () => {
                                 onSelectOption={(item) => { setIdHuyen(item?.id) }}
                             />
                         </ContainerField>
-                        <ContainerField title="Quận/Huyện">
+                        <ContainerField title="Xã/Phường">
                             <Field
                                 component={AppSelectXa}
                                 name="subDistrict"
                                 horizontal
                                 styleTitle={{ width: 90 }}
-                                placeholder="Quận/Huyện"
+                                placeholder="Xã/Phường"
                                 idHuyen={idHuyen}
                             />
                         </ContainerField>
