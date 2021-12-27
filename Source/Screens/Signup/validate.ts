@@ -26,7 +26,7 @@ export const register = Yup.object().shape({
             const regex = /\s/;
             return !regex.test(password);
         })
-        .test("test", "Mật khẩu phải có cả chữ, sô, kí tự đặc biệt và tối thiểu 8 kí tự", function () {
+        .test("test", "Mật khẩu phải có cả chữ, số, kí tự đặc biệt và tối thiểu 8 kí tự", function () {
             const { parent } = this;
             const { password } = parent;
             // const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&^_-]{8,}$/;

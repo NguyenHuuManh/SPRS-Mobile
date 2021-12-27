@@ -61,7 +61,7 @@ export default ({ navigation }) => {
             pageIndex: pageSize.pageIndex
         }
         apiGetEvents(bodyRequest).then((e) => {
-            // console.log('evnetPoinse', e);
+            console.log('evnetPoinse', e);
             if (e.status == 200) {
                 if (e.data.code === "200") {
                     setPoints(e.data.obj);
@@ -108,7 +108,7 @@ export default ({ navigation }) => {
                         onPress={(e) => {
                             // console.log("item", item)
                             e.preventDefault();
-                            navigation.replace("MapCluser",
+                            navigation.navigate("MapCluser",
                                 {
                                     toLocation:
                                     {
